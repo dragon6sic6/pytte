@@ -805,6 +805,16 @@ Båda spakarna verkar, och tiden är den stora: tät data gav +11 punkter på su
 
 **Kvar till lansering.** Länkar i sidfoten (kod, modeller, data, rapport) när de finns; eventuellt WebAssembly om 15M känns seg på mobil.
 
+## 21. Fas 5a: repo, GitHub och Hugging Face, 2026-11-24
+
+**Git och GitHub.** Projektmappen blev ett git-arkiv (den hade inte varit det) med första commit "Pytte: tiny Swedish language models trained from scratch on a MacBook" och ligger som **privat** repo på `https://github.com/dragon6sic6/pytte` tills vidare. Med i repot: koden, skripten, mätningarna (`eval/`), varumärket, webbdemon med de tolv modellfilerna (59 MB i vanlig git, inte LFS, eftersom GitHub Pages inte serverar LFS-filer och LFS-bandbredden är begränsad), README och den här loggen. Utanför (`.gitignore`): `checkpoints/`, loggar, det kompilerade `run`, `.claude/` och de tre research-rapporterna som var underlag för planen. Inga hemligheter i historiken (kontrollerat med grep innan första commit).
+
+**Licenser (beslut).** Kod och modeller **Apache-2.0** (samma som Gemma 4, vars villkor inte begränsar utdata, se avsnitt 10), SagoSvenska **CC BY 4.0**. `LICENSE` är Apache-texten.
+
+**Hugging Face (förberett, väntar på inloggning).** `scripts/make_model_cards.py` bygger tolv uppladdningsmappar i `/Volumes/Modelltest/pytte/hf/` (safetensors, config, tokenizer.json, int8-.bin och ett modellkort genererat ur summary/eval/judge/eval_pairs: arkitektur, träning, resultattabell, filer, användning i C och Python, begränsningar, licens). `scripts/hf_upload.py --models --dataset` skapar privata repon `<användare>/pytte-<storlek>[-chat]` och datasetrepot `<användare>/sagosvenska` (mapparna `v1.1/`, `v2/`, `mix1/` med jsonl och stats, datasetkort med tabell över de tre seten, varför de finns, rensningen och licensen); `--public` vid lansering. Kräver `hf auth login` med en skrivtoken, vilket bara Mathias kan göra; sedan är uppladdningen ett kommando (modellerna 310 MB, datasetet 211 MB).
+
+**Kvar i fas 5.** Rapporten (avsnitt 6, fas 5), Zenodo-DOI, länkarna i demons sidfot, modellkortens länk till rapporten.
+
 ## Källor som verifierades i den här genomgången
 
 - Hugging Face: `tdde19-llm-from-scratch/TinyStoriesSwe` och tillhörande modeller, `qwrt/Swedish0.1M`, `Dxniz/TinyStories-Multilingual` (API-anrop 2026-11-06)
