@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Pytte: a single tiny block (one token, one parameter) that has learned to talk. -->
+  <rect width="512" height="512" rx="96" fill="#F6F1E7"/>
+  <!-- speech bubble -->
+  <g transform="translate(236 62)">
+    <path d="M28 0h192a28 28 0 0 1 28 28v76a28 28 0 0 1-28 28H86l-44 40 10-40H28A28 28 0 0 1 0 104V28A28 28 0 0 1 28 0z" fill="#F2B632"/>
+    <circle cx="74" cy="66" r="11" fill="#1E2A4A"/>
+    <circle cx="124" cy="66" r="11" fill="#1E2A4A"/>
+    <circle cx="174" cy="66" r="11" fill="#1E2A4A"/>
+  </g>
+  <!-- the little one -->
+  <g transform="translate(120 248)">
+    <rect x="0" y="0" width="176" height="176" rx="44" fill="#1E2A4A"/>
+    <circle cx="58" cy="76" r="13" fill="#F6F1E7"/>
+    <circle cx="118" cy="76" r="13" fill="#F6F1E7"/>
+    <path d="M60 118q28 26 56 0" stroke="#F6F1E7" stroke-width="10" stroke-linecap="round" fill="none"/>
+    <!-- tiny antenna: one blinking light -->
+    <rect x="80" y="-30" width="16" height="34" rx="8" fill="#1E2A4A"/>
+    <circle cx="88" cy="-36" r="14" fill="#F2B632"/>
+  </g>
+</svg>

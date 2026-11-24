@@ -1,0 +1,15 @@
+# build and caches
+run
+__pycache__/
+*.pyc
+.venv/
+.DS_Store
+# app-specific
+.claude/
+# scratch outputs
+checkpoints/
+*.log
+# planning inputs (not part of the release)
+deep-research-report.md
+Den minsta riktiga språkmodellen_ Plan för en svensk LLM tränad på en MacBook.md
+Världens Minsta LLM-Projekt.md

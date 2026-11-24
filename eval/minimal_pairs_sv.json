@@ -1,0 +1,1005 @@
+{
+  "description": "Swedish minimal pairs for tiny story models. Each pair: grammatical sentence first, ungrammatical second, same number of words, and the two forms are kept close in length so that a plain log-probability comparison does not favour the shorter string. Vocabulary kept at children's-story level. v2, 2026-11-09 (v1 had 63 pairs; the plural category compared forms of different length).",
+  "pairs": [
+    {
+      "cat": "verb_present",
+      "good": "Hunden springer i parken.",
+      "bad": "Hunden springa i parken."
+    },
+    {
+      "cat": "verb_present",
+      "good": "Flickan läser en bok.",
+      "bad": "Flickan läsa en bok."
+    },
+    {
+      "cat": "verb_present",
+      "good": "Katten sover på soffan.",
+      "bad": "Katten sova på soffan."
+    },
+    {
+      "cat": "verb_present",
+      "good": "Barnen leker i trädgården.",
+      "bad": "Barnen leka i trädgården."
+    },
+    {
+      "cat": "verb_present",
+      "good": "Mamma lagar god mat.",
+      "bad": "Mamma laga god mat."
+    },
+    {
+      "cat": "verb_present",
+      "good": "Pojken ritar ett hus.",
+      "bad": "Pojken rita ett hus."
+    },
+    {
+      "cat": "verb_present",
+      "good": "Fågeln sjunger i trädet.",
+      "bad": "Fågeln sjunga i trädet."
+    },
+    {
+      "cat": "verb_present",
+      "good": "Vi äter frukost nu.",
+      "bad": "Vi äta frukost nu."
+    },
+    {
+      "cat": "verb_present",
+      "good": "Solen skiner på ängen.",
+      "bad": "Solen skina på ängen."
+    },
+    {
+      "cat": "verb_present",
+      "good": "Pappa kör bilen hem.",
+      "bad": "Pappa köra bilen hem."
+    },
+    {
+      "cat": "verb_present",
+      "good": "Hon bor i en stuga.",
+      "bad": "Hon bo i en stuga."
+    },
+    {
+      "cat": "verb_present",
+      "good": "Hunden skäller på katten.",
+      "bad": "Hunden skälla på katten."
+    },
+    {
+      "cat": "verb_present",
+      "good": "Elsa hoppar i vattnet.",
+      "bad": "Elsa hoppa i vattnet."
+    },
+    {
+      "cat": "verb_present",
+      "good": "De bygger ett torn.",
+      "bad": "De bygga ett torn."
+    },
+    {
+      "cat": "verb_present",
+      "good": "Farmor bakar bullar idag.",
+      "bad": "Farmor baka bullar idag."
+    },
+    {
+      "cat": "verb_present",
+      "good": "Kaninen gräver i sanden.",
+      "bad": "Kaninen gräva i sanden."
+    },
+    {
+      "cat": "verb_present",
+      "good": "Jag tycker om glass.",
+      "bad": "Jag tycka om glass."
+    },
+    {
+      "cat": "verb_present",
+      "good": "Han tittar på fåglarna.",
+      "bad": "Han titta på fåglarna."
+    },
+    {
+      "cat": "verb_present",
+      "good": "Barnen skrattar högt.",
+      "bad": "Barnen skratta högt."
+    },
+    {
+      "cat": "verb_present",
+      "good": "Draken flyger över skogen.",
+      "bad": "Draken flyga över skogen."
+    },
+    {
+      "cat": "past_tense",
+      "good": "Igår lekte barnen ute.",
+      "bad": "Igår lekade barnen ute."
+    },
+    {
+      "cat": "past_tense",
+      "good": "Hon sprang hem fort.",
+      "bad": "Hon springde hem fort."
+    },
+    {
+      "cat": "past_tense",
+      "good": "Han åt ett äpple.",
+      "bad": "Han ätade ett äpple."
+    },
+    {
+      "cat": "past_tense",
+      "good": "De gick till skolan.",
+      "bad": "De gådde till skolan."
+    },
+    {
+      "cat": "past_tense",
+      "good": "Katten sov hela dagen.",
+      "bad": "Katten sovde hela dagen."
+    },
+    {
+      "cat": "past_tense",
+      "good": "Flickan skrev ett brev.",
+      "bad": "Flickan skrivde ett brev."
+    },
+    {
+      "cat": "past_tense",
+      "good": "Pojken drack sin mjölk.",
+      "bad": "Pojken drickade sin mjölk."
+    },
+    {
+      "cat": "past_tense",
+      "good": "Vi såg en älg igår.",
+      "bad": "Vi seade en älg igår."
+    },
+    {
+      "cat": "past_tense",
+      "good": "Hunden kom hem igen.",
+      "bad": "Hunden kommde hem igen."
+    },
+    {
+      "cat": "past_tense",
+      "good": "Mamma gav mig en kram.",
+      "bad": "Mamma givde mig en kram."
+    },
+    {
+      "cat": "past_tense",
+      "good": "Elsa satt på bänken.",
+      "bad": "Elsa sittade på bänken."
+    },
+    {
+      "cat": "past_tense",
+      "good": "Omar tog sin boll.",
+      "bad": "Omar tagde sin boll."
+    },
+    {
+      "cat": "past_tense",
+      "good": "Fågeln flög över taket.",
+      "bad": "Fågeln flygde över taket."
+    },
+    {
+      "cat": "past_tense",
+      "good": "Barnen fick varsin glass.",
+      "bad": "Barnen fådde varsin glass."
+    },
+    {
+      "cat": "past_tense",
+      "good": "Pappa sa god natt.",
+      "bad": "Pappa sägde god natt."
+    },
+    {
+      "cat": "past_tense",
+      "good": "Hon stod vid dörren.",
+      "bad": "Hon stådde vid dörren."
+    },
+    {
+      "cat": "past_tense",
+      "good": "Vi var i skogen.",
+      "bad": "Vi varade i skogen."
+    },
+    {
+      "cat": "past_tense",
+      "good": "Han hittade en sten.",
+      "bad": "Han hittde en sten."
+    },
+    {
+      "cat": "past_tense",
+      "good": "Lova visste svaret.",
+      "bad": "Lova vetade svaret."
+    },
+    {
+      "cat": "past_tense",
+      "good": "Katten låg i solen.",
+      "bad": "Katten liggde i solen."
+    },
+    {
+      "cat": "plural",
+      "good": "Två hundar leker ute.",
+      "bad": "Två hunden leker ute."
+    },
+    {
+      "cat": "plural",
+      "good": "Tre katter sover nu.",
+      "bad": "Tre katten sover nu."
+    },
+    {
+      "cat": "plural",
+      "good": "Många barn leker ute.",
+      "bad": "Många barnen leker ute."
+    },
+    {
+      "cat": "plural",
+      "good": "Hon har två bröder.",
+      "bad": "Hon har två brodern."
+    },
+    {
+      "cat": "plural",
+      "good": "Flera fåglar sjunger glatt.",
+      "bad": "Flera fågeln sjunger glatt."
+    },
+    {
+      "cat": "plural",
+      "good": "Fem äpplen låg i korgen.",
+      "bad": "Fem äpplet låg i korgen."
+    },
+    {
+      "cat": "plural",
+      "good": "Alla blommor är röda.",
+      "bad": "Alla blomman är röda."
+    },
+    {
+      "cat": "plural",
+      "good": "Två flickor går hem.",
+      "bad": "Två flickan går hem."
+    },
+    {
+      "cat": "plural",
+      "good": "Många bilar står där.",
+      "bad": "Många bilen står där."
+    },
+    {
+      "cat": "plural",
+      "good": "Tre pojkar spelar boll.",
+      "bad": "Tre pojken spelar boll."
+    },
+    {
+      "cat": "plural",
+      "good": "Hon ser fyra hästar.",
+      "bad": "Hon ser fyra hästen."
+    },
+    {
+      "cat": "plural",
+      "good": "Alla stolar är blå.",
+      "bad": "Alla stolen är blå."
+    },
+    {
+      "cat": "plural",
+      "good": "Barnen har många böcker.",
+      "bad": "Barnen har många boken."
+    },
+    {
+      "cat": "plural",
+      "good": "Där finns tre hus.",
+      "bad": "Där finns tre huset."
+    },
+    {
+      "cat": "plural",
+      "good": "Sex ankor simmar i dammen.",
+      "bad": "Sex ankan simmar i dammen."
+    },
+    {
+      "cat": "plural",
+      "good": "De plockar många bär.",
+      "bad": "De plockar många bäret."
+    },
+    {
+      "cat": "plural",
+      "good": "Två kaniner hoppar runt.",
+      "bad": "Två kaninen hoppar runt."
+    },
+    {
+      "cat": "plural",
+      "good": "Alla träd är gröna.",
+      "bad": "Alla trädet är gröna."
+    },
+    {
+      "cat": "plural",
+      "good": "Hon äter två bullar.",
+      "bad": "Hon äter två bullen."
+    },
+    {
+      "cat": "plural",
+      "good": "Många stjärnor lyser inatt.",
+      "bad": "Många stjärnan lyser inatt."
+    },
+    {
+      "cat": "definiteness",
+      "good": "Hunden springer till huset.",
+      "bad": "Hunden springer till huse."
+    },
+    {
+      "cat": "definiteness",
+      "good": "Den lilla katten sover.",
+      "bad": "Den lilla katt sover."
+    },
+    {
+      "cat": "definiteness",
+      "good": "Det stora trädet är grönt.",
+      "bad": "Det stora träd är grönt."
+    },
+    {
+      "cat": "definiteness",
+      "good": "Flickan tar bollen.",
+      "bad": "Flickan tar bollet."
+    },
+    {
+      "cat": "definiteness",
+      "good": "Pojken öppnar dörren.",
+      "bad": "Pojken öppnar dörret."
+    },
+    {
+      "cat": "definiteness",
+      "good": "Hon klappar den snälla hunden.",
+      "bad": "Hon klappar den snälla hund."
+    },
+    {
+      "cat": "definiteness",
+      "good": "Barnen går till skolan.",
+      "bad": "Barnen går till skolen."
+    },
+    {
+      "cat": "definiteness",
+      "good": "Den röda bilen är snabb.",
+      "bad": "Den röda bil är snabb."
+    },
+    {
+      "cat": "definiteness",
+      "good": "Det lilla huset är gult.",
+      "bad": "Det lilla hus är gult."
+    },
+    {
+      "cat": "definiteness",
+      "good": "Mamma läser boken högt.",
+      "bad": "Mamma läser boket högt."
+    },
+    {
+      "cat": "definiteness",
+      "good": "Katten ligger på den mjuka mattan.",
+      "bad": "Katten ligger på den mjuka matta."
+    },
+    {
+      "cat": "definiteness",
+      "good": "Elsa ser den gula fågeln.",
+      "bad": "Elsa ser den gula fågel."
+    },
+    {
+      "cat": "definiteness",
+      "good": "Solen går ner bakom det höga berget.",
+      "bad": "Solen går ner bakom det höga berg."
+    },
+    {
+      "cat": "definiteness",
+      "good": "Han hittar den gamla nyckeln.",
+      "bad": "Han hittar den gamla nyckel."
+    },
+    {
+      "cat": "definiteness",
+      "good": "Flickan äter det röda äpplet.",
+      "bad": "Flickan äter det röda äpple."
+    },
+    {
+      "cat": "definiteness",
+      "good": "De sitter vid det runda bordet.",
+      "bad": "De sitter vid det runda bord."
+    },
+    {
+      "cat": "definiteness",
+      "good": "Den stora björnen sover.",
+      "bad": "Den stora björn sover."
+    },
+    {
+      "cat": "definiteness",
+      "good": "Pappa stänger det stora fönstret.",
+      "bad": "Pappa stänger det stora fönster."
+    },
+    {
+      "cat": "definiteness",
+      "good": "Vi går ner till stranden.",
+      "bad": "Vi går ner till stranda."
+    },
+    {
+      "cat": "definiteness",
+      "good": "Hunden gömmer det stora benet.",
+      "bad": "Hunden gömmer det stora ben."
+    },
+    {
+      "cat": "gender",
+      "good": "Hon har en röd boll.",
+      "bad": "Hon har ett röd boll."
+    },
+    {
+      "cat": "gender",
+      "good": "Det är ett stort hus.",
+      "bad": "Det är en stort hus."
+    },
+    {
+      "cat": "gender",
+      "good": "Han ser en liten katt.",
+      "bad": "Han ser ett liten katt."
+    },
+    {
+      "cat": "gender",
+      "good": "Vi har ett grönt träd.",
+      "bad": "Vi har en grönt träd."
+    },
+    {
+      "cat": "gender",
+      "good": "Där står en gammal bil.",
+      "bad": "Där står ett gammal bil."
+    },
+    {
+      "cat": "gender",
+      "good": "Hon får ett nytt äpple.",
+      "bad": "Hon får en nytt äpple."
+    },
+    {
+      "cat": "gender",
+      "good": "Det är en fin dag.",
+      "bad": "Det är ett fin dag."
+    },
+    {
+      "cat": "gender",
+      "good": "Han bygger ett högt torn.",
+      "bad": "Han bygger en högt torn."
+    },
+    {
+      "cat": "gender",
+      "good": "Där ligger en mjuk kudde.",
+      "bad": "Där ligger ett mjuk kudde."
+    },
+    {
+      "cat": "gender",
+      "good": "Hon hittar ett litet skal.",
+      "bad": "Hon hittar en litet skal."
+    },
+    {
+      "cat": "gender",
+      "good": "De ser en stor hund.",
+      "bad": "De ser ett stor hund."
+    },
+    {
+      "cat": "gender",
+      "good": "Pojken har ett blått tåg.",
+      "bad": "Pojken har en blått tåg."
+    },
+    {
+      "cat": "gender",
+      "good": "Hon äter en varm bulle.",
+      "bad": "Hon äter ett varm bulle."
+    },
+    {
+      "cat": "gender",
+      "good": "Det är ett gult hus.",
+      "bad": "Det är en gult hus."
+    },
+    {
+      "cat": "gender",
+      "good": "Katten är en snäll vän.",
+      "bad": "Katten är ett snäll vän."
+    },
+    {
+      "cat": "gender",
+      "good": "Vi ser ett vitt moln.",
+      "bad": "Vi ser en vitt moln."
+    },
+    {
+      "cat": "gender",
+      "good": "Han har en lång pinne.",
+      "bad": "Han har ett lång pinne."
+    },
+    {
+      "cat": "gender",
+      "good": "Hon får ett rött hjärta.",
+      "bad": "Hon får en rött hjärta."
+    },
+    {
+      "cat": "gender",
+      "good": "Där finns en liten sjö.",
+      "bad": "Där finns ett liten sjö."
+    },
+    {
+      "cat": "gender",
+      "good": "Det är ett tyst rum.",
+      "bad": "Det är en tyst rum."
+    },
+    {
+      "cat": "adjective_agreement",
+      "good": "Huset är stort och gult.",
+      "bad": "Huset är stor och gul."
+    },
+    {
+      "cat": "adjective_agreement",
+      "good": "Blommorna är röda och fina.",
+      "bad": "Blommorna är röd och fin."
+    },
+    {
+      "cat": "adjective_agreement",
+      "good": "Hunden är stor och brun.",
+      "bad": "Hunden är stort och brunt."
+    },
+    {
+      "cat": "adjective_agreement",
+      "good": "Trädet är högt och grönt.",
+      "bad": "Trädet är hög och grön."
+    },
+    {
+      "cat": "adjective_agreement",
+      "good": "Barnen är glada idag.",
+      "bad": "Barnen är glad idag."
+    },
+    {
+      "cat": "adjective_agreement",
+      "good": "Katten är liten och mjuk.",
+      "bad": "Katten är litet och mjukt."
+    },
+    {
+      "cat": "adjective_agreement",
+      "good": "Äpplet är rött och gott.",
+      "bad": "Äpplet är röd och god."
+    },
+    {
+      "cat": "adjective_agreement",
+      "good": "Molnen är vita och stora.",
+      "bad": "Molnen är vit och stor."
+    },
+    {
+      "cat": "adjective_agreement",
+      "good": "Vattnet är kallt och blått.",
+      "bad": "Vattnet är kall och blå."
+    },
+    {
+      "cat": "adjective_agreement",
+      "good": "Bollen är rund och röd.",
+      "bad": "Bollen är runt och rött."
+    },
+    {
+      "cat": "adjective_agreement",
+      "good": "Husen är gamla och små.",
+      "bad": "Husen är gammal och liten."
+    },
+    {
+      "cat": "adjective_agreement",
+      "good": "Brödet är varmt och gott.",
+      "bad": "Brödet är varm och god."
+    },
+    {
+      "cat": "adjective_agreement",
+      "good": "Fåglarna är små och snabba.",
+      "bad": "Fåglarna är liten och snabb."
+    },
+    {
+      "cat": "adjective_agreement",
+      "good": "Bilen är ny och snabb.",
+      "bad": "Bilen är nytt och snabbt."
+    },
+    {
+      "cat": "adjective_agreement",
+      "good": "Ljuset är starkt och varmt.",
+      "bad": "Ljuset är stark och varm."
+    },
+    {
+      "cat": "adjective_agreement",
+      "good": "Hon har ett stort hjärta.",
+      "bad": "Hon har ett stor hjärta."
+    },
+    {
+      "cat": "adjective_agreement",
+      "good": "Han har en stor hund.",
+      "bad": "Han har en stort hund."
+    },
+    {
+      "cat": "adjective_agreement",
+      "good": "De har fina små stugor.",
+      "bad": "De har fin liten stugor."
+    },
+    {
+      "cat": "adjective_agreement",
+      "good": "Snön är vit och kall.",
+      "bad": "Snön är vitt och kallt."
+    },
+    {
+      "cat": "adjective_agreement",
+      "good": "Berget är högt och grått.",
+      "bad": "Berget är hög och grå."
+    },
+    {
+      "cat": "word_order_v2",
+      "good": "Idag leker barnen ute.",
+      "bad": "Idag barnen leker ute."
+    },
+    {
+      "cat": "word_order_v2",
+      "good": "Sedan gick de hem.",
+      "bad": "Sedan de gick hem."
+    },
+    {
+      "cat": "word_order_v2",
+      "good": "I skogen bor en räv.",
+      "bad": "I skogen en räv bor."
+    },
+    {
+      "cat": "word_order_v2",
+      "good": "Nu sover katten gott.",
+      "bad": "Nu katten sover gott."
+    },
+    {
+      "cat": "word_order_v2",
+      "good": "På kvällen läser mamma sagor.",
+      "bad": "På kvällen mamma läser sagor."
+    },
+    {
+      "cat": "word_order_v2",
+      "good": "Där står en stor björn.",
+      "bad": "Där en stor björn står."
+    },
+    {
+      "cat": "word_order_v2",
+      "good": "Plötsligt hörde hon ett ljud.",
+      "bad": "Plötsligt hon hörde ett ljud."
+    },
+    {
+      "cat": "word_order_v2",
+      "good": "Imorgon åker vi till mormor.",
+      "bad": "Imorgon vi åker till mormor."
+    },
+    {
+      "cat": "word_order_v2",
+      "good": "Efter maten gick Omar ut.",
+      "bad": "Efter maten Omar gick ut."
+    },
+    {
+      "cat": "word_order_v2",
+      "good": "Ibland regnar det hela dagen.",
+      "bad": "Ibland det regnar hela dagen."
+    },
+    {
+      "cat": "word_order_v2",
+      "good": "Då skrattade alla barnen.",
+      "bad": "Då alla barnen skrattade."
+    },
+    {
+      "cat": "word_order_v2",
+      "good": "På natten lyser stjärnorna.",
+      "bad": "På natten stjärnorna lyser."
+    },
+    {
+      "cat": "word_order_v2",
+      "good": "Snart kommer pappa hem.",
+      "bad": "Snart pappa kommer hem."
+    },
+    {
+      "cat": "word_order_v2",
+      "good": "I korgen ligger tre äpplen.",
+      "bad": "I korgen tre äpplen ligger."
+    },
+    {
+      "cat": "word_order_v2",
+      "good": "Först åt de frukost.",
+      "bad": "Först de åt frukost."
+    },
+    {
+      "cat": "word_order_v2",
+      "good": "Hemma väntar en varm soppa.",
+      "bad": "Hemma en varm soppa väntar."
+    },
+    {
+      "cat": "word_order_v2",
+      "good": "Under bordet sover hunden.",
+      "bad": "Under bordet hunden sover."
+    },
+    {
+      "cat": "word_order_v2",
+      "good": "Till slut hittade de nyckeln.",
+      "bad": "Till slut de hittade nyckeln."
+    },
+    {
+      "cat": "word_order_v2",
+      "good": "Varje dag matar Elsa fåglarna.",
+      "bad": "Varje dag Elsa matar fåglarna."
+    },
+    {
+      "cat": "word_order_v2",
+      "good": "Utanför snöar det mycket.",
+      "bad": "Utanför det snöar mycket."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "Hon vill leka med bollen.",
+      "bad": "Hon vill leker med bollen."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "Han kan simma i sjön.",
+      "bad": "Han kan simmar i sjön."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "Vi ska äta middag snart.",
+      "bad": "Vi ska äter middag snart."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "Katten måste sova nu.",
+      "bad": "Katten måste sover nu."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "Barnen får gå ut.",
+      "bad": "Barnen får går ut."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "Hon vill ha en kaka.",
+      "bad": "Hon vill har en kaka."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "Pojken kan hoppa högt.",
+      "bad": "Pojken kan hoppar högt."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "Vi ska bygga en koja.",
+      "bad": "Vi ska bygger en koja."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "Du måste borsta tänderna.",
+      "bad": "Du måste borstar tänderna."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "Hunden får inte bita.",
+      "bad": "Hunden får inte biter."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "Elsa vill rita en häst.",
+      "bad": "Elsa vill ritar en häst."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "De kan springa fort.",
+      "bad": "De kan springer fort."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "Jag ska läsa en saga.",
+      "bad": "Jag ska läser en saga."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "Mamma måste laga mat.",
+      "bad": "Mamma måste lagar mat."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "Han vill åka till stranden.",
+      "bad": "Han vill åker till stranden."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "Fågeln kan flyga långt.",
+      "bad": "Fågeln kan flyger långt."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "Vi får plocka blommor här.",
+      "bad": "Vi får plockar blommor här."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "Hon ska sova hos farmor.",
+      "bad": "Hon ska sover hos farmor."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "Omar vill bli pirat.",
+      "bad": "Omar vill blir pirat."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "Draken kan spruta eld.",
+      "bad": "Draken kan sprutar eld."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "Hon gav honom en kaka.",
+      "bad": "Hon gav han en kaka."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "Vi såg henne i parken.",
+      "bad": "Vi såg hon i parken."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "Mamma kramade mig hårt.",
+      "bad": "Mamma kramade jag hårt."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "Pappa hjälpte dem hem.",
+      "bad": "Pappa hjälpte de hem."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "Hunden följde oss hem.",
+      "bad": "Hunden följde vi hem."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "Han tittade på henne.",
+      "bad": "Han tittade på hon."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "Kan du hjälpa mig?",
+      "bad": "Kan du hjälpa jag?"
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "Farmor bakade bullar åt oss.",
+      "bad": "Farmor bakade bullar åt vi."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "Jag ser honom där borta.",
+      "bad": "Jag ser han där borta."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "Katten sprang efter dem.",
+      "bad": "Katten sprang efter de."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "Hon vinkade till mig.",
+      "bad": "Hon vinkade till jag."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "Elsa lekte med honom.",
+      "bad": "Elsa lekte med han."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "Vi bjöd henne på saft.",
+      "bad": "Vi bjöd hon på saft."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "Pojken gav oss varsin boll.",
+      "bad": "Pojken gav vi varsin boll."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "Läraren hjälpte dem alla.",
+      "bad": "Läraren hjälpte de alla."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "De lyssnade på honom.",
+      "bad": "De lyssnade på han."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "Mormor ringde till mig igår.",
+      "bad": "Mormor ringde till jag igår."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "Kaninen sprang ifrån oss.",
+      "bad": "Kaninen sprang ifrån vi."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "Hon väntade på dem länge.",
+      "bad": "Hon väntade på de länge."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "Pappa läste för henne.",
+      "bad": "Pappa läste för hon."
+    },
+    {
+      "cat": "subordinate_negation",
+      "good": "Hon sa att hon inte ville.",
+      "bad": "Hon sa att hon ville inte."
+    },
+    {
+      "cat": "subordinate_negation",
+      "good": "Han vet att katten inte bits.",
+      "bad": "Han vet att katten bits inte."
+    },
+    {
+      "cat": "subordinate_negation",
+      "good": "Mamma ser att vi inte sover.",
+      "bad": "Mamma ser att vi sover inte."
+    },
+    {
+      "cat": "subordinate_negation",
+      "good": "Jag tror att det inte regnar.",
+      "bad": "Jag tror att det regnar inte."
+    },
+    {
+      "cat": "subordinate_negation",
+      "good": "Elsa säger att hon inte är rädd.",
+      "bad": "Elsa säger att hon är inte rädd."
+    },
+    {
+      "cat": "subordinate_negation",
+      "good": "De märkte att hunden inte åt.",
+      "bad": "De märkte att hunden åt inte."
+    },
+    {
+      "cat": "subordinate_negation",
+      "good": "Pappa hoppas att det inte snöar.",
+      "bad": "Pappa hoppas att det snöar inte."
+    },
+    {
+      "cat": "subordinate_negation",
+      "good": "Omar vet att han inte får.",
+      "bad": "Omar vet att han får inte."
+    },
+    {
+      "cat": "subordinate_negation",
+      "good": "Hon undrar varför han inte kom.",
+      "bad": "Hon undrar varför han kom inte."
+    },
+    {
+      "cat": "subordinate_negation",
+      "good": "Vi hör att fågeln inte sjunger.",
+      "bad": "Vi hör att fågeln sjunger inte."
+    },
+    {
+      "cat": "subordinate_negation",
+      "good": "Han ser att dörren inte är stängd.",
+      "bad": "Han ser att dörren är inte stängd."
+    },
+    {
+      "cat": "subordinate_negation",
+      "good": "Lova tror att draken inte finns.",
+      "bad": "Lova tror att draken finns inte."
+    },
+    {
+      "cat": "subordinate_negation",
+      "good": "Farmor sa att hon inte var trött.",
+      "bad": "Farmor sa att hon var inte trött."
+    },
+    {
+      "cat": "subordinate_negation",
+      "good": "Barnen vet att de inte får springa.",
+      "bad": "Barnen vet att de får inte springa."
+    },
+    {
+      "cat": "subordinate_negation",
+      "good": "Katten märker att maten inte är klar.",
+      "bad": "Katten märker att maten är inte klar."
+    },
+    {
+      "cat": "subordinate_negation",
+      "good": "Jag ser att du inte ler.",
+      "bad": "Jag ser att du ler inte."
+    },
+    {
+      "cat": "subordinate_negation",
+      "good": "Han vet att bilen inte går.",
+      "bad": "Han vet att bilen går inte."
+    },
+    {
+      "cat": "subordinate_negation",
+      "good": "Hon tror att de inte hör.",
+      "bad": "Hon tror att de hör inte."
+    },
+    {
+      "cat": "subordinate_negation",
+      "good": "Vi vet att det inte är farligt.",
+      "bad": "Vi vet att det är inte farligt."
+    },
+    {
+      "cat": "subordinate_negation",
+      "good": "Mamma säger att vi inte ska oroa oss.",
+      "bad": "Mamma säger att vi ska inte oroa oss."
+    }
+  ]
+}

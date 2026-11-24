@@ -1,0 +1,1005 @@
+{
+  "description": "English minimal pairs for tiny story models, built to mirror minimal_pairs_sv.json v2: grammatical sentence first, ungrammatical second, same number of words, the two forms kept close in length so that a plain log-probability comparison does not favour the shorter string. Vocabulary at TinyStories level. 10 categories x 20 pairs. v2, 2026-11-09 (v1 had 30 pairs).",
+  "pairs": [
+    {
+      "cat": "verb_agreement",
+      "good": "The dog runs in the park.",
+      "bad": "The dog run in the park."
+    },
+    {
+      "cat": "verb_agreement",
+      "good": "The girl reads a book.",
+      "bad": "The girl read a book."
+    },
+    {
+      "cat": "verb_agreement",
+      "good": "The cat sleeps on the bed.",
+      "bad": "The cat sleep on the bed."
+    },
+    {
+      "cat": "verb_agreement",
+      "good": "The children play in the garden.",
+      "bad": "The children plays in the garden."
+    },
+    {
+      "cat": "verb_agreement",
+      "good": "Mom bakes a big cake.",
+      "bad": "Mom bake a big cake."
+    },
+    {
+      "cat": "verb_agreement",
+      "good": "The birds fly high in the sky.",
+      "bad": "The birds flies high in the sky."
+    },
+    {
+      "cat": "verb_agreement",
+      "good": "Tom likes his red ball.",
+      "bad": "Tom like his red ball."
+    },
+    {
+      "cat": "verb_agreement",
+      "good": "The boys jump into the water.",
+      "bad": "The boys jumps into the water."
+    },
+    {
+      "cat": "verb_agreement",
+      "good": "Grandma sits on the chair.",
+      "bad": "Grandma sit on the chair."
+    },
+    {
+      "cat": "verb_agreement",
+      "good": "The sun shines on the hill.",
+      "bad": "The sun shine on the hill."
+    },
+    {
+      "cat": "verb_agreement",
+      "good": "The ducks swim in the pond.",
+      "bad": "The ducks swims in the pond."
+    },
+    {
+      "cat": "verb_agreement",
+      "good": "Lily wants a new toy.",
+      "bad": "Lily want a new toy."
+    },
+    {
+      "cat": "verb_agreement",
+      "good": "The frogs hop on the rocks.",
+      "bad": "The frogs hops on the rocks."
+    },
+    {
+      "cat": "verb_agreement",
+      "good": "Dad drives the big car.",
+      "bad": "Dad drive the big car."
+    },
+    {
+      "cat": "verb_agreement",
+      "good": "The kids laugh at the clown.",
+      "bad": "The kids laughs at the clown."
+    },
+    {
+      "cat": "verb_agreement",
+      "good": "The bunny eats a carrot.",
+      "bad": "The bunny eat a carrot."
+    },
+    {
+      "cat": "verb_agreement",
+      "good": "The bees buzz around the flowers.",
+      "bad": "The bees buzzes around the flowers."
+    },
+    {
+      "cat": "verb_agreement",
+      "good": "Sam opens the blue door.",
+      "bad": "Sam open the blue door."
+    },
+    {
+      "cat": "verb_agreement",
+      "good": "The fish swims in the bowl.",
+      "bad": "The fish swim in the bowl."
+    },
+    {
+      "cat": "verb_agreement",
+      "good": "The two friends share the cookies.",
+      "bad": "The two friends shares the cookies."
+    },
+    {
+      "cat": "past_tense",
+      "good": "Yesterday Tom went to the park.",
+      "bad": "Yesterday Tom goed to the park."
+    },
+    {
+      "cat": "past_tense",
+      "good": "Lily ate a red apple.",
+      "bad": "Lily eated a red apple."
+    },
+    {
+      "cat": "past_tense",
+      "good": "The dog ran to the tree.",
+      "bad": "The dog runned to the tree."
+    },
+    {
+      "cat": "past_tense",
+      "good": "Mom gave him a hug.",
+      "bad": "Mom gived him a hug."
+    },
+    {
+      "cat": "past_tense",
+      "good": "The bird flew over the house.",
+      "bad": "The bird flied over the house."
+    },
+    {
+      "cat": "past_tense",
+      "good": "Ben saw a big fish.",
+      "bad": "Ben seed a big fish."
+    },
+    {
+      "cat": "past_tense",
+      "good": "They sang a happy song.",
+      "bad": "They singed a happy song."
+    },
+    {
+      "cat": "past_tense",
+      "good": "The cat sat on the mat.",
+      "bad": "The cat sitted on the mat."
+    },
+    {
+      "cat": "past_tense",
+      "good": "She took the toy home.",
+      "bad": "She taked the toy home."
+    },
+    {
+      "cat": "past_tense",
+      "good": "He drank all the milk.",
+      "bad": "He drinked all the milk."
+    },
+    {
+      "cat": "past_tense",
+      "good": "The kids made a sand castle.",
+      "bad": "The kids maked a sand castle."
+    },
+    {
+      "cat": "past_tense",
+      "good": "Sam found a shiny coin.",
+      "bad": "Sam finded a shiny coin."
+    },
+    {
+      "cat": "past_tense",
+      "good": "The girl told a funny story.",
+      "bad": "The girl telled a funny story."
+    },
+    {
+      "cat": "past_tense",
+      "good": "The boy threw the ball.",
+      "bad": "The boy throwed the ball."
+    },
+    {
+      "cat": "past_tense",
+      "good": "Grandpa came to visit.",
+      "bad": "Grandpa comed to visit."
+    },
+    {
+      "cat": "past_tense",
+      "good": "They swam in the lake.",
+      "bad": "They swimmed in the lake."
+    },
+    {
+      "cat": "past_tense",
+      "good": "The frog hid under a leaf.",
+      "bad": "The frog hided under a leaf."
+    },
+    {
+      "cat": "past_tense",
+      "good": "The baby slept all night.",
+      "bad": "The baby sleeped all night."
+    },
+    {
+      "cat": "past_tense",
+      "good": "Anna wrote her name.",
+      "bad": "Anna writed her name."
+    },
+    {
+      "cat": "past_tense",
+      "good": "Max broke the little cup.",
+      "bad": "Max breaked the little cup."
+    },
+    {
+      "cat": "plural",
+      "good": "She has two cats.",
+      "bad": "She has two cat."
+    },
+    {
+      "cat": "plural",
+      "good": "The three ducks swam away.",
+      "bad": "The three duck swam away."
+    },
+    {
+      "cat": "plural",
+      "good": "He saw many stars.",
+      "bad": "He saw many star."
+    },
+    {
+      "cat": "plural",
+      "good": "Mom bought five apples.",
+      "bad": "Mom bought five apple."
+    },
+    {
+      "cat": "plural",
+      "good": "The two dogs barked.",
+      "bad": "The two dog barked."
+    },
+    {
+      "cat": "plural",
+      "good": "There were four birds in the tree.",
+      "bad": "There were four bird in the tree."
+    },
+    {
+      "cat": "plural",
+      "good": "Lily picked some flowers.",
+      "bad": "Lily picked some flower."
+    },
+    {
+      "cat": "plural",
+      "good": "The children ate their cookies.",
+      "bad": "The childs ate their cookies."
+    },
+    {
+      "cat": "plural",
+      "good": "Three mice ran into the hole.",
+      "bad": "Three mouses ran into the hole."
+    },
+    {
+      "cat": "plural",
+      "good": "His feet were cold.",
+      "bad": "His foots were cold."
+    },
+    {
+      "cat": "plural",
+      "good": "Two men came to the door.",
+      "bad": "Two mans came to the door."
+    },
+    {
+      "cat": "plural",
+      "good": "Tim counted ten cars.",
+      "bad": "Tim counted ten car."
+    },
+    {
+      "cat": "plural",
+      "good": "The boys had six balls.",
+      "bad": "The boys had six ball."
+    },
+    {
+      "cat": "plural",
+      "good": "She drew many houses.",
+      "bad": "She drew many house."
+    },
+    {
+      "cat": "plural",
+      "good": "All the kids were happy.",
+      "bad": "All the kid were happy."
+    },
+    {
+      "cat": "plural",
+      "good": "Both girls laughed.",
+      "bad": "Both girl laughed."
+    },
+    {
+      "cat": "plural",
+      "good": "The teeth were white.",
+      "bad": "The tooths were white."
+    },
+    {
+      "cat": "plural",
+      "good": "Several boats were on the lake.",
+      "bad": "Several boat were on the lake."
+    },
+    {
+      "cat": "plural",
+      "good": "Dad has two big hands.",
+      "bad": "Dad has two big hand."
+    },
+    {
+      "cat": "plural",
+      "good": "Many leaves fell down.",
+      "bad": "Many leafs fell down."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "I saw him at the park.",
+      "bad": "I saw he at the park."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "They gave her a gift.",
+      "bad": "They gave she a gift."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "This is my book.",
+      "bad": "This is me book."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "The kids ate their lunch.",
+      "bad": "The kids ate them lunch."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "She played with us.",
+      "bad": "She played with we."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "Mom called them for dinner.",
+      "bad": "Mom called they for dinner."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "He gave me a cookie.",
+      "bad": "He gave I a cookie."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "We like our new house.",
+      "bad": "We like us new house."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "The dog followed her home.",
+      "bad": "The dog followed she home."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "Tom showed him the toy.",
+      "bad": "Tom showed he the toy."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "Lily lost her red hat.",
+      "bad": "Lily lost she red hat."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "The cat sat next to me.",
+      "bad": "The cat sat next to I."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "Ben waved at them.",
+      "bad": "Ben waved at they."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "His bike is blue.",
+      "bad": "Him bike is blue."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "Grandma hugged us tight.",
+      "bad": "Grandma hugged we tight."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "The ball is for you and me.",
+      "bad": "The ball is for you and I."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "Her shoes were wet.",
+      "bad": "She shoes were wet."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "Dad helped him up.",
+      "bad": "Dad helped he up."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "They built their fort.",
+      "bad": "They built they fort."
+    },
+    {
+      "cat": "pronoun_case",
+      "good": "Sam ran after her.",
+      "bad": "Sam ran after she."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "He wants to play outside.",
+      "bad": "He wants to plays outside."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "She can swim very fast.",
+      "bad": "She can swims very fast."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "Birds can fly high.",
+      "bad": "Birds can flies high."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "Tom will come tomorrow.",
+      "bad": "Tom will comes tomorrow."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "We must go home now.",
+      "bad": "We must goes home now."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "Lily likes to sing.",
+      "bad": "Lily likes to sings."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "The dog can jump high.",
+      "bad": "The dog can jumps high."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "Mom will bake a cake.",
+      "bad": "Mom will bakes a cake."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "You should eat your soup.",
+      "bad": "You should eats your soup."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "He tried to catch the ball.",
+      "bad": "He tried to catches the ball."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "The cat wants to sleep.",
+      "bad": "The cat wants to sleeps."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "They can see the moon.",
+      "bad": "They can sees the moon."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "Ben needs to find his hat.",
+      "bad": "Ben needs to finds his hat."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "It may rain today.",
+      "bad": "It may rains today."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "She could hear the birds.",
+      "bad": "She could hears the birds."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "Dad has to work today.",
+      "bad": "Dad has to works today."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "The bunny can hop fast.",
+      "bad": "The bunny can hops fast."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "We will play after lunch.",
+      "bad": "We will plays after lunch."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "Sam wanted to help Mom.",
+      "bad": "Sam wanted to helps Mom."
+    },
+    {
+      "cat": "modal_infinitive",
+      "good": "The bird could sing well.",
+      "bad": "The bird could sings well."
+    },
+    {
+      "cat": "determiner_number",
+      "good": "This cat is black.",
+      "bad": "These cat is black."
+    },
+    {
+      "cat": "determiner_number",
+      "good": "These cats are black.",
+      "bad": "This cats are black."
+    },
+    {
+      "cat": "determiner_number",
+      "good": "That dog is big.",
+      "bad": "Those dog is big."
+    },
+    {
+      "cat": "determiner_number",
+      "good": "Those dogs are big.",
+      "bad": "That dogs are big."
+    },
+    {
+      "cat": "determiner_number",
+      "good": "Look at this flower.",
+      "bad": "Look at these flower."
+    },
+    {
+      "cat": "determiner_number",
+      "good": "Look at these flowers.",
+      "bad": "Look at this flowers."
+    },
+    {
+      "cat": "determiner_number",
+      "good": "That boy is my friend.",
+      "bad": "Those boy is my friend."
+    },
+    {
+      "cat": "determiner_number",
+      "good": "Those boys are my friends.",
+      "bad": "That boys are my friends."
+    },
+    {
+      "cat": "determiner_number",
+      "good": "This apple is red.",
+      "bad": "These apple is red."
+    },
+    {
+      "cat": "determiner_number",
+      "good": "These apples are red.",
+      "bad": "This apples are red."
+    },
+    {
+      "cat": "determiner_number",
+      "good": "She likes that song.",
+      "bad": "She likes those song."
+    },
+    {
+      "cat": "determiner_number",
+      "good": "She likes those songs.",
+      "bad": "She likes that songs."
+    },
+    {
+      "cat": "determiner_number",
+      "good": "Every child got a cookie.",
+      "bad": "Every children got a cookie."
+    },
+    {
+      "cat": "determiner_number",
+      "good": "Each duck had a hat.",
+      "bad": "Each ducks had a hat."
+    },
+    {
+      "cat": "determiner_number",
+      "good": "There is a bird on this tree.",
+      "bad": "There is a bird on these tree."
+    },
+    {
+      "cat": "determiner_number",
+      "good": "He found a coin.",
+      "bad": "He found a coins."
+    },
+    {
+      "cat": "determiner_number",
+      "good": "She has one sister.",
+      "bad": "She has one sisters."
+    },
+    {
+      "cat": "determiner_number",
+      "good": "Tom has another ball.",
+      "bad": "Tom has another balls."
+    },
+    {
+      "cat": "determiner_number",
+      "good": "This is a nice day.",
+      "bad": "These is a nice day."
+    },
+    {
+      "cat": "determiner_number",
+      "good": "Those are my shoes.",
+      "bad": "That are my shoes."
+    },
+    {
+      "cat": "word_order",
+      "good": "There is a big dog.",
+      "bad": "There is a dog big."
+    },
+    {
+      "cat": "word_order",
+      "good": "He has a red ball.",
+      "bad": "He has a ball red."
+    },
+    {
+      "cat": "word_order",
+      "good": "She saw a little bird.",
+      "bad": "She saw a bird little."
+    },
+    {
+      "cat": "word_order",
+      "good": "Lily wore a blue dress.",
+      "bad": "Lily wore a dress blue."
+    },
+    {
+      "cat": "word_order",
+      "good": "They live in a small house.",
+      "bad": "They live in a house small."
+    },
+    {
+      "cat": "word_order",
+      "good": "Tom ate a sweet cookie.",
+      "bad": "Tom ate a cookie sweet."
+    },
+    {
+      "cat": "word_order",
+      "good": "The cat has soft fur.",
+      "bad": "The cat has fur soft."
+    },
+    {
+      "cat": "word_order",
+      "good": "Mom made a yummy soup.",
+      "bad": "Mom made a soup yummy."
+    },
+    {
+      "cat": "word_order",
+      "good": "It was a sunny day.",
+      "bad": "It was a day sunny."
+    },
+    {
+      "cat": "word_order",
+      "good": "He found a shiny coin.",
+      "bad": "He found a coin shiny."
+    },
+    {
+      "cat": "word_order",
+      "good": "What is your name?",
+      "bad": "What your name is?"
+    },
+    {
+      "cat": "word_order",
+      "good": "Where is the ball?",
+      "bad": "Where the ball is?"
+    },
+    {
+      "cat": "word_order",
+      "good": "Can you help me?",
+      "bad": "You can help me?"
+    },
+    {
+      "cat": "word_order",
+      "good": "The girl is very happy.",
+      "bad": "The girl very is happy."
+    },
+    {
+      "cat": "word_order",
+      "good": "She quickly ran home.",
+      "bad": "She home ran quickly."
+    },
+    {
+      "cat": "word_order",
+      "good": "I like ice cream.",
+      "bad": "I ice cream like."
+    },
+    {
+      "cat": "word_order",
+      "good": "The dog chased the cat.",
+      "bad": "The dog the cat chased."
+    },
+    {
+      "cat": "word_order",
+      "good": "Ben gave Mom a flower.",
+      "bad": "Ben gave a flower Mom."
+    },
+    {
+      "cat": "word_order",
+      "good": "Do you want a cookie?",
+      "bad": "You do want a cookie?"
+    },
+    {
+      "cat": "word_order",
+      "good": "Why are you sad?",
+      "bad": "Why you are sad?"
+    },
+    {
+      "cat": "progressive",
+      "good": "The dog is barking loudly.",
+      "bad": "The dog is bark loudly."
+    },
+    {
+      "cat": "progressive",
+      "good": "The sun is shining today.",
+      "bad": "The sun is shine today."
+    },
+    {
+      "cat": "progressive",
+      "good": "Lily was reading a book.",
+      "bad": "Lily was read a book."
+    },
+    {
+      "cat": "progressive",
+      "good": "They are playing outside.",
+      "bad": "They are play outside."
+    },
+    {
+      "cat": "progressive",
+      "good": "Mom is cooking dinner.",
+      "bad": "Mom is cook dinner."
+    },
+    {
+      "cat": "progressive",
+      "good": "The baby is sleeping now.",
+      "bad": "The baby is sleep now."
+    },
+    {
+      "cat": "progressive",
+      "good": "Tom was running fast.",
+      "bad": "Tom was run fast."
+    },
+    {
+      "cat": "progressive",
+      "good": "The kids are laughing.",
+      "bad": "The kids are laugh."
+    },
+    {
+      "cat": "progressive",
+      "good": "The cat is sitting on the mat.",
+      "bad": "The cat is sit on the mat."
+    },
+    {
+      "cat": "progressive",
+      "good": "She is drawing a house.",
+      "bad": "She is draw a house."
+    },
+    {
+      "cat": "progressive",
+      "good": "We are going to the park.",
+      "bad": "We are go to the park."
+    },
+    {
+      "cat": "progressive",
+      "good": "The birds were singing.",
+      "bad": "The birds were sing."
+    },
+    {
+      "cat": "progressive",
+      "good": "He is eating an apple.",
+      "bad": "He is eat an apple."
+    },
+    {
+      "cat": "progressive",
+      "good": "The fish are swimming.",
+      "bad": "The fish are swim."
+    },
+    {
+      "cat": "progressive",
+      "good": "Dad was washing the car.",
+      "bad": "Dad was wash the car."
+    },
+    {
+      "cat": "progressive",
+      "good": "The rain is falling.",
+      "bad": "The rain is fall."
+    },
+    {
+      "cat": "progressive",
+      "good": "Anna is jumping on the bed.",
+      "bad": "Anna is jump on the bed."
+    },
+    {
+      "cat": "progressive",
+      "good": "The boys were building a fort.",
+      "bad": "The boys were build a fort."
+    },
+    {
+      "cat": "progressive",
+      "good": "I am looking for my hat.",
+      "bad": "I am look for my hat."
+    },
+    {
+      "cat": "progressive",
+      "good": "The frog is hopping away.",
+      "bad": "The frog is hop away."
+    },
+    {
+      "cat": "reflexive",
+      "good": "The girl hurt herself.",
+      "bad": "The girl hurt himself."
+    },
+    {
+      "cat": "reflexive",
+      "good": "The boy washed himself.",
+      "bad": "The boy washed herself."
+    },
+    {
+      "cat": "reflexive",
+      "good": "The kids enjoyed themselves.",
+      "bad": "The kids enjoyed himself."
+    },
+    {
+      "cat": "reflexive",
+      "good": "I made it myself.",
+      "bad": "I made it himself."
+    },
+    {
+      "cat": "reflexive",
+      "good": "The cat cleaned itself.",
+      "bad": "The cat cleaned himself."
+    },
+    {
+      "cat": "reflexive",
+      "good": "Lily looked at herself in the mirror.",
+      "bad": "Lily looked at himself in the mirror."
+    },
+    {
+      "cat": "reflexive",
+      "good": "Tom was proud of himself.",
+      "bad": "Tom was proud of herself."
+    },
+    {
+      "cat": "reflexive",
+      "good": "We built it ourselves.",
+      "bad": "We built it themselves."
+    },
+    {
+      "cat": "reflexive",
+      "good": "The dog saw itself in the water.",
+      "bad": "The dog saw himself in the water."
+    },
+    {
+      "cat": "reflexive",
+      "good": "Mom hurt herself in the kitchen.",
+      "bad": "Mom hurt himself in the kitchen."
+    },
+    {
+      "cat": "reflexive",
+      "good": "The boys dressed themselves.",
+      "bad": "The boys dressed himself."
+    },
+    {
+      "cat": "reflexive",
+      "good": "Anna taught herself to swim.",
+      "bad": "Anna taught himself to swim."
+    },
+    {
+      "cat": "reflexive",
+      "good": "Dad cut himself a slice.",
+      "bad": "Dad cut herself a slice."
+    },
+    {
+      "cat": "reflexive",
+      "good": "The ducks dried themselves.",
+      "bad": "The ducks dried itself."
+    },
+    {
+      "cat": "reflexive",
+      "good": "You can do it yourself.",
+      "bad": "You can do it himself."
+    },
+    {
+      "cat": "reflexive",
+      "good": "The girls hid themselves.",
+      "bad": "The girls hid herself."
+    },
+    {
+      "cat": "reflexive",
+      "good": "Sam made himself a sandwich.",
+      "bad": "Sam made herself a sandwich."
+    },
+    {
+      "cat": "reflexive",
+      "good": "The bird found itself a nest.",
+      "bad": "The bird found himself a nest."
+    },
+    {
+      "cat": "reflexive",
+      "good": "Grandma knitted herself a hat.",
+      "bad": "Grandma knitted himself a hat."
+    },
+    {
+      "cat": "reflexive",
+      "good": "The two friends helped themselves.",
+      "bad": "The two friends helped himself."
+    },
+    {
+      "cat": "negation",
+      "good": "He did not want to go.",
+      "bad": "He did not wanted to go."
+    },
+    {
+      "cat": "negation",
+      "good": "She does not like milk.",
+      "bad": "She does not likes milk."
+    },
+    {
+      "cat": "negation",
+      "good": "They did not see the cat.",
+      "bad": "They did not saw the cat."
+    },
+    {
+      "cat": "negation",
+      "good": "Tom does not have a hat.",
+      "bad": "Tom does not has a hat."
+    },
+    {
+      "cat": "negation",
+      "good": "I do not know the way.",
+      "bad": "I do not knows the way."
+    },
+    {
+      "cat": "negation",
+      "good": "The dog did not eat the bone.",
+      "bad": "The dog did not ate the bone."
+    },
+    {
+      "cat": "negation",
+      "good": "Lily does not want to sleep.",
+      "bad": "Lily does not wants to sleep."
+    },
+    {
+      "cat": "negation",
+      "good": "We did not find the ball.",
+      "bad": "We did not found the ball."
+    },
+    {
+      "cat": "negation",
+      "good": "Mom does not drink coffee.",
+      "bad": "Mom does not drinks coffee."
+    },
+    {
+      "cat": "negation",
+      "good": "He did not hear the bell.",
+      "bad": "He did not heard the bell."
+    },
+    {
+      "cat": "negation",
+      "good": "The cat does not like water.",
+      "bad": "The cat does not likes water."
+    },
+    {
+      "cat": "negation",
+      "good": "They do not play in the rain.",
+      "bad": "They do not plays in the rain."
+    },
+    {
+      "cat": "negation",
+      "good": "Ben did not break the cup.",
+      "bad": "Ben did not broke the cup."
+    },
+    {
+      "cat": "negation",
+      "good": "The baby does not cry much.",
+      "bad": "The baby does not cries much."
+    },
+    {
+      "cat": "negation",
+      "good": "She did not go to school.",
+      "bad": "She did not went to school."
+    },
+    {
+      "cat": "negation",
+      "good": "The bird does not fly at night.",
+      "bad": "The bird does not flies at night."
+    },
+    {
+      "cat": "negation",
+      "good": "I did not take your toy.",
+      "bad": "I did not took your toy."
+    },
+    {
+      "cat": "negation",
+      "good": "Dad does not need a map.",
+      "bad": "Dad does not needs a map."
+    },
+    {
+      "cat": "negation",
+      "good": "We did not win the game.",
+      "bad": "We did not won the game."
+    },
+    {
+      "cat": "negation",
+      "good": "Sam does not eat carrots.",
+      "bad": "Sam does not eats carrots."
+    }
+  ]
+}

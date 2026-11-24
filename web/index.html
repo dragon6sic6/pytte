@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pytte</title>
+  <meta name="description" content="Pytte: en pytteliten språkmodell som skriver svenska, tränad från noll på en laptop. Körs helt i din webbläsare.">
+  <link rel="icon" href="pytte-mark.svg">
+  <link rel="stylesheet" href="style.css?v=2">
+</head>
+<body>
+  <header class="top">
+    <img class="mark" src="pytte-mark.svg" alt="" width="56" height="56">
+    <div>
+      <h1>Pytte</h1>
+      <p class="tagline">En pytteliten språkmodell som skriver svenska. Tränad från noll på en laptop. Allt här körs i din webbläsare, inget skickas någonstans.</p>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-tab="grow">Sagan växer</button>
+    <button role="tab" aria-selected="false" data-tab="chat">Prata med Pytte</button>
+    <button role="tab" aria-selected="false" data-tab="inside">Under huven</button>
+  </nav>
+
+  <!-- ------------------------------------------------ 1. the emergence slider -->
+  <section id="tab-grow" class="panel" role="tabpanel">
+    <p class="lead">Samma början, samma slumpfrö, sex modeller. Dra i reglaget och se språk uppstå: från ordsallad vid 0,3 miljoner parametrar till en saga vid 7.</p>
+    <label class="field">
+      <span>Börja sagan</span>
+      <input id="grow-prompt" type="text" value="Det var en gång en liten älg som" spellcheck="false" autocomplete="off">
+    </label>
+    <div class="slider-wrap">
+      <input id="grow-size" type="range" min="0" max="5" step="1" value="2" aria-label="Modellstorlek">
+      <div class="ticks" id="grow-ticks"></div>
+    </div>
+    <div class="row">
+      <button id="grow-run" class="primary">Skriv sagan</button>
+      <button id="grow-reseed" title="Nytt slumpfrö">Nytt frö</button>
+      <span id="grow-status" class="status"></span>
+    </div>
+    <div id="grow-progress" class="progress" hidden><div></div></div>
+    <div id="grow-out" class="story" aria-live="polite"></div>
+  </section>
+
+  <!-- ------------------------------------------------ 2. chat -->
+  <section id="tab-chat" class="panel" role="tabpanel" hidden>
+    <p class="lead">Be om en saga: <em>Berätta en saga om en räv som vill flyga.</em> Fråga sedan <em>Vad händer sedan?</em> Modellen är instruktionstränad på begäranden byggda ur sagornas egna recept.</p>
+    <div class="row">
+      <span class="sizes" id="chat-sizes" role="radiogroup" aria-label="Modellstorlek"></span>
+      <button id="chat-reset">Börja om</button>
+      <span id="chat-status" class="status"></span>
+    </div>
+    <div id="chat-progress" class="progress" hidden><div></div></div>
+    <div id="chat-log" class="chatlog" aria-live="polite"></div>
+    <form id="chat-form" class="chatform">
+      <input id="chat-input" type="text" placeholder="Berätta en saga om…" autocomplete="off" spellcheck="false">
+      <button class="primary" type="submit">Skicka</button>
+    </form>
+  </section>
+
+  <!-- ------------------------------------------------ 3. under the hood -->
+  <section id="tab-inside" class="panel" role="tabpanel" hidden>
+    <p class="lead">Modellen ser inte bokstäver utan token: bitar av ord som tokeniseraren lärt sig från sagorna. Skriv något och se hur det delas upp, och vilka token modellen tror kommer sedan.</p>
+    <div class="row">
+      <span class="sizes" id="inside-sizes" role="radiogroup" aria-label="Modellstorlek"></span>
+      <span id="inside-status" class="status"></span>
+    </div>
+    <label class="field">
+      <span>Text</span>
+      <input id="inside-text" type="text" value="Midsommarafton åt Saga en" spellcheck="false" autocomplete="off">
+    </label>
+    <div id="inside-progress" class="progress" hidden><div></div></div>
+    <h3>Token</h3>
+    <div id="inside-tokens" class="tokens"></div>
+    <h3>Nästa token</h3>
+    <div id="inside-probs" class="probs"></div>
+  </section>
+
+  <footer>
+    <p><strong>Vad är det här?</strong> Pytte är en familj av språkmodeller på 0,3–15 miljoner parametrar (en vanlig stor modell har tusentals gånger fler), byggda från noll och tränade på en MacBook på 60 000 svenska barnsagor. Samma arkitektur som de stora: token, inbäddningar, attention, lager, sampling. Hela sagan om hur det gick till, med varje mätning, finns i rapporten.</p>
+    <p class="small">Modellfilerna är 0,4–16 MB och laddas när du väljer dem. Kod, modeller, data och rapport: länkar kommer vid lanseringen.</p>
+  </footer>
+
+  <script type="module" src="app.js?v=2"></script>
+</body>
+</html>
