@@ -78,7 +78,7 @@ select { padding: 10px 8px; border-radius: 12px; border: 1.5px solid var(--line)
 #grid { width: 100%; display: block; cursor: pointer; image-rendering: pixelated; margin-top: 6px; border-radius: 6px; }
 
 /* layers and lens */
-.lens { display: grid; grid-template-columns: max-content minmax(70px, 130px) 1fr; gap: 6px 14px; align-items: center; font-size: 14.5px; }
+.lens { display: grid; grid-template-columns: max-content minmax(70px, 130px) minmax(0, 1fr); gap: 6px 14px; align-items: center; font-size: 14.5px; }
 .lens .stage { font-weight: 600; white-space: nowrap; }
 .lens .upd { display: grid; gap: 2px; }
 .lens .upd i { display: block; height: 6px; border-radius: 2px; min-width: 2px; }
@@ -109,7 +109,7 @@ input[type=range] { width: 100%; accent-color: var(--accent); }
 #curve text { fill: var(--muted); font-size: 12px; }
 footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 15px; color: var(--muted); }
 a { color: inherit; }
-@media (max-width: 600px) { body { font-size: 16px; } .lead { font-size: 18px; } .story { font-size: 18px; } .lens { grid-template-columns: max-content 60px 1fr; gap: 6px 8px; } }
+@media (max-width: 600px) { body { font-size: 16px; } .lead { font-size: 18px; } .story { font-size: 18px; } .lens { grid-template-columns: max-content minmax(0, 1fr); gap: 4px 10px; } .lens .guess { grid-column: 1 / -1; margin-bottom: 10px; } }
 </style>
 </head>
 <body>
