@@ -1,4 +1,6 @@
-"""Build the Hugging Face upload folders: one per model with the safetensors checkpoint,
+"""Not used: Pytte is published on GitHub and on mathiaskarlsson.se/pytte instead. Kept as a record.
+
+Build the Hugging Face upload folders: one per model with the safetensors checkpoint,
 config, tokenizer, the int8 .bin and a model card generated from the measurements.
 
     python scripts/make_model_cards.py --out /Volumes/Modelltest/pytte/hf
@@ -37,8 +39,8 @@ def card(size, chat, src, bin_mb):
         f"# {name}", "",
         f"{'An instruction-tuned' if chat else 'A'} Swedish language model with **{params/1e6:.2f} million parameters** "
         f"({sm.get('params_no_embed', 0)/1e6:.2f}M without the embedding table), written and trained from scratch on a "
-        f"MacBook Pro (M2 Pro) as part of [Pytte](https://github.com/dragon6sic6/pytte): the smallest open, documented "
-        f"models that write coherent Swedish. It is not a fine-tune of an existing model.", "",
+        f"MacBook Pro (M2 Pro) as part of [Pytte](https://github.com/dragon6sic6/pytte), a family of small models that write "
+        f"Swedish children's stories. It is not a fine-tune of an existing model.", "",
         "## Architecture", "",
         f"Llama-style decoder: RMSNorm, rotary positions, {'grouped-query ' if KV < H else ''}attention, SwiGLU, tied "
         f"embeddings. dim {dim}, {L} layers, {H} heads ({KV} kv heads), feed-forward {FF}, vocabulary {V} "

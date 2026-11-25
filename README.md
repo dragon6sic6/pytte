@@ -29,9 +29,8 @@ The same code trains a Swedish and an English twin on matched data, so we can as
   as large ones.
 - Not the first Swedish TinyStories. A Linköping University course published a
   machine-translated TinyStories and 15 Swedish models in December 2024
-  (`tdde19-llm-from-scratch` on Hugging Face), without a license, card or report.
-  Pytte is, as far as we know, the first *open, documented* attempt with a defined
-  quality floor and a Swedish/English comparison.
+  (`tdde19-llm-from-scratch` on Hugging Face). That data has no license, so it could
+  not be reused here.
 
 ## Layout
 

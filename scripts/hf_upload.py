@@ -1,9 +1,11 @@
-"""Upload the models and the dataset to Hugging Face as private repos (made public at launch).
+"""Upload the models and the dataset to Hugging Face as private repos.
+
+Not used: Pytte is published on GitHub and on mathiaskarlsson.se/pytte instead. Kept as a record.
 
     hf auth login                                   # once, with a write token
     python scripts/hf_upload.py --models            # <user>/pytte-<size>[-chat] from <root>/hf/
     python scripts/hf_upload.py --dataset           # <user>/sagosvenska from the clean story sets
-    python scripts/hf_upload.py --models --dataset --public   # at launch
+    python scripts/hf_upload.py --models --dataset --public   # public repos
 
 The namespace defaults to the logged-in user; pass --org to use an organisation.
 """
@@ -43,8 +45,8 @@ configs:
 # SagoSvenska
 
 Swedish children's stories in the spirit of TinyStories, generated locally on a MacBook for the
-[Pytte](https://github.com/dragon6sic6/pytte) project: the smallest open, documented language models
-that write coherent Swedish. Every story was written by Gemma 4 (Apache-2.0) from a recipe: a child's
+[Pytte](https://github.com/dragon6sic6/pytte) project: small language models that write Swedish,
+trained from scratch on a laptop. Every story was written by Gemma 4 (Apache-2.0) from a recipe: a child's
 name, a place, an object, a verb, an adjective, one or two story features and an ending type, in a
 vocabulary a small child knows. No story was written by a person and none comes from a book.
 
@@ -108,7 +110,7 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("--models", action="store_true")
     p.add_argument("--dataset", action="store_true")
-    p.add_argument("--public", action="store_true", help="create as public (launch day)")
+    p.add_argument("--public", action="store_true", help="create as public")
     p.add_argument("--org", default=None, help="namespace; defaults to the logged-in user")
     args = p.parse_args()
     api = HfApi()
