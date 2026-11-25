@@ -32,6 +32,26 @@ other change. A link from the demo section of `/pytte` ("Se vad som händer inut
 inside") is the natural entrance. Redoing the page inside the site's own layout is your call; the pages
 follow the system light/dark setting and work at phone width. Each page has a back link at the top: `../pytte` on the Swedish pages and `../en/pytte` on the English one, which resolve to `/pytte` and `/en/pytte` when the files are served from `/pytte/`. Anywhere else (the local preview) a line of script points the link at `index.html` instead.
 
+## The diagram as an embed (added later the same day)
+
+Mathias wants the diagram clearly visible on `/pytte` itself. For that there are two more generated files,
+`arkitektur-embed.html` and `arkitektur-embed.en.html` (and `arkitektur.en.html`, the English full page), all
+written by `python3 scripts/make_arkitektur.py` from `arkitektur.html`. The embed is the big clickable
+diagram inline: no heading, no back links, no thumbnail, no border or card of its own, transparent background,
+20 px padding. Contract with the embedding page:
+
+- **Theme:** `?theme=light|dark` in the URL; without it the system setting. Live switch without reload:
+  `iframe.contentWindow.postMessage({type: "pytte-theme", theme: "light" | "dark"}, "*")`.
+- **Height:** the embed posts `{type: "pytte-embed-height", height}` to its parent after layout and whenever
+  its height changes. The value is the content height (`document.body` box), not `scrollHeight`, so that
+  the iframe can also shrink again.
+- **Layout:** from 760 px wide the detail text sits beside the diagram, level with the clicked part; below
+  that it opens as a card directly under the clicked part and the embed grows if needed. Checked at 900 and
+  320 px.
+- **Transparency:** the embed sets no `color-scheme`. If the site sets `color-scheme: dark` around the
+  iframe, browsers paint an opaque backdrop behind a document with another scheme; `style="color-scheme:
+  normal"` on the iframe element avoids it.
+
 ## What must hold after the move
 
 - **The existing demo is unaffected.** The new `pytte.js` and `worker.js` are drop-in: the generation path is

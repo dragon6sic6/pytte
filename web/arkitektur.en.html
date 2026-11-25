@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How Pytte works</title>
+<link rel="icon" href="pytte-mark.svg">
+<script>(function () { var t = new URLSearchParams(location.search).get("theme"); if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t); })();</script>
+<style>
+:root {
+  --bg: #FBF8F1; --card: #FFFDF8; --ink: #1E2A4A; --muted: #5B6480; --line: #CFC7B4; --soft: #EFE9DA;
+  --accent: #F2B632; --c-emb: #2a78d6; --c-attn: #eb6834; --c-ff: #1baf7a;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #151916; --card: #1E231F; --ink: #ECEBE4; --muted: #A3A79C; --line: #454C45; --soft: #262C27;
+          --c-emb: #5a9ae6; --c-attn: #f08a5d; --c-ff: #3fc795; }
+}
+:root[data-theme="dark"] { --bg: #151916; --card: #1E231F; --ink: #ECEBE4; --muted: #A3A79C; --line: #454C45; --soft: #262C27;
+          --c-emb: #5a9ae6; --c-attn: #f08a5d; --c-ff: #3fc795; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 -apple-system, "Segoe UI", system-ui, sans-serif; }
+main { max-width: 760px; margin: 0 auto; padding: 32px 16px 64px; }
+h1 { font-size: 28px; margin: 0 0 8px; }
+h2 { font-size: 18px; margin: 0 0 6px; }
+p { margin: 0 0 12px; }
+.muted { color: var(--muted); }
+.draft { display: inline-block; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; border: 1px solid var(--line); border-radius: 99px; padding: 2px 10px; color: var(--muted); margin-bottom: 12px; }
+
+/* the small picture */
+.thumb { display: block; width: 100%; margin: 20px 0 6px; padding: 14px 14px 8px; background: var(--card); color: inherit; border: 1px solid var(--line); border-radius: 16px; cursor: zoom-in; font: inherit; text-align: left; }
+.thumb:hover, .thumb:focus-visible { border-color: var(--ink); outline: none; }
+.thumb svg { display: block; width: 100%; height: auto; }
+.thumb .open { display: block; margin-top: 6px; font-size: 14px; color: var(--muted); }
+figure { margin: 0; }
+figcaption { font-size: 14px; color: var(--muted); }
+
+/* shared SVG styling (no <style> inside the SVGs) */
+svg text { fill: currentColor; font-family: inherit; }
+.box { fill: var(--card); stroke: var(--line); stroke-width: 1.5; }
+.t { font-size: 15px; font-weight: 650; }
+.s { font-size: 12.5px; fill: var(--muted); }
+svg text.s { fill: var(--muted); }
+.flow { stroke: currentColor; stroke-width: 1.5; fill: none; }
+.dash { stroke-dasharray: 5 5; }
+.frame { fill: var(--soft); stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 6 5; }
+.mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+.chip { fill: var(--soft); stroke: var(--line); }
+.edge-emb { fill: var(--c-emb); } .edge-attn { fill: var(--c-attn); } .edge-ff { fill: var(--c-ff); }
+.part { cursor: pointer; }
+.part:focus { outline: none; }
+.part:hover .box, .part:focus-visible .box { stroke: var(--ink); }
+.part.sel .box { stroke: var(--accent); stroke-width: 3; }
+.plus { fill: var(--card); stroke: currentColor; stroke-width: 1.5; }
+.bar { fill: var(--muted); }
+
+/* the big picture */
+dialog { width: min(1040px, 100vw - 16px); max-width: none; height: min(92vh, 1200px); max-height: none; padding: 0; border: 1px solid var(--line); border-radius: 18px; background: var(--bg); color: var(--ink); overflow: hidden; }
+dialog::backdrop { background: rgba(10, 12, 10, .6); }
+.dlg { display: flex; flex-direction: column; height: 100%; }
+.dlg header { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+.dlg header h2 { margin: 0; flex: 1 1 auto; }
+.sizes { display: flex; flex-wrap: wrap; gap: 4px; }
+.sizes button, .close { font: inherit; font-size: 14px; color: inherit; background: var(--card); border: 1px solid var(--line); border-radius: 99px; padding: 4px 12px; cursor: pointer; }
+.sizes button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.dlg .body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 440px) minmax(0, 1fr); }
+.dia { overflow-y: auto; padding: 16px; border-right: 1px solid var(--line); }
+.dia svg { display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto; }
+.panel { overflow-y: auto; padding: 20px 22px 28px; }
+.panel h3 { font-size: 22px; margin: 0 0 4px; }
+.panel .kicker { font-size: 13px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin: 18px 0 4px; }
+.panel code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13.5px; background: var(--soft); padding: 1px 5px; border-radius: 5px; }
+.facts { display: grid; grid-template-columns: auto 1fr; gap: 2px 14px; margin: 0; font-variant-numeric: tabular-nums; }
+.facts dt { color: var(--muted); } .facts dd { margin: 0; }
+.share { display: flex; gap: 2px; height: 14px; margin: 8px 0 6px; border-radius: 4px; overflow: hidden; }
+.share span { display: block; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 14px; font-variant-numeric: tabular-nums; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; }
+.back { font: inherit; font-size: 14px; color: var(--muted); background: none; border: 0; padding: 0; margin: 0 0 10px; cursor: pointer; text-decoration: underline; }
+@media (max-width: 760px) {
+  dialog { height: 96vh; }
+  .dlg header h2 { order: 1; } .dlg header .close { order: 2; } .dlg header .sizes { order: 3; width: 100%; }
+  .dlg .body { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) minmax(0, 44%); }
+  .dia { border-right: 0; border-bottom: 1px solid var(--line); }
+  .panel { padding: 14px 16px 20px; }
+  .panel h3 { font-size: 19px; }
+}
+
+/* embed mode (<html data-mode="embed">): the big picture inline, for an iframe on the Pytte page */
+html[data-mode="embed"] body { background: transparent; }
+html[data-mode="embed"] main { max-width: none; padding: 20px; }
+html[data-mode="embed"] .dlg { height: auto; }
+html[data-mode="embed"] .dlg header { border: 0; padding: 0 0 14px; }
+html[data-mode="embed"] .dlg header h2, html[data-mode="embed"] .close { display: none; }
+html[data-mode="embed"] .dlg .body { position: relative; align-items: start; grid-template-rows: none; }
+html[data-mode="embed"] .dia { overflow: visible; padding: 0; border: 0; }
+html[data-mode="embed"] .panel { overflow: visible; padding: 0 0 0 24px; transition: margin-top .25s; }
+@media (max-width: 760px) {
+  html[data-mode="embed"] .dlg .body { display: flex; flex-direction: column; align-items: stretch; }
+  html[data-mode="embed"] .panel { order: -1; padding: 0 0 16px; transition: none; }
+  html[data-mode="embed"] .panel.pop { position: absolute; left: 0; right: 0; z-index: 2; order: 0; padding: 14px 16px 16px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 12px 32px rgba(0, 0, 0, .28); }
+}
+</style>
+</head>
+<body>
+<main>
+  <p style="margin:0 0 16px"><a class="muted" id="back" href="../en/pytte" style="font-size:15px;text-decoration:none">← Pytte</a> <span class="muted">·</span> <a class="muted" href="inuti.en.html" style="font-size:15px;text-decoration:none">Inside Pytte</a></p>
+  <h1>How Pytte works</h1>
+  <p>Pytte does one thing: it guesses the next piece of text. The picture shows the path from what you write to that guess. Click it to see every part, what it does and how big it is.</p>
+
+  <figure>
+    <button class="thumb" id="open" aria-haspopup="dialog">
+      <svg viewBox="0 0 720 150" role="img" aria-label="Text becomes tokens, tokens become numbers, the numbers pass through the layers and out come probabilities for the next token. The chosen token is added to the text and everything runs again.">
+        <defs><marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="currentColor"/></marker></defs>
+        <g id="thumb-chips"></g>
+        <path class="flow" d="M665 82 V122 H55 V84" marker-end="url(#a1)"/>
+        <text class="s" x="360" y="140" text-anchor="middle">the chosen token is added to the text, and round it goes again</text>
+      </svg>
+      <span class="open">Open the full picture</span>
+    </button>
+    <figcaption>The same path in all six models. Only the size of the parts differs.</figcaption>
+  </figure>
+</main>
+
+<dialog id="big" aria-labelledby="big-title">
+  <div class="dlg">
+    <header>
+      <h2 id="big-title">How Pytte works</h2>
+      <div class="sizes" id="sizes" role="group" aria-label="Model size"></div>
+      <button class="close" id="close">Close</button>
+    </header>
+    <div class="body">
+      <div class="dia">
+        <svg id="dia" viewBox="0 0 440 1130" role="img" aria-label="The architecture from top to bottom: text, tokenizer, embedding, the layers with normalisation, attention and feed-forward, the final normalisation, output, probabilities and the choice of the next token.">
+          <defs><marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="currentColor"/></marker></defs>
+
+          <!-- the loop back to the text, and the shared table -->
+          <path class="flow" d="M90 1068 H18 V40 H86" marker-end="url(#a2)"/>
+          <text class="s" transform="translate(12 560) rotate(-90)" text-anchor="middle">added to the text, then one more round</text>
+          <path class="flow dash" d="M350 210 H422 V856 H354" marker-end="url(#a2)"/>
+          <text class="s" transform="translate(435 533) rotate(-90)" text-anchor="middle">the same table is used again</text>
+
+          <!-- main line -->
+          <path class="flow" d="M220 60 V82" marker-end="url(#a2)"/>
+          <path class="flow" d="M220 158 V180" marker-end="url(#a2)"/>
+          <path class="flow" d="M220 238 V298" marker-end="url(#a2)"/>
+          <path class="flow" d="M220 334 V350" marker-end="url(#a2)"/>
+          <path class="flow" d="M220 448 V468" marker-end="url(#a2)"/>
+          <path class="flow" d="M220 494 V520" marker-end="url(#a2)"/>
+          <path class="flow" d="M220 556 V572" marker-end="url(#a2)"/>
+          <path class="flow" d="M220 670 V690" marker-end="url(#a2)"/>
+          <path class="flow" d="M220 716 V774" marker-end="url(#a2)"/>
+          <path class="flow" d="M220 810 V826" marker-end="url(#a2)"/>
+          <path class="flow" d="M220 884 V900" marker-end="url(#a2)"/>
+          <path class="flow" d="M220 1020 V1038" marker-end="url(#a2)"/>
+
+          <g class="part" data-part="text" tabindex="0" role="button" aria-label="The text">
+            <rect class="box" x="90" y="20" width="260" height="40" rx="20"/>
+            <text class="t mono" x="220" y="45" text-anchor="middle">Alma bor i en liten</text>
+          </g>
+
+          <g class="part" data-part="tok" tabindex="0" role="button" aria-label="Tokenizer">
+            <rect class="box" x="90" y="84" width="260" height="74" rx="10"/>
+            <text class="t" x="104" y="107">Tokenizer</text>
+            <g id="chips"></g>
+          </g>
+
+          <g class="part" data-part="emb" tabindex="0" role="button" aria-label="Embedding">
+            <rect class="box" x="90" y="182" width="260" height="56" rx="10"/>
+            <rect class="edge-emb" x="90" y="190" width="5" height="40" rx="2"/>
+            <text class="t" x="104" y="206">Embedding</text>
+            <text class="s" x="104" y="225" id="emb-sub"></text>
+          </g>
+
+          <!-- one layer, with the others stacked behind it -->
+          <rect class="frame" x="56" y="242" width="352" height="488" rx="14" opacity=".5"/>
+          <rect class="frame" x="50" y="248" width="352" height="488" rx="14" opacity=".75"/>
+          <g class="part" data-part="layer" tabindex="0" role="button" aria-label="The layers">
+            <rect class="frame box" x="44" y="254" width="352" height="488" rx="14"/>
+            <text class="t" x="58" y="276" id="layer-title"></text>
+            <text class="s" x="382" y="276" text-anchor="end" id="layer-sub"></text>
+          </g>
+
+          <!-- skip connections -->
+          <g class="part" data-part="res" tabindex="0" role="button" aria-label="Skip connection">
+            <path class="flow" d="M220 292 H66 V481 H206" marker-end="url(#a2)"/>
+            <path class="flow" d="M220 508 H66 V703 H206" marker-end="url(#a2)"/>
+            <circle cx="220" cy="292" r="3" fill="currentColor"/><circle cx="220" cy="508" r="3" fill="currentColor"/>
+            <text class="s" transform="translate(60 388) rotate(-90)" text-anchor="middle">skip connection</text>
+            <text class="s" transform="translate(60 606) rotate(-90)" text-anchor="middle">skip connection</text>
+            <circle class="plus" cx="220" cy="481" r="12"/><path class="flow" d="M213 481 H227 M220 474 V488"/>
+            <circle class="plus" cx="220" cy="703" r="12"/><path class="flow" d="M213 703 H227 M220 696 V710"/>
+          </g>
+
+          <g class="part" data-part="norm" tabindex="0" role="button" aria-label="Normalisation">
+            <rect class="box" x="90" y="300" width="260" height="34" rx="8"/>
+            <text class="t" x="104" y="322">Normalisation</text>
+          </g>
+          <g class="part" data-part="attn" tabindex="0" role="button" aria-label="Attention">
+            <rect class="box" x="90" y="352" width="260" height="96" rx="10"/>
+            <rect class="edge-attn" x="90" y="360" width="5" height="80" rx="2"/>
+            <text class="t" x="104" y="377">Attention</text>
+            <text class="s" x="104" y="397">every token looks back in the text</text>
+            <text class="s" x="104" y="415">and fetches what it needs</text>
+            <text class="s" x="104" y="435" id="attn-sub"></text>
+          </g>
+          <g class="part" data-part="norm" tabindex="0" role="button" aria-label="Normalisation">
+            <rect class="box" x="90" y="522" width="260" height="34" rx="8"/>
+            <text class="t" x="104" y="544">Normalisation</text>
+          </g>
+          <g class="part" data-part="ff" tabindex="0" role="button" aria-label="Feed-forward">
+            <rect class="box" x="90" y="574" width="260" height="96" rx="10"/>
+            <rect class="edge-ff" x="90" y="582" width="5" height="80" rx="2"/>
+            <text class="t" x="104" y="599">Feed-forward</text>
+            <text class="s" x="104" y="619">every token is processed on its own</text>
+            <text class="s" x="104" y="637">through a small network</text>
+            <text class="s" x="104" y="657" id="ff-sub"></text>
+          </g>
+
+          <g class="part" data-part="norm" tabindex="0" role="button" aria-label="The final normalisation">
+            <rect class="box" x="90" y="776" width="260" height="34" rx="8"/>
+            <text class="t" x="104" y="798">Normalisation</text>
+          </g>
+          <g class="part" data-part="out" tabindex="0" role="button" aria-label="Output">
+            <rect class="box" x="90" y="828" width="260" height="56" rx="10"/>
+            <rect class="edge-emb" x="90" y="836" width="5" height="40" rx="2"/>
+            <text class="t" x="104" y="852">Output</text>
+            <text class="s" x="104" y="871" id="out-sub"></text>
+          </g>
+          <g class="part" data-part="prob" tabindex="0" role="button" aria-label="Probabilities">
+            <rect class="box" x="90" y="902" width="260" height="118" rx="10"/>
+            <text class="t" x="104" y="925">Probabilities</text>
+            <g id="probs"></g>
+          </g>
+          <g class="part" data-part="pick" tabindex="0" role="button" aria-label="Chance picks">
+            <rect class="box" x="90" y="1040" width="260" height="56" rx="10"/>
+            <text class="t" x="104" y="1064">Chance picks</text>
+            <text class="s" x="104" y="1083" id="pick-sub"></text>
+          </g>
+        </svg>
+      </div>
+      <div class="panel" id="panel" aria-live="polite"></div>
+    </div>
+  </div>
+</dialog>
+
+<script>
+// Every number here comes from the release models: the configs and parameter counts in paper/results.json
+// (the counts are recomputed from the config and match the checkpoints exactly), the .bin file sizes, and the
+// tokens and next-token probabilities the models give for the example sentence in the "Under huven" tab.
+const M = {
+  "0.3m": { label: "0.3 M", dim: 64,  layers: 4, heads: 4, kv: 2, ff: 192,  vocab: 2048, total: 328256,   min: 5,  mb: "0.38",
+            tokens: ["Al","ma","␣bor","␣i","␣en","␣liten"], probs: [["␣stad",45.4],["␣by",26.2],["␣stuga",23.0],["␣lägenhet",2.8]] },
+  "1m":   { label: "1 M",   dim: 128, layers: 4, heads: 4, kv: 4, ff: 352,  vocab: 4096, total: 1328256,  min: 8,  mb: "1.4",
+            tokens: ["Alma","␣bor","␣i","␣en","␣liten"], probs: [["␣stad",49.2],["␣by",25.3],["␣stuga",22.2],["␣lägenhet",2.6]] },
+  "2m":   { label: "2 M",   dim: 160, layers: 5, heads: 5, kv: 5, ff: 448,  vocab: 4096, total: 2244320,  min: 10, mb: "2.4",
+            tokens: ["Alma","␣bor","␣i","␣en","␣liten"], probs: [["␣stad",51.7],["␣stuga",23.3],["␣by",21.3],["␣lägenhet",2.9]] },
+  "3m":   { label: "3 M",   dim: 192, layers: 6, heads: 6, kv: 6, ff: 512,  vocab: 4096, total: 3443136,  min: 12, mb: "3.6",
+            tokens: ["Alma","␣bor","␣i","␣en","␣liten"], probs: [["␣by",42.2],["␣stad",32.3],["␣stuga",22.7],["␣lägenhet",2.0]] },
+  "7m":   { label: "7 M",   dim: 288, layers: 6, heads: 6, kv: 6, ff: 768,  vocab: 4096, total: 7155360,  min: 20, mb: "7.3",
+            tokens: ["Alma","␣bor","␣i","␣en","␣liten"], probs: [["␣stad",40.6],["␣stuga",34.1],["␣by",22.9],["␣lägenhet",1.6]] },
+  "15m":  { label: "15 M",  dim: 384, layers: 8, heads: 6, kv: 6, ff: 1024, vocab: 4096, total: 15735168, min: 30, mb: "16",
+            tokens: ["Alma","␣bor","␣i","␣en","␣liten"], probs: [["␣stad",61.6],["␣by",22.9],["␣stuga",14.1],["␣lägenhet",1.0]] },
+};
+// The parameter counts per part are computed from the configuration and checked against the checkpoint totals.
+for (const m of Object.values(M)) {
+  const hd = m.dim / m.heads;
+  m.hd = hd;
+  m.attn = m.layers * (2 * m.dim * m.dim + 2 * m.dim * m.kv * hd);
+  m.ffp = m.layers * 3 * m.dim * m.ff;
+  m.norm = (2 * m.layers + 1) * m.dim;
+  m.emb = m.vocab * m.dim;
+  console.assert(m.emb + m.attn + m.ffp + m.norm === m.total, "parameter count does not add up", m.label);
+}
+
+const NS = "http://www.w3.org/2000/svg";
+const $ = (id) => document.getElementById(id);
+const el = (name, attrs, text) => { const e = document.createElementNS(NS, name); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; return e; };
+const n = (x) => x.toLocaleString("en-US").replace(/\s/g, " ");
+const pct = (x, d = 0) => (100 * x).toFixed(d) + " %";
+let size = "7m", sel = null, selEl = null;
+const EMBED = document.documentElement.dataset.mode === "embed";
+
+// ---- the small picture
+(() => {
+  const g = $("thumb-chips"), items = ["Text", "Tokens", "Numbers", "Layers", "Probabilities", "Next token"];
+  const w = 100, gap = 22, x0 = 5;
+  items.forEach((t, i) => {
+    const x = x0 + i * (w + gap);
+    if (t === "Layers") { g.append(el("rect", { class: "box", x: x + 8, y: 26, width: w, height: 50, rx: 10 }), el("rect", { class: "box", x: x + 4, y: 30, width: w, height: 50, rx: 10 })); }
+    g.append(el("rect", { class: "box", x, y: 34, width: w, height: 50, rx: 10 }));
+    g.append(el("text", { class: "t", x: x + w / 2, y: 64, "text-anchor": "middle", "font-size": 14 }, t));
+    if (i < items.length - 1) g.append(el("path", { class: "flow", d: `M${x + w + (t === "Layers" ? 9 : 1)} 59 H${x + w + gap - 1}`, "marker-end": "url(#a1)" }));
+  });
+})();
+
+// ---- the big picture: everything that depends on the model size
+function draw() {
+  const m = M[size];
+  $("emb-sub").textContent = `every token becomes ${m.dim} numbers`;
+  $("layer-title").textContent = `Layer 1 of ${m.layers}`;
+  $("layer-sub").textContent = `${m.layers} alike, one after another`;
+  $("attn-sub").textContent = `${m.heads} heads with ${m.hd} numbers each`;
+  $("ff-sub").textContent = `${m.dim} numbers → ${n(m.ff)} → ${m.dim}`;
+  $("out-sub").textContent = `${m.dim} numbers → ${n(m.vocab)} scores, one per token`;
+  $("pick-sub").textContent = `for example ${m.probs[0][0]}`;
+  const chips = $("chips"); chips.replaceChildren();
+  let x = 104;
+  for (const t of m.tokens) {
+    const w = Math.round(t.length * 7.4 + 10);
+    chips.append(el("rect", { class: "chip", x, y: 120, width: w, height: 26, rx: 6 }), el("text", { class: "mono", x: x + w / 2, y: 137, "text-anchor": "middle", "font-size": 12 }, t));
+    x += w + 4;
+  }
+  const probs = $("probs"); probs.replaceChildren();
+  m.probs.forEach(([t, p], i) => {
+    const y = 944 + i * 19;
+    probs.append(el("text", { class: "mono", x: 104, y, "font-size": 12 }, t), el("rect", { class: "bar", x: 184, y: y - 9, width: Math.max(2, p * 1.6), height: 10, rx: 2 }),
+                 el("text", { class: "s", x: 340, y, "text-anchor": "end" }, p.toFixed(1) + " %"));
+  });
+  [...$("sizes").children].forEach((b) => b.setAttribute("aria-pressed", b.dataset.size === size));
+  document.querySelectorAll("#dia .part").forEach((p) => p.classList.toggle("sel", p.dataset.part === sel));
+  panel();
+  place();
+}
+
+// ---- embed mode: the detail sits beside the clicked part (wide) or as a card just under it (narrow)
+function place() {
+  if (!EMBED) return;
+  const p = $("panel"), body = document.querySelector(".dlg .body"), narrow = matchMedia("(max-width: 760px)").matches;
+  p.classList.toggle("pop", narrow && !!sel); p.style.marginTop = ""; p.style.top = ""; body.style.minHeight = "";
+  if (!sel || !selEl) return;
+  const r = selEl.getBoundingClientRect(), b = body.getBoundingClientRect();
+  if (narrow) { const top = r.bottom - b.top + 8; p.style.top = top + "px"; body.style.minHeight = Math.max(b.height, top + p.offsetHeight + 8) + "px"; }   // the card may reach below the picture
+  else p.style.marginTop = Math.max(0, Math.min(r.top - b.top, b.height - p.offsetHeight)) + "px";
+}
+
+// ---- the explanations
+const P = {
+  text: { title: "The text", what: (m) => `What you have written, plus everything the model itself has added so far. The example here is <i>Alma bor i en liten</i>, Swedish for “Alma lives in a small”.`,
+    why: () => `The model has no memory beyond the text. All it knows about the story so far is what stands here, at most 512 tokens back.` },
+  tok: { title: "Tokenizer", what: (m) => `Splits the text into pieces called tokens and swaps each piece for a number. Common words become one piece, rare ones are split into several. The space belongs to the word after it, which is why the pieces start with ␣.`,
+    why: (m) => `A model computes with numbers, not letters. The tokenizer learned its ${n(m.vocab)} pieces from the stories, so the words that are common there get a piece of their own.`,
+    num: (m) => [["Different tokens", n(m.vocab)], ["The example", `${m.tokens.length} tokens`], ["Parameters", "none, it is a word list"]], code: "pytte/tokenizer.py" },
+  emb: { title: "Embedding", what: (m) => `A table with one row per token and ${m.dim} numbers in each row. Every token number is swapped for its row. After this step the text is ${m.dim} numbers per token, and those numbers are what the rest of the model works with.`,
+    why: () => `The numbers are the model's description of what a token means. Nobody wrote them in. They start out random and are adjusted during training.`,
+    num: (m) => [["Size of the table", `${n(m.vocab)} × ${m.dim}`], ["Parameters", n(m.emb)], ["Share of the model", pct(m.emb / m.total)]], code: "pytte/model.py · self.embed" },
+  layer: { title: "The layers", what: (m) => `A layer does two things in a row: attention, where tokens fetch information from each other, and feed-forward, where every token is processed on its own. The model has ${m.layers} such layers. They are built alike but have their own numbers.`,
+    why: () => `Every layer adds a little to the one before, and the answer takes shape step by step. What each individual layer does in Pytte I have not investigated.`,
+    num: (m) => [["Layers", m.layers], ["Parameters per layer", n((m.attn + m.ffp) / m.layers + 2 * m.dim)], ["Share of the model", pct((m.attn + m.ffp) / m.total)]], code: "pytte/model.py · class Block" },
+  norm: { title: "Normalisation", what: (m) => `Rescales the ${m.dim} numbers of every token so that they keep roughly the same size. It sits before attention and before feed-forward in every layer, and once more after the last layer.`,
+    why: () => `Without it the numbers can grow or shrink with every layer, and training becomes unstable. This variant is called RMSNorm.`,
+    num: (m) => [["How many", `${2 * m.layers + 1}`], ["Parameters", `${n(m.norm)}, that is ${pct(m.norm / m.total, 2)}`]], code: "pytte/model.py · nn.RMSNorm" },
+  attn: { title: "Attention", what: (m) => `Here every token looks at the tokens that came before. Every token asks a question, and every earlier token has a key and a content. The question is compared with the keys, and the content of those that fit best is blended together. That is how <i>liten</i> can pick up that the text is about <i>Alma</i> and that the word before was <i>en</i>.`,
+    why: () => `It is the only place where tokens exchange information with each other. Two things make it work for text: a token may only look backwards, or it would see the answer during training. And questions and keys are rotated by an angle that depends on the position in the text, so that the model knows how far apart two tokens are. The latter is called RoPE.`,
+    num: (m) => [["Heads", `${m.heads}, with ${m.hd} numbers each`], ...(m.kv < m.heads ? [["Keys and contents", `${m.kv} sets shared by the heads`]] : []), ["Parameters", n(m.attn)], ["Share of the model", pct(m.attn / m.total)]], code: "pytte/model.py · class Attention" },
+  res: { title: "Skip connection", what: () => `What attention and feed-forward compute is added to what came in, instead of replacing it. The plus sign in the picture is that addition.`,
+    why: () => `Each layer then only has to learn a change. The information also has a straight path through the whole model, which makes it possible to train.`,
+    num: () => [["Parameters", "none"]], code: "pytte/model.py · x = x + ..." },
+  ff: { title: "Feed-forward", what: (m) => `Every token is processed on its own. The ${m.dim} numbers are expanded to ${n(m.ff)}, pass through a gate that lets some through and dampens others, and are squeezed back to ${m.dim}.`,
+    why: () => `Attention moves information between tokens. Here it is processed. This is also where most of the model's numbers are. This variant is called SwiGLU.`,
+    num: (m) => [["Size", `${m.dim} → ${n(m.ff)} → ${m.dim}`], ["Parameters", n(m.ffp)], ["Share of the model", pct(m.ffp / m.total)]], code: "pytte/model.py · class SwiGLU" },
+  out: { title: "Output", what: (m) => `The ${m.dim} numbers of the last token are compared with every row of the embedding table. Each comparison gives a score, so out come ${n(m.vocab)} scores, one for every token that could come next.`,
+    why: (m) => `The table is the same one as in the embedding, used the other way round. That saves ${n(m.emb)} parameters, which is a lot in a model this small.`,
+    num: (m) => [["Own parameters", "none, the table is shared"], ["Saved by sharing", n(m.emb)]], code: "pytte/model.py · self.embed.as_linear" },
+  prob: { title: "Probabilities", what: (m) => `The scores are converted into probabilities that add up to 100 %. The picture shows the four most likely for the example. The figures are the model's own, taken from the ${m.label} model.`,
+    why: () => `The model never answers with one word. It answers with a distribution over all tokens, and it is often unsure between several reasonable continuations.`,
+    num: (m) => m.probs.map(([t, p]) => [t, p.toFixed(1) + " %"]), code: "run.c · softmax" },
+  pick: { title: "Chance picks", what: () => `A token is drawn at random, with likely tokens drawn more often. Two settings control it: the temperature 0.8 makes the likely ones a little more likely, and top-p 0.95 removes the least likely ones altogether.`,
+    why: () => `Chance is why the same opening gives different stories. The random seed in the demo decides which draws are made, so the same seed gives the same story.`,
+    num: () => [["Temperature", "0.8"], ["Top-p", "0.95"], ["Parameters", "none"]], code: "pytte/sample.py · run.c" },
+};
+
+function panel() {
+  const m = M[size], p = $("panel");
+  if (!sel) {
+    p.innerHTML = `<h3>The whole path, one round</h3>
+      <p>The text goes in at the top and passes every part once. Out comes a probability for every token the model knows. One is chosen and added to the text, and then everything runs again. A story of a hundred words is about 120 rounds.</p>
+      <p>During training the same path is run. The guess is then compared with the token that actually came next in the story, and every number is adjusted a little.</p>
+      <p class="muted">Click a part of the picture to read about it.</p>
+      <div class="kicker">pytte-${size}</div>
+      <dl class="facts"><dt>Parameters</dt><dd>${n(m.total)}</dd><dt>Layers</dt><dd>${m.layers}</dd><dt>Numbers per token</dt><dd>${m.dim}</dd>
+        <dt>Trained in</dt><dd>${m.min} minutes on a laptop</dd><dt>File</dt><dd>${m.mb} MB</dd></dl>
+      <div class="kicker">Where the parameters are</div>
+      <div class="share" role="img" aria-label="Embedding ${pct(m.emb / m.total)}, attention ${pct(m.attn / m.total)}, feed-forward ${pct(m.ffp / m.total)}">
+        <span style="flex:${m.emb};background:var(--c-emb)"></span><span style="flex:${m.attn};background:var(--c-attn)"></span><span style="flex:${m.ffp};background:var(--c-ff)"></span></div>
+      <div class="legend"><span><i style="background:var(--c-emb)"></i>Embedding ${pct(m.emb / m.total)}</span><span><i style="background:var(--c-attn)"></i>Attention ${pct(m.attn / m.total)}</span><span><i style="background:var(--c-ff)"></i>Feed-forward ${pct(m.ffp / m.total)}</span></div>`;
+    return;
+  }
+  const d = P[sel];
+  const rows = d.num ? d.num(m).map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("") : "";
+  p.innerHTML = `<button class="back">To the overview</button><h3>${d.title}</h3>
+    <div class="kicker">What it does</div><p>${d.what(m)}</p>
+    <div class="kicker">Why</div><p>${d.why(m)}</p>
+    ${rows ? `<div class="kicker">In pytte-${size}</div><dl class="facts">${rows}</dl>` : ""}
+    ${d.code ? `<div class="kicker">In the code</div><p><code>${d.code}</code></p>` : ""}`;
+  p.querySelector(".back").onclick = () => { sel = null; draw(); };
+}
+
+// ---- wiring
+if (!location.pathname.startsWith("/pytte/")) document.getElementById("back").href = "index.html";   // local preview: the demo page
+for (const k of Object.keys(M)) { const b = document.createElement("button"); b.textContent = M[k].label; b.dataset.size = k; b.onclick = () => { size = k; draw(); }; $("sizes").append(b); }
+document.querySelectorAll("#dia .part").forEach((p) => {
+  const pick = () => { sel = sel === p.dataset.part && selEl === p ? null : p.dataset.part; selEl = sel ? p : null; draw(); };
+  p.addEventListener("click", (e) => { e.stopPropagation(); pick(); });
+  p.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } });
+});
+$("open").onclick = () => { $("big").showModal(); };
+if (EMBED) {
+  document.querySelector("main").replaceChildren(document.querySelector(".dlg"));
+  // the page that embeds this sizes the iframe from these messages (the content height, which unlike scrollHeight can also shrink)
+  const tell = () => parent.postMessage({ type: "pytte-embed-height", height: Math.ceil(document.body.getBoundingClientRect().height) }, "*");
+  new ResizeObserver(tell).observe(document.body); addEventListener("resize", () => { place(); tell(); });
+  // the embedding page can switch the theme without a reload: postMessage({type: "pytte-theme", theme: "light" | "dark"})
+  addEventListener("message", (e) => { const m = e.data; if (m && m.type === "pytte-theme" && (m.theme === "light" || m.theme === "dark")) document.documentElement.dataset.theme = m.theme; });
+}
+$("close").onclick = () => $("big").close();
+$("big").addEventListener("click", (e) => { if (e.target === $("big")) $("big").close(); });
+draw();
+if (!EMBED && location.hash === "#stor") $("big").showModal();
+</script>
+</body>
+</html>

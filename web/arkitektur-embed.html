@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="sv" data-mode="embed">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Så fungerar Pytte</title>
+<link rel="icon" href="pytte-mark.svg">
+<script>(function () { var t = new URLSearchParams(location.search).get("theme"); if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t); })();</script>
+<style>
+:root {
+  --bg: #FBF8F1; --card: #FFFDF8; --ink: #1E2A4A; --muted: #5B6480; --line: #CFC7B4; --soft: #EFE9DA;
+  --accent: #F2B632; --c-emb: #2a78d6; --c-attn: #eb6834; --c-ff: #1baf7a;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #151916; --card: #1E231F; --ink: #ECEBE4; --muted: #A3A79C; --line: #454C45; --soft: #262C27;
+          --c-emb: #5a9ae6; --c-attn: #f08a5d; --c-ff: #3fc795; }
+}
+:root[data-theme="dark"] { --bg: #151916; --card: #1E231F; --ink: #ECEBE4; --muted: #A3A79C; --line: #454C45; --soft: #262C27;
+          --c-emb: #5a9ae6; --c-attn: #f08a5d; --c-ff: #3fc795; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 -apple-system, "Segoe UI", system-ui, sans-serif; }
+main { max-width: 760px; margin: 0 auto; padding: 32px 16px 64px; }
+h1 { font-size: 28px; margin: 0 0 8px; }
+h2 { font-size: 18px; margin: 0 0 6px; }
+p { margin: 0 0 12px; }
+.muted { color: var(--muted); }
+.draft { display: inline-block; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; border: 1px solid var(--line); border-radius: 99px; padding: 2px 10px; color: var(--muted); margin-bottom: 12px; }
+
+/* the small picture */
+.thumb { display: block; width: 100%; margin: 20px 0 6px; padding: 14px 14px 8px; background: var(--card); color: inherit; border: 1px solid var(--line); border-radius: 16px; cursor: zoom-in; font: inherit; text-align: left; }
+.thumb:hover, .thumb:focus-visible { border-color: var(--ink); outline: none; }
+.thumb svg { display: block; width: 100%; height: auto; }
+.thumb .open { display: block; margin-top: 6px; font-size: 14px; color: var(--muted); }
+figure { margin: 0; }
+figcaption { font-size: 14px; color: var(--muted); }
+
+/* shared SVG styling (no <style> inside the SVGs) */
+svg text { fill: currentColor; font-family: inherit; }
+.box { fill: var(--card); stroke: var(--line); stroke-width: 1.5; }
+.t { font-size: 15px; font-weight: 650; }
+.s { font-size: 12.5px; fill: var(--muted); }
+svg text.s { fill: var(--muted); }
+.flow { stroke: currentColor; stroke-width: 1.5; fill: none; }
+.dash { stroke-dasharray: 5 5; }
+.frame { fill: var(--soft); stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 6 5; }
+.mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+.chip { fill: var(--soft); stroke: var(--line); }
+.edge-emb { fill: var(--c-emb); } .edge-attn { fill: var(--c-attn); } .edge-ff { fill: var(--c-ff); }
+.part { cursor: pointer; }
+.part:focus { outline: none; }
+.part:hover .box, .part:focus-visible .box { stroke: var(--ink); }
+.part.sel .box { stroke: var(--accent); stroke-width: 3; }
+.plus { fill: var(--card); stroke: currentColor; stroke-width: 1.5; }
+.bar { fill: var(--muted); }
+
+/* the big picture */
+dialog { width: min(1040px, 100vw - 16px); max-width: none; height: min(92vh, 1200px); max-height: none; padding: 0; border: 1px solid var(--line); border-radius: 18px; background: var(--bg); color: var(--ink); overflow: hidden; }
+dialog::backdrop { background: rgba(10, 12, 10, .6); }
+.dlg { display: flex; flex-direction: column; height: 100%; }
+.dlg header { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+.dlg header h2 { margin: 0; flex: 1 1 auto; }
+.sizes { display: flex; flex-wrap: wrap; gap: 4px; }
+.sizes button, .close { font: inherit; font-size: 14px; color: inherit; background: var(--card); border: 1px solid var(--line); border-radius: 99px; padding: 4px 12px; cursor: pointer; }
+.sizes button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.dlg .body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 440px) minmax(0, 1fr); }
+.dia { overflow-y: auto; padding: 16px; border-right: 1px solid var(--line); }
+.dia svg { display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto; }
+.panel { overflow-y: auto; padding: 20px 22px 28px; }
+.panel h3 { font-size: 22px; margin: 0 0 4px; }
+.panel .kicker { font-size: 13px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin: 18px 0 4px; }
+.panel code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13.5px; background: var(--soft); padding: 1px 5px; border-radius: 5px; }
+.facts { display: grid; grid-template-columns: auto 1fr; gap: 2px 14px; margin: 0; font-variant-numeric: tabular-nums; }
+.facts dt { color: var(--muted); } .facts dd { margin: 0; }
+.share { display: flex; gap: 2px; height: 14px; margin: 8px 0 6px; border-radius: 4px; overflow: hidden; }
+.share span { display: block; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 14px; font-variant-numeric: tabular-nums; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; }
+.back { font: inherit; font-size: 14px; color: var(--muted); background: none; border: 0; padding: 0; margin: 0 0 10px; cursor: pointer; text-decoration: underline; }
+@media (max-width: 760px) {
+  dialog { height: 96vh; }
+  .dlg header h2 { order: 1; } .dlg header .close { order: 2; } .dlg header .sizes { order: 3; width: 100%; }
+  .dlg .body { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) minmax(0, 44%); }
+  .dia { border-right: 0; border-bottom: 1px solid var(--line); }
+  .panel { padding: 14px 16px 20px; }
+  .panel h3 { font-size: 19px; }
+}
+
+/* embed mode (<html data-mode="embed">): the big picture inline, for an iframe on the Pytte page */
+html[data-mode="embed"] body { background: transparent; }
+html[data-mode="embed"] main { max-width: none; padding: 20px; }
+html[data-mode="embed"] .dlg { height: auto; }
+html[data-mode="embed"] .dlg header { border: 0; padding: 0 0 14px; }
+html[data-mode="embed"] .dlg header h2, html[data-mode="embed"] .close { display: none; }
+html[data-mode="embed"] .dlg .body { position: relative; align-items: start; grid-template-rows: none; }
+html[data-mode="embed"] .dia { overflow: visible; padding: 0; border: 0; }
+html[data-mode="embed"] .panel { overflow: visible; padding: 0 0 0 24px; transition: margin-top .25s; }
+@media (max-width: 760px) {
+  html[data-mode="embed"] .dlg .body { display: flex; flex-direction: column; align-items: stretch; }
+  html[data-mode="embed"] .panel { order: -1; padding: 0 0 16px; transition: none; }
+  html[data-mode="embed"] .panel.pop { position: absolute; left: 0; right: 0; z-index: 2; order: 0; padding: 14px 16px 16px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 12px 32px rgba(0, 0, 0, .28); }
+}
+</style>
+</head>
+<body>
+<main>
+  <p style="margin:0 0 16px"><a class="muted" id="back" href="../pytte" style="font-size:15px;text-decoration:none">← Pytte</a> <span class="muted">·</span> <a class="muted" href="inuti.html" style="font-size:15px;text-decoration:none">Inuti Pytte</a></p>
+  <h1>Så fungerar Pytte</h1>
+  <p>Pytte gör en enda sak: gissar nästa bit text. Bilden visar vägen från det du skriver till den gissningen. Klicka på den för att se varje del, vad den gör och hur stor den är.</p>
+
+  <figure>
+    <button class="thumb" id="open" aria-haspopup="dialog">
+      <svg viewBox="0 0 720 150" role="img" aria-label="Text blir token, token blir tal, talen går genom lagren och ut kommer sannolikheter för nästa token. Det valda tokenet läggs till texten och allt körs igen.">
+        <defs><marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="currentColor"/></marker></defs>
+        <g id="thumb-chips"></g>
+        <path class="flow" d="M665 82 V122 H55 V84" marker-end="url(#a1)"/>
+        <text class="s" x="360" y="140" text-anchor="middle">det valda tokenet läggs till texten, och så ett varv till</text>
+      </svg>
+      <span class="open">Öppna hela bilden</span>
+    </button>
+    <figcaption>Samma väg i alla sex modeller. Bara storleken på delarna skiljer.</figcaption>
+  </figure>
+</main>
+
+<dialog id="big" aria-labelledby="big-title">
+  <div class="dlg">
+    <header>
+      <h2 id="big-title">Så fungerar Pytte</h2>
+      <div class="sizes" id="sizes" role="group" aria-label="Modellstorlek"></div>
+      <button class="close" id="close">Stäng</button>
+    </header>
+    <div class="body">
+      <div class="dia">
+        <svg id="dia" viewBox="0 0 440 1130" role="img" aria-label="Arkitekturen uppifrån och ner: text, tokeniserare, inbäddning, lagren med normalisering, attention och feed-forward, sista normalisering, utmatning, sannolikheter och val av nästa token.">
+          <defs><marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="currentColor"/></marker></defs>
+
+          <!-- the loop back to the text, and the shared table -->
+          <path class="flow" d="M90 1068 H18 V40 H86" marker-end="url(#a2)"/>
+          <text class="s" transform="translate(12 560) rotate(-90)" text-anchor="middle">läggs till texten, sedan ett varv till</text>
+          <path class="flow dash" d="M350 210 H422 V856 H354" marker-end="url(#a2)"/>
+          <text class="s" transform="translate(435 533) rotate(-90)" text-anchor="middle">samma tabell används igen</text>
+
+          <!-- main line -->
+          <path class="flow" d="M220 60 V82" marker-end="url(#a2)"/>
+          <path class="flow" d="M220 158 V180" marker-end="url(#a2)"/>
+          <path class="flow" d="M220 238 V298" marker-end="url(#a2)"/>
+          <path class="flow" d="M220 334 V350" marker-end="url(#a2)"/>
+          <path class="flow" d="M220 448 V468" marker-end="url(#a2)"/>
+          <path class="flow" d="M220 494 V520" marker-end="url(#a2)"/>
+          <path class="flow" d="M220 556 V572" marker-end="url(#a2)"/>
+          <path class="flow" d="M220 670 V690" marker-end="url(#a2)"/>
+          <path class="flow" d="M220 716 V774" marker-end="url(#a2)"/>
+          <path class="flow" d="M220 810 V826" marker-end="url(#a2)"/>
+          <path class="flow" d="M220 884 V900" marker-end="url(#a2)"/>
+          <path class="flow" d="M220 1020 V1038" marker-end="url(#a2)"/>
+
+          <g class="part" data-part="text" tabindex="0" role="button" aria-label="Texten">
+            <rect class="box" x="90" y="20" width="260" height="40" rx="20"/>
+            <text class="t mono" x="220" y="45" text-anchor="middle">Alma bor i en liten</text>
+          </g>
+
+          <g class="part" data-part="tok" tabindex="0" role="button" aria-label="Tokeniserare">
+            <rect class="box" x="90" y="84" width="260" height="74" rx="10"/>
+            <text class="t" x="104" y="107">Tokeniserare</text>
+            <g id="chips"></g>
+          </g>
+
+          <g class="part" data-part="emb" tabindex="0" role="button" aria-label="Inbäddning">
+            <rect class="box" x="90" y="182" width="260" height="56" rx="10"/>
+            <rect class="edge-emb" x="90" y="190" width="5" height="40" rx="2"/>
+            <text class="t" x="104" y="206">Inbäddning</text>
+            <text class="s" x="104" y="225" id="emb-sub"></text>
+          </g>
+
+          <!-- one layer, with the others stacked behind it -->
+          <rect class="frame" x="56" y="242" width="352" height="488" rx="14" opacity=".5"/>
+          <rect class="frame" x="50" y="248" width="352" height="488" rx="14" opacity=".75"/>
+          <g class="part" data-part="layer" tabindex="0" role="button" aria-label="Lagren">
+            <rect class="frame box" x="44" y="254" width="352" height="488" rx="14"/>
+            <text class="t" x="58" y="276" id="layer-title"></text>
+            <text class="s" x="382" y="276" text-anchor="end" id="layer-sub"></text>
+          </g>
+
+          <!-- skip connections -->
+          <g class="part" data-part="res" tabindex="0" role="button" aria-label="Hopplänk">
+            <path class="flow" d="M220 292 H66 V481 H206" marker-end="url(#a2)"/>
+            <path class="flow" d="M220 508 H66 V703 H206" marker-end="url(#a2)"/>
+            <circle cx="220" cy="292" r="3" fill="currentColor"/><circle cx="220" cy="508" r="3" fill="currentColor"/>
+            <text class="s" transform="translate(60 388) rotate(-90)" text-anchor="middle">hopplänk</text>
+            <text class="s" transform="translate(60 606) rotate(-90)" text-anchor="middle">hopplänk</text>
+            <circle class="plus" cx="220" cy="481" r="12"/><path class="flow" d="M213 481 H227 M220 474 V488"/>
+            <circle class="plus" cx="220" cy="703" r="12"/><path class="flow" d="M213 703 H227 M220 696 V710"/>
+          </g>
+
+          <g class="part" data-part="norm" tabindex="0" role="button" aria-label="Normalisering">
+            <rect class="box" x="90" y="300" width="260" height="34" rx="8"/>
+            <text class="t" x="104" y="322">Normalisering</text>
+          </g>
+          <g class="part" data-part="attn" tabindex="0" role="button" aria-label="Attention">
+            <rect class="box" x="90" y="352" width="260" height="96" rx="10"/>
+            <rect class="edge-attn" x="90" y="360" width="5" height="80" rx="2"/>
+            <text class="t" x="104" y="377">Attention</text>
+            <text class="s" x="104" y="397">varje token tittar bakåt i texten</text>
+            <text class="s" x="104" y="415">och hämtar det den behöver</text>
+            <text class="s" x="104" y="435" id="attn-sub"></text>
+          </g>
+          <g class="part" data-part="norm" tabindex="0" role="button" aria-label="Normalisering">
+            <rect class="box" x="90" y="522" width="260" height="34" rx="8"/>
+            <text class="t" x="104" y="544">Normalisering</text>
+          </g>
+          <g class="part" data-part="ff" tabindex="0" role="button" aria-label="Feed-forward">
+            <rect class="box" x="90" y="574" width="260" height="96" rx="10"/>
+            <rect class="edge-ff" x="90" y="582" width="5" height="80" rx="2"/>
+            <text class="t" x="104" y="599">Feed-forward</text>
+            <text class="s" x="104" y="619">varje token bearbetas för sig</text>
+            <text class="s" x="104" y="637">genom ett litet nätverk</text>
+            <text class="s" x="104" y="657" id="ff-sub"></text>
+          </g>
+
+          <g class="part" data-part="norm" tabindex="0" role="button" aria-label="Sista normaliseringen">
+            <rect class="box" x="90" y="776" width="260" height="34" rx="8"/>
+            <text class="t" x="104" y="798">Normalisering</text>
+          </g>
+          <g class="part" data-part="out" tabindex="0" role="button" aria-label="Utmatning">
+            <rect class="box" x="90" y="828" width="260" height="56" rx="10"/>
+            <rect class="edge-emb" x="90" y="836" width="5" height="40" rx="2"/>
+            <text class="t" x="104" y="852">Utmatning</text>
+            <text class="s" x="104" y="871" id="out-sub"></text>
+          </g>
+          <g class="part" data-part="prob" tabindex="0" role="button" aria-label="Sannolikheter">
+            <rect class="box" x="90" y="902" width="260" height="118" rx="10"/>
+            <text class="t" x="104" y="925">Sannolikheter</text>
+            <g id="probs"></g>
+          </g>
+          <g class="part" data-part="pick" tabindex="0" role="button" aria-label="Slumpen väljer">
+            <rect class="box" x="90" y="1040" width="260" height="56" rx="10"/>
+            <text class="t" x="104" y="1064">Slumpen väljer</text>
+            <text class="s" x="104" y="1083" id="pick-sub"></text>
+          </g>
+        </svg>
+      </div>
+      <div class="panel" id="panel" aria-live="polite"></div>
+    </div>
+  </div>
+</dialog>
+
+<script>
+// Every number here comes from the release models: the configs and parameter counts in paper/results.json
+// (the counts are recomputed from the config and match the checkpoints exactly), the .bin file sizes, and the
+// tokens and next-token probabilities the models give for the example sentence in the "Under huven" tab.
+const M = {
+  "0.3m": { label: "0,3 M", dim: 64,  layers: 4, heads: 4, kv: 2, ff: 192,  vocab: 2048, total: 328256,   min: 5,  mb: "0,38",
+            tokens: ["Al","ma","␣bor","␣i","␣en","␣liten"], probs: [["␣stad",45.4],["␣by",26.2],["␣stuga",23.0],["␣lägenhet",2.8]] },
+  "1m":   { label: "1 M",   dim: 128, layers: 4, heads: 4, kv: 4, ff: 352,  vocab: 4096, total: 1328256,  min: 8,  mb: "1,4",
+            tokens: ["Alma","␣bor","␣i","␣en","␣liten"], probs: [["␣stad",49.2],["␣by",25.3],["␣stuga",22.2],["␣lägenhet",2.6]] },
+  "2m":   { label: "2 M",   dim: 160, layers: 5, heads: 5, kv: 5, ff: 448,  vocab: 4096, total: 2244320,  min: 10, mb: "2,4",
+            tokens: ["Alma","␣bor","␣i","␣en","␣liten"], probs: [["␣stad",51.7],["␣stuga",23.3],["␣by",21.3],["␣lägenhet",2.9]] },
+  "3m":   { label: "3 M",   dim: 192, layers: 6, heads: 6, kv: 6, ff: 512,  vocab: 4096, total: 3443136,  min: 12, mb: "3,6",
+            tokens: ["Alma","␣bor","␣i","␣en","␣liten"], probs: [["␣by",42.2],["␣stad",32.3],["␣stuga",22.7],["␣lägenhet",2.0]] },
+  "7m":   { label: "7 M",   dim: 288, layers: 6, heads: 6, kv: 6, ff: 768,  vocab: 4096, total: 7155360,  min: 20, mb: "7,3",
+            tokens: ["Alma","␣bor","␣i","␣en","␣liten"], probs: [["␣stad",40.6],["␣stuga",34.1],["␣by",22.9],["␣lägenhet",1.6]] },
+  "15m":  { label: "15 M",  dim: 384, layers: 8, heads: 6, kv: 6, ff: 1024, vocab: 4096, total: 15735168, min: 30, mb: "16",
+            tokens: ["Alma","␣bor","␣i","␣en","␣liten"], probs: [["␣stad",61.6],["␣by",22.9],["␣stuga",14.1],["␣lägenhet",1.0]] },
+};
+// The parameter counts per part are computed from the configuration and checked against the checkpoint totals.
+for (const m of Object.values(M)) {
+  const hd = m.dim / m.heads;
+  m.hd = hd;
+  m.attn = m.layers * (2 * m.dim * m.dim + 2 * m.dim * m.kv * hd);
+  m.ffp = m.layers * 3 * m.dim * m.ff;
+  m.norm = (2 * m.layers + 1) * m.dim;
+  m.emb = m.vocab * m.dim;
+  console.assert(m.emb + m.attn + m.ffp + m.norm === m.total, "parameter count does not add up", m.label);
+}
+
+const NS = "http://www.w3.org/2000/svg";
+const $ = (id) => document.getElementById(id);
+const el = (name, attrs, text) => { const e = document.createElementNS(NS, name); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; return e; };
+const n = (x) => x.toLocaleString("sv-SE").replace(/\s/g, " ");
+const pct = (x, d = 0) => (100 * x).toFixed(d).replace(".", ",") + " %";
+let size = "7m", sel = null, selEl = null;
+const EMBED = document.documentElement.dataset.mode === "embed";
+
+// ---- the small picture
+(() => {
+  const g = $("thumb-chips"), items = ["Text", "Token", "Tal", "Lager", "Sannolikheter", "Nästa token"];
+  const w = 100, gap = 22, x0 = 5;
+  items.forEach((t, i) => {
+    const x = x0 + i * (w + gap);
+    if (t === "Lager") { g.append(el("rect", { class: "box", x: x + 8, y: 26, width: w, height: 50, rx: 10 }), el("rect", { class: "box", x: x + 4, y: 30, width: w, height: 50, rx: 10 })); }
+    g.append(el("rect", { class: "box", x, y: 34, width: w, height: 50, rx: 10 }));
+    g.append(el("text", { class: "t", x: x + w / 2, y: 64, "text-anchor": "middle", "font-size": 14 }, t));
+    if (i < items.length - 1) g.append(el("path", { class: "flow", d: `M${x + w + (t === "Lager" ? 9 : 1)} 59 H${x + w + gap - 1}`, "marker-end": "url(#a1)" }));
+  });
+})();
+
+// ---- the big picture: everything that depends on the model size
+function draw() {
+  const m = M[size];
+  $("emb-sub").textContent = `varje token blir ${m.dim} tal`;
+  $("layer-title").textContent = `Lager 1 av ${m.layers}`;
+  $("layer-sub").textContent = `${m.layers} likadana efter varandra`;
+  $("attn-sub").textContent = `${m.heads} huvuden med ${m.hd} tal var`;
+  $("ff-sub").textContent = `${m.dim} tal → ${n(m.ff)} → ${m.dim}`;
+  $("out-sub").textContent = `${m.dim} tal → ${n(m.vocab)} poäng, en per token`;
+  $("pick-sub").textContent = `till exempel ${m.probs[0][0]}`;
+  const chips = $("chips"); chips.replaceChildren();
+  let x = 104;
+  for (const t of m.tokens) {
+    const w = Math.round(t.length * 7.4 + 10);
+    chips.append(el("rect", { class: "chip", x, y: 120, width: w, height: 26, rx: 6 }), el("text", { class: "mono", x: x + w / 2, y: 137, "text-anchor": "middle", "font-size": 12 }, t));
+    x += w + 4;
+  }
+  const probs = $("probs"); probs.replaceChildren();
+  m.probs.forEach(([t, p], i) => {
+    const y = 944 + i * 19;
+    probs.append(el("text", { class: "mono", x: 104, y, "font-size": 12 }, t), el("rect", { class: "bar", x: 184, y: y - 9, width: Math.max(2, p * 1.6), height: 10, rx: 2 }),
+                 el("text", { class: "s", x: 340, y, "text-anchor": "end" }, p.toFixed(1).replace(".", ",") + " %"));
+  });
+  [...$("sizes").children].forEach((b) => b.setAttribute("aria-pressed", b.dataset.size === size));
+  document.querySelectorAll("#dia .part").forEach((p) => p.classList.toggle("sel", p.dataset.part === sel));
+  panel();
+  place();
+}
+
+// ---- embed mode: the detail sits beside the clicked part (wide) or as a card just under it (narrow)
+function place() {
+  if (!EMBED) return;
+  const p = $("panel"), body = document.querySelector(".dlg .body"), narrow = matchMedia("(max-width: 760px)").matches;
+  p.classList.toggle("pop", narrow && !!sel); p.style.marginTop = ""; p.style.top = ""; body.style.minHeight = "";
+  if (!sel || !selEl) return;
+  const r = selEl.getBoundingClientRect(), b = body.getBoundingClientRect();
+  if (narrow) { const top = r.bottom - b.top + 8; p.style.top = top + "px"; body.style.minHeight = Math.max(b.height, top + p.offsetHeight + 8) + "px"; }   // the card may reach below the picture
+  else p.style.marginTop = Math.max(0, Math.min(r.top - b.top, b.height - p.offsetHeight)) + "px";
+}
+
+// ---- the explanations
+const P = {
+  text: { title: "Texten", what: (m) => `Det du har skrivit, plus allt modellen själv har lagt till hittills. Här är exemplet <i>Alma bor i en liten</i>.`,
+    why: () => `Modellen har inget minne utöver texten. Allt den vet om sagan så här långt är det som står här, högst 512 token bakåt.` },
+  tok: { title: "Tokeniserare", what: (m) => `Delar texten i bitar som kallas token och byter varje bit mot ett nummer. Vanliga ord blir en bit, ovanliga delas i flera. Mellanslaget hör till ordet efter, därför ser du ␣ först i bitarna.`,
+    why: (m) => `En modell räknar med tal, inte bokstäver. Tokeniseraren har lärt sig sina ${n(m.vocab)} bitar från sagorna, så de ord som är vanliga där får en egen bit.`,
+    num: (m) => [["Antal olika token", n(m.vocab)], ["Exemplet", `${m.tokens.length} token`], ["Parametrar", "inga, det är en ordlista"]], code: "pytte/tokenizer.py" },
+  emb: { title: "Inbäddning", what: (m) => `En tabell med en rad per token och ${m.dim} tal på varje rad. Varje tokennummer byts mot sin rad. Efter det här steget är texten ${m.dim} tal per token, och det är de talen som resten av modellen arbetar med.`,
+    why: () => `Talen är modellens beskrivning av vad en token betyder. Ingen har skrivit in dem. De börjar som slump och justeras under träningen.`,
+    num: (m) => [["Tabellens storlek", `${n(m.vocab)} × ${m.dim}`], ["Parametrar", n(m.emb)], ["Andel av modellen", pct(m.emb / m.total)]], code: "pytte/model.py · self.embed" },
+  layer: { title: "Lagren", what: (m) => `Ett lager gör två saker efter varandra: attention, där token hämtar information från varandra, och feed-forward, där varje token bearbetas för sig. Modellen har ${m.layers} sådana lager. De är byggda likadant men har egna tal.`,
+    why: () => `Varje lager lägger till lite på det förra, och svaret växer fram steg för steg. Vad varje enskilt lager gör i Pytte har jag inte undersökt.`,
+    num: (m) => [["Antal lager", m.layers], ["Parametrar per lager", n((m.attn + m.ffp) / m.layers + 2 * m.dim)], ["Andel av modellen", pct((m.attn + m.ffp) / m.total)]], code: "pytte/model.py · class Block" },
+  norm: { title: "Normalisering", what: (m) => `Skalar om de ${m.dim} talen för varje token så att de håller ungefär samma storlek. Den sitter före attention och före feed-forward i varje lager, och en gång till efter sista lagret.`,
+    why: () => `Utan den kan talen växa eller krympa för varje lager, och då blir träningen ostadig. Varianten heter RMSNorm.`,
+    num: (m) => [["Antal", `${2 * m.layers + 1} stycken`], ["Parametrar", `${n(m.norm)}, alltså ${pct(m.norm / m.total, 2)}`]], code: "pytte/model.py · nn.RMSNorm" },
+  attn: { title: "Attention", what: (m) => `Här tittar varje token på de token som kom före. Varje token ställer en fråga, varje tidigare token har en nyckel och ett innehåll. Frågan jämförs med nycklarna, och innehållet från dem som passar bäst vägs ihop. Så kan <i>liten</i> hämta att det handlar om <i>Alma</i> och att ordet före var <i>en</i>.`,
+    why: () => `Det är det enda stället där token utbyter information med varandra. Två saker gör att det fungerar för text: en token får bara titta bakåt, annars skulle den se facit under träningen. Och frågor och nycklar vrids en vinkel som beror på platsen i texten, så att modellen vet hur långt ifrån varandra två token står. Det sista kallas RoPE.`,
+    num: (m) => [["Huvuden", `${m.heads}, med ${m.hd} tal var`], ...(m.kv < m.heads ? [["Nycklar och innehåll", `${m.kv} uppsättningar som huvudena delar på`]] : []), ["Parametrar", n(m.attn)], ["Andel av modellen", pct(m.attn / m.total)]], code: "pytte/model.py · class Attention" },
+  res: { title: "Hopplänk", what: () => `Det attention och feed-forward räknar fram läggs till det som kom in, i stället för att ersätta det. Plustecknet i bilden är den additionen.`,
+    why: () => `Varje lager behöver då bara lära sig en ändring. Informationen har dessutom en rak väg genom hela modellen, vilket gör den möjlig att träna.`,
+    num: () => [["Parametrar", "inga"]], code: "pytte/model.py · x = x + ..." },
+  ff: { title: "Feed-forward", what: (m) => `Varje token bearbetas för sig. De ${m.dim} talen blåses upp till ${n(m.ff)}, går genom en grind som släpper fram vissa och dämpar andra, och trycks ihop till ${m.dim} igen.`,
+    why: () => `Attention flyttar information mellan token. Här bearbetas den. Det är också här de flesta av modellens tal ligger. Varianten heter SwiGLU.`,
+    num: (m) => [["Storlek", `${m.dim} → ${n(m.ff)} → ${m.dim}`], ["Parametrar", n(m.ffp)], ["Andel av modellen", pct(m.ffp / m.total)]], code: "pytte/model.py · class SwiGLU" },
+  out: { title: "Utmatning", what: (m) => `De ${m.dim} talen för den sista token jämförs med varje rad i inbäddningstabellen. Varje jämförelse ger en poäng, så ut kommer ${n(m.vocab)} poäng, en för varje token som skulle kunna komma härnäst.`,
+    why: (m) => `Tabellen är samma som i inbäddningen, använd åt andra hållet. Det sparar ${n(m.emb)} parametrar, vilket är mycket i en så liten modell.`,
+    num: (m) => [["Egna parametrar", "inga, tabellen delas"], ["Sparat genom att dela", n(m.emb)]], code: "pytte/model.py · self.embed.as_linear" },
+  prob: { title: "Sannolikheter", what: (m) => `Poängen räknas om till sannolikheter som tillsammans blir 100 %. Bilden visar de fyra troligaste för exemplet. Siffrorna är modellens egna, hämtade från ${m.label}-modellen.`,
+    why: () => `Modellen svarar aldrig med ett ord. Den svarar med en fördelning över alla token, och den är ofta osäker mellan flera rimliga fortsättningar.`,
+    num: (m) => m.probs.map(([t, p]) => [t, p.toFixed(1).replace(".", ",") + " %"]), code: "run.c · softmax" },
+  pick: { title: "Slumpen väljer", what: () => `Ett token dras med slumpen, där troliga token dras oftare. Två inställningar styr: temperaturen 0,8 gör de troliga lite troligare, och top-p 0,95 stryker de minst troliga helt.`,
+    why: () => `Slumpen gör att samma början ger olika sagor. Slumpfröt i demon bestämmer vilka dragningar som görs, så samma frö ger samma saga.`,
+    num: () => [["Temperatur", "0,8"], ["Top-p", "0,95"], ["Parametrar", "inga"]], code: "pytte/sample.py · run.c" },
+};
+
+function panel() {
+  const m = M[size], p = $("panel");
+  if (!sel) {
+    p.innerHTML = `<h3>Hela vägen, ett varv</h3>
+      <p>Texten går in upptill och passerar alla delar en gång. Ut kommer en sannolikhet för varje token modellen kan. Ett väljs och läggs till texten, och sedan körs allt igen. En saga på hundra ord är ungefär 120 varv.</p>
+      <p>Under träningen körs samma väg. Då jämförs gissningen med det token som faktiskt kom i sagan, och alla tal justeras lite.</p>
+      <p class="muted">Klicka på en del i bilden för att läsa om den.</p>
+      <div class="kicker">pytte-${size}</div>
+      <dl class="facts"><dt>Parametrar</dt><dd>${n(m.total)}</dd><dt>Lager</dt><dd>${m.layers}</dd><dt>Tal per token</dt><dd>${m.dim}</dd>
+        <dt>Tränad i</dt><dd>${m.min} minuter på en laptop</dd><dt>Fil</dt><dd>${m.mb} MB</dd></dl>
+      <div class="kicker">Var parametrarna ligger</div>
+      <div class="share" role="img" aria-label="Inbäddning ${pct(m.emb / m.total)}, attention ${pct(m.attn / m.total)}, feed-forward ${pct(m.ffp / m.total)}">
+        <span style="flex:${m.emb};background:var(--c-emb)"></span><span style="flex:${m.attn};background:var(--c-attn)"></span><span style="flex:${m.ffp};background:var(--c-ff)"></span></div>
+      <div class="legend"><span><i style="background:var(--c-emb)"></i>Inbäddning ${pct(m.emb / m.total)}</span><span><i style="background:var(--c-attn)"></i>Attention ${pct(m.attn / m.total)}</span><span><i style="background:var(--c-ff)"></i>Feed-forward ${pct(m.ffp / m.total)}</span></div>`;
+    return;
+  }
+  const d = P[sel];
+  const rows = d.num ? d.num(m).map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("") : "";
+  p.innerHTML = `<button class="back">Till översikten</button><h3>${d.title}</h3>
+    <div class="kicker">Vad den gör</div><p>${d.what(m)}</p>
+    <div class="kicker">Varför</div><p>${d.why(m)}</p>
+    ${rows ? `<div class="kicker">I pytte-${size}</div><dl class="facts">${rows}</dl>` : ""}
+    ${d.code ? `<div class="kicker">I koden</div><p><code>${d.code}</code></p>` : ""}`;
+  p.querySelector(".back").onclick = () => { sel = null; draw(); };
+}
+
+// ---- wiring
+if (!location.pathname.startsWith("/pytte/")) document.getElementById("back").href = "index.html";   // local preview: the demo page
+for (const k of Object.keys(M)) { const b = document.createElement("button"); b.textContent = M[k].label; b.dataset.size = k; b.onclick = () => { size = k; draw(); }; $("sizes").append(b); }
+document.querySelectorAll("#dia .part").forEach((p) => {
+  const pick = () => { sel = sel === p.dataset.part && selEl === p ? null : p.dataset.part; selEl = sel ? p : null; draw(); };
+  p.addEventListener("click", (e) => { e.stopPropagation(); pick(); });
+  p.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } });
+});
+$("open").onclick = () => { $("big").showModal(); };
+if (EMBED) {
+  document.querySelector("main").replaceChildren(document.querySelector(".dlg"));
+  // the page that embeds this sizes the iframe from these messages (the content height, which unlike scrollHeight can also shrink)
+  const tell = () => parent.postMessage({ type: "pytte-embed-height", height: Math.ceil(document.body.getBoundingClientRect().height) }, "*");
+  new ResizeObserver(tell).observe(document.body); addEventListener("resize", () => { place(); tell(); });
+  // the embedding page can switch the theme without a reload: postMessage({type: "pytte-theme", theme: "light" | "dark"})
+  addEventListener("message", (e) => { const m = e.data; if (m && m.type === "pytte-theme" && (m.theme === "light" || m.theme === "dark")) document.documentElement.dataset.theme = m.theme; });
+}
+$("close").onclick = () => $("big").close();
+$("big").addEventListener("click", (e) => { if (e.target === $("big")) $("big").close(); });
+draw();
+if (!EMBED && location.hash === "#stor") $("big").showModal();
+</script>
+</body>
+</html>

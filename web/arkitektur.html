@@ -5,13 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Så fungerar Pytte</title>
 <link rel="icon" href="pytte-mark.svg">
+<script>(function () { var t = new URLSearchParams(location.search).get("theme"); if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t); })();</script>
 <style>
 :root {
   --bg: #FBF8F1; --card: #FFFDF8; --ink: #1E2A4A; --muted: #5B6480; --line: #CFC7B4; --soft: #EFE9DA;
   --accent: #F2B632; --c-emb: #2a78d6; --c-attn: #eb6834; --c-ff: #1baf7a;
 }
 @media (prefers-color-scheme: dark) {
-  :root { --bg: #151916; --card: #1E231F; --ink: #ECEBE4; --muted: #A3A79C; --line: #454C45; --soft: #262C27;
+  :root:not([data-theme="light"]) { --bg: #151916; --card: #1E231F; --ink: #ECEBE4; --muted: #A3A79C; --line: #454C45; --soft: #262C27;
+          --c-emb: #5a9ae6; --c-attn: #f08a5d; --c-ff: #3fc795; }
+}
+:root[data-theme="dark"] { --bg: #151916; --card: #1E231F; --ink: #ECEBE4; --muted: #A3A79C; --line: #454C45; --soft: #262C27;
           --c-emb: #5a9ae6; --c-attn: #f08a5d; --c-ff: #3fc795; }
 }
 * { box-sizing: border-box; }
@@ -80,6 +84,21 @@ dialog::backdrop { background: rgba(10, 12, 10, .6); }
   .dia { border-right: 0; border-bottom: 1px solid var(--line); }
   .panel { padding: 14px 16px 20px; }
   .panel h3 { font-size: 19px; }
+}
+
+/* embed mode (<html data-mode="embed">): the big picture inline, for an iframe on the Pytte page */
+html[data-mode="embed"] body { background: transparent; }
+html[data-mode="embed"] main { max-width: none; padding: 20px; }
+html[data-mode="embed"] .dlg { height: auto; }
+html[data-mode="embed"] .dlg header { border: 0; padding: 0 0 14px; }
+html[data-mode="embed"] .dlg header h2, html[data-mode="embed"] .close { display: none; }
+html[data-mode="embed"] .dlg .body { position: relative; align-items: start; grid-template-rows: none; }
+html[data-mode="embed"] .dia { overflow: visible; padding: 0; border: 0; }
+html[data-mode="embed"] .panel { overflow: visible; padding: 0 0 0 24px; transition: margin-top .25s; }
+@media (max-width: 760px) {
+  html[data-mode="embed"] .dlg .body { display: flex; flex-direction: column; align-items: stretch; }
+  html[data-mode="embed"] .panel { order: -1; padding: 0 0 16px; transition: none; }
+  html[data-mode="embed"] .panel.pop { position: absolute; left: 0; right: 0; z-index: 2; order: 0; padding: 14px 16px 16px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 12px 32px rgba(0, 0, 0, .28); }
 }
 </style>
 </head>
@@ -259,7 +278,8 @@ const $ = (id) => document.getElementById(id);
 const el = (name, attrs, text) => { const e = document.createElementNS(NS, name); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; return e; };
 const n = (x) => x.toLocaleString("sv-SE").replace(/\s/g, " ");
 const pct = (x, d = 0) => (100 * x).toFixed(d).replace(".", ",") + " %";
-let size = "7m", sel = null;
+let size = "7m", sel = null, selEl = null;
+const EMBED = document.documentElement.dataset.mode === "embed";
 
 // ---- the small picture
 (() => {
@@ -300,6 +320,18 @@ function draw() {
   [...$("sizes").children].forEach((b) => b.setAttribute("aria-pressed", b.dataset.size === size));
   document.querySelectorAll("#dia .part").forEach((p) => p.classList.toggle("sel", p.dataset.part === sel));
   panel();
+  place();
+}
+
+// ---- embed mode: the detail sits beside the clicked part (wide) or as a card just under it (narrow)
+function place() {
+  if (!EMBED) return;
+  const p = $("panel"), body = document.querySelector(".dlg .body"), narrow = matchMedia("(max-width: 760px)").matches;
+  p.classList.toggle("pop", narrow && !!sel); p.style.marginTop = ""; p.style.top = ""; body.style.minHeight = "";
+  if (!sel || !selEl) return;
+  const r = selEl.getBoundingClientRect(), b = body.getBoundingClientRect();
+  if (narrow) { const top = r.bottom - b.top + 8; p.style.top = top + "px"; body.style.minHeight = Math.max(b.height, top + p.offsetHeight + 8) + "px"; }   // the card may reach below the picture
+  else p.style.marginTop = Math.max(0, Math.min(r.top - b.top, b.height - p.offsetHeight)) + "px";
 }
 
 // ---- the explanations
@@ -313,7 +345,7 @@ const P = {
     why: () => `Talen är modellens beskrivning av vad en token betyder. Ingen har skrivit in dem. De börjar som slump och justeras under träningen.`,
     num: (m) => [["Tabellens storlek", `${n(m.vocab)} × ${m.dim}`], ["Parametrar", n(m.emb)], ["Andel av modellen", pct(m.emb / m.total)]], code: "pytte/model.py · self.embed" },
   layer: { title: "Lagren", what: (m) => `Ett lager gör två saker efter varandra: attention, där token hämtar information från varandra, och feed-forward, där varje token bearbetas för sig. Modellen har ${m.layers} sådana lager. De är byggda likadant men har egna tal.`,
-    why: () => `Varje lager lägger till lite. De första lagren kan hålla reda på ord och böjningar, de senare på vem sagan handlar om och vad som har hänt. Vad varje lager faktiskt gör i Pytte har jag inte undersökt.`,
+    why: () => `Varje lager lägger till lite på det förra, och svaret växer fram steg för steg. Vad varje enskilt lager gör i Pytte har jag inte undersökt.`,
     num: (m) => [["Antal lager", m.layers], ["Parametrar per lager", n((m.attn + m.ffp) / m.layers + 2 * m.dim)], ["Andel av modellen", pct((m.attn + m.ffp) / m.total)]], code: "pytte/model.py · class Block" },
   norm: { title: "Normalisering", what: (m) => `Skalar om de ${m.dim} talen för varje token så att de håller ungefär samma storlek. Den sitter före attention och före feed-forward i varje lager, och en gång till efter sista lagret.`,
     why: () => `Utan den kan talen växa eller krympa för varje lager, och då blir träningen ostadig. Varianten heter RMSNorm.`,
@@ -356,27 +388,35 @@ function panel() {
   }
   const d = P[sel];
   const rows = d.num ? d.num(m).map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("") : "";
-  p.innerHTML = `<button class="back" id="back">Till översikten</button><h3>${d.title}</h3>
+  p.innerHTML = `<button class="back">Till översikten</button><h3>${d.title}</h3>
     <div class="kicker">Vad den gör</div><p>${d.what(m)}</p>
     <div class="kicker">Varför</div><p>${d.why(m)}</p>
     ${rows ? `<div class="kicker">I pytte-${size}</div><dl class="facts">${rows}</dl>` : ""}
     ${d.code ? `<div class="kicker">I koden</div><p><code>${d.code}</code></p>` : ""}`;
-  $("back").onclick = () => { sel = null; draw(); };
+  p.querySelector(".back").onclick = () => { sel = null; draw(); };
 }
 
 // ---- wiring
 if (!location.pathname.startsWith("/pytte/")) document.getElementById("back").href = "index.html";   // local preview: the demo page
 for (const k of Object.keys(M)) { const b = document.createElement("button"); b.textContent = M[k].label; b.dataset.size = k; b.onclick = () => { size = k; draw(); }; $("sizes").append(b); }
 document.querySelectorAll("#dia .part").forEach((p) => {
-  const pick = () => { sel = sel === p.dataset.part ? null : p.dataset.part; draw(); };
+  const pick = () => { sel = sel === p.dataset.part && selEl === p ? null : p.dataset.part; selEl = sel ? p : null; draw(); };
   p.addEventListener("click", (e) => { e.stopPropagation(); pick(); });
   p.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } });
 });
 $("open").onclick = () => { $("big").showModal(); };
+if (EMBED) {
+  document.querySelector("main").replaceChildren(document.querySelector(".dlg"));
+  // the page that embeds this sizes the iframe from these messages (the content height, which unlike scrollHeight can also shrink)
+  const tell = () => parent.postMessage({ type: "pytte-embed-height", height: Math.ceil(document.body.getBoundingClientRect().height) }, "*");
+  new ResizeObserver(tell).observe(document.body); addEventListener("resize", () => { place(); tell(); });
+  // the embedding page can switch the theme without a reload: postMessage({type: "pytte-theme", theme: "light" | "dark"})
+  addEventListener("message", (e) => { const m = e.data; if (m && m.type === "pytte-theme" && (m.theme === "light" || m.theme === "dark")) document.documentElement.dataset.theme = m.theme; });
+}
 $("close").onclick = () => $("big").close();
 $("big").addEventListener("click", (e) => { if (e.target === $("big")) $("big").close(); });
 draw();
-if (location.hash === "#stor") $("big").showModal();
+if (!EMBED && location.hash === "#stor") $("big").showModal();
 </script>
 </body>
 </html>

@@ -76,7 +76,7 @@ ONCE = [
     ("<b>Förlusten</b> mäter hur förvånad modellen blir av rätt svar. Vid ren gissning bland 4&nbsp;096 token är den 8,3. I proverna här dyker punkterna upp efter fem sekunder och hela meningar efter tio. Efter drygt en minut handlar texten om Alma. Resten av tiden går åt till det svåra: att hålla ihop en hel saga.",
      "<b>The loss</b> measures how surprised the model is by the right answer. For a pure guess among 4,096 tokens it is 8.3. In the samples here full stops appear after five seconds and whole sentences after ten. After a little over a minute the text is about Alma. The rest of the time goes to the hard part: holding a whole story together."),
     ("Allt på den här sidan räknas av samma program som i demon, med samma modellfiler. Inget skickas någonstans. Vill du se delarna som en ritning finns <a href=\"arkitektur.html\">arkitekturbilden</a>. <a href=\"inuti.en.html\">This page in English</a>.",
-     "Everything on this page is computed by the same program as the demo, with the same model files. Nothing is sent anywhere. <a href=\"inuti.html\">Den här sidan på svenska</a>."),
+     "Everything on this page is computed by the same program as the demo, with the same model files. Nothing is sent anywhere. If you want to see the parts as a drawing, there is <a href=\"arkitektur.en.html\">the architecture diagram</a>. <a href=\"inuti.html\">Den här sidan på svenska</a>."),
     # script
     ("`${label} parametrar`", "`${label} parameters`"), ('"räknar…"', '"computing…"'),
     ("· ${m.T - 1} token · ${m.L} lager · ${m.H} huvuden per lager · ${m.D} tal per token · räknat på ${Math.round(performance.now() - t0)} ms`",
