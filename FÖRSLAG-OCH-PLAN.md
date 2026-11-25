@@ -829,6 +829,14 @@ Båda spakarna verkar, och tiden är den stora: tät data gav +11 punkter på su
 
 **Kvar.** Mathias läser igenom; Zenodo-DOI vid lansering (läggs in på förstasidan och i korten); sedan Hugging Face-uppladdningen (avsnitt 21).
 
+## 23. Ändrad publiceringsväg: hobbyprojekt på mathiaskarlsson.se/pytte, 2026-11-25
+
+**Beslut (Mathias, 2026-11-25).** Modellerna har varit ett test av om det här går. I stället för en modellsläpp på Hugging Face publiceras Pytte som ett **hobbyprojekt på hans egen sajt**, med en egen sida `mathiaskarlsson.se/pytte` och ett kort under `/sidoprojekt`, och med öppenhet om att han inte vet hur bra det är. Sidan ska rymma allt: demon, berättelsen, rapporten och modellfilerna för nedladdning. Det ersätter planens lansering tills vidare; Hugging Face och Zenodo är inte aktuella nu men blockeras inte av något.
+
+**Vad som följer av det.** (1) Sajten är ett Next.js-projekt (`mathiaskarlsson2026final`, svenska och engelska, innehåll i `content/`, Vercel), som ägs av en annan session. Sidan byggs därför där, i sajtens egen design och struktur, från ett överlämningspaket härifrån: `site/BRIEF.md` (beställning: sidans delar i ordning, filer med absoluta sökvägar, hur demon fungerar för en React-portning, vad som ska avgöras på sajtsidan, verifieringspunkter, vad som inte ingår) och `site/content.pytte.ts` (all text på svenska och engelska: kort, hero, demons strängar, varför, siffror, fem lärdomar, sex punkter under "Vad jag inte vet", nedladdningar). Körkoden (`web/pytte.js`, `web/worker.js`) och modellfilerna (`web/models/`, 59 MB) återanvänds som de är. (2) Rapporten fick hobbyprojekt-inramning: en rad på förstasidan (oberoende hobbyprojekt, inte granskad), en mening i sammanfattningen och inledningen, en ny första punkt under begränsningar (inte granskad, inte jämförd med andras modeller) och motsvarande i den svenska sammanfattningen; förstasidan pekar nu på `mathiaskarlsson.se/pytte`. (3) Stora nedladdningar (fulla vikter 310 MB, datasetet 211 MB) läggs som GitHub-releaser när repot blir publikt; modellkorten för Hugging Face ligger kvar på disken men används inte. (4) Inget publiceras förrän Mathias sett sidan.
+
+**Öppna frågor för sajtsidan.** Var .bin-filerna serveras ifrån (59 MB statiskt, 31 MB om en besökare drar reglaget genom alla storlekar; bandbredden på hostingplanen behöver kontrolleras före lansering), när GitHub-repot görs publikt, och OG-bild/kort i sajtens stil.
+
 ## Källor som verifierades i den här genomgången
 
 - Hugging Face: `tdde19-llm-from-scratch/TinyStoriesSwe` och tillhörande modeller, `qwrt/Swedish0.1M`, `Dxniz/TinyStories-Multilingual` (API-anrop 2026-11-06)
