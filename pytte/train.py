@@ -100,6 +100,9 @@ def main():
     p.add_argument("--log-every", type=int, default=25)
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--no-compile", action="store_true")
+    p.add_argument("--snapshots", default=None, help="comma-separated steps at which a text sample is written to "
+                   "snapshots.jsonl (0 = before training); the last step is always added. Needs --tok")
+    p.add_argument("--snap-prompt", default="", help="the text the snapshot samples continue")
     p.add_argument("--init", default=None, help="checkpoint dir to start from (fine-tuning); its config.json is used")
     args = p.parse_args()
 
@@ -172,6 +175,16 @@ def main():
 
     t_start = time.monotonic()
     t_log = t_start
+    snaps = {int(v) for v in args.snapshots.split(",")} if args.snapshots else set()
+
+    def do_snap(it, loss=None):
+        text = generate(model, tok, args.snap_prompt, max_new=70, temp=0.8, top_p=0.95)
+        rec = {"step": it, "tokens": it * tokens_per_step, "elapsed": time.monotonic() - t_start, "loss": loss, "text": text}
+        with (out / "snapshots.jsonl").open("a") as f:
+            f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+
+    if 0 in snaps:
+        do_snap(0)
     best_val = math.inf
     last_eval = 0
     it = 0
@@ -197,12 +210,16 @@ def main():
             print(f"step {it:6d}{total} | loss {rec['loss']:.3f} | lr {rec['lr']:.2e} | "
                   f"{tps:,.0f} tok/s | {rec['elapsed']/60:.1f} min", flush=True)
             log.write(json.dumps(rec) + "\n"); log.flush()
+        if it in snaps:
+            do_snap(it, float(loss))
         if it % args.eval_every == 0:
             do_eval(it)
             last_eval = it
 
     if last_eval != it:
         do_eval(it)
+    if snaps and it not in snaps:
+        do_snap(it, float(loss))
     total_time = time.monotonic() - t_start
     summary = {"name": cfg.name, "params": n_total, "params_no_embed": n_body, "steps": it,
                "tokens": it * tokens_per_step, "train_minutes": total_time / 60,

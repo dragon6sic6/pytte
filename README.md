@@ -247,8 +247,10 @@ model's instruction following is unchanged within noise. Lab log section 19.
 JavaScript (no WebAssembly, no WebGPU, no server), `worker.js` keeps it off the UI thread, and
 `index.html` has three panels: a size slider that regenerates the same story with the same seed
 at every size, a chat with the instruction-tuned models, and a view of the tokens and the
-next-token probabilities. With the same seed the browser produces byte-for-byte the same story
-as `run.c`. Speed in Chromium on an M2 Pro: 0.3M 640 tokens/s, 2M 220, 7M 43, 15M 55. Serve the
+next-token probabilities. With the same seed the browser begins the same story as `run.c`, token
+for token, but the two usually drift apart within a few hundred characters (20 of 70 stories of up
+to 250 tokens were identical to the end), most likely because JavaScript computes in 64-bit floats
+and C in 32-bit. Speed in Chromium on an M2 Pro: 0.3M 640 tokens/s, 2M 220, 7M 43, 15M 55. Serve the
 folder statically (`python3 -m http.server 8765 --directory web`); the model files go in
 `web/models/`.
 

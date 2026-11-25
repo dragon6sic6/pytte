@@ -5,7 +5,9 @@
 //   {type:"cancel"}
 //   {type:"tokenize", id, file, text}                 -> tokens [{id, text}]
 //   {type:"probs", id, file, text}                    -> tokens + top next-token probabilities
-import { Pytte, makeRng, chatPromptIds } from "./pytte.js";
+//   {type:"trace", id, file, text|ids, vocab}         -> everything the model computes for a short text (explainer page)
+//   {type:"neighbors", id, file, token, k}            -> the tokens with the most similar embedding rows
+import { Pytte, makeRng, chatPromptIds } from "./pytte.js?v=4";
 
 const models = new Map();
 let cancelled = false;
@@ -18,6 +20,8 @@ async function get(file) {
   postMessage({ type: "loaded", file, nParams: model.nParams, bytes: 0 });
   return model;
 }
+
+const tokText = (model, id) => new TextDecoder().decode(model.tokenBytes(id));
 
 function tokenList(model, ids) {
   return ids.map((id) => ({ id, text: new TextDecoder().decode(model.tokenBytes(id)) }));
@@ -38,6 +42,32 @@ onmessage = async (e) => {
       for (let i = 0; i < ids.length && i < model.maxSeq; i++) model.forward(ids[i], i);
       const top = model.topProbs(12).map((t) => ({ ...t, text: new TextDecoder().decode(model.tokenBytes(t.id)) }));
       postMessage({ type: "probs", id: m.id, tokens: tokenList(model, ids.slice(1)), top });
+      return;
+    }
+    if (m.type === "neighbors") {
+      postMessage({ type: "neighbors", id: m.id, token: m.token, list: model.neighbors(m.token, m.k ?? 8).map((t) => ({ ...t, text: tokText(model, t.id) })) });
+      return;
+    }
+    if (m.type === "trace") {
+      const MAXT = 40, L = model.nLayers, H = model.nHeads, D = model.dim;
+      const ids = [model.eot, ...(m.ids ?? model.encode(m.text))].slice(0, MAXT), T = ids.length;
+      const emb = new Float32Array(T * D), att = new Float32Array(L * H * T * T), upd = new Float32Array(T * L * 2);
+      let last = null;
+      for (let pos = 0; pos < T; pos++) {
+        model.tap = {};
+        model.forward(ids[pos], pos);
+        const tap = model.tap; model.tap = null;
+        emb.set(tap.emb, pos * D); upd.set(tap.upd, pos * L * 2);
+        for (let lh = 0; lh < L * H; lh++) att.set(tap.att[lh], (lh * T + pos) * T);
+        last = tap;
+      }
+      const named = (list) => list.map((t) => ({ ...t, text: tokText(model, t.id) }));
+      const lens = [named(Pytte.top(model.lensLogits(last.emb), 5)), ...last.resid.map((x) => named(Pytte.top(model.lensLogits(x), 5)))];
+      const logits = model.logits.slice();
+      const out = { type: "trace", id: m.id, T, L, H, D, vocabSize: model.vocab, eot: model.eot, tokens: tokenList(model, ids), ids: ids.slice(1),
+                    text: new TextDecoder().decode(Uint8Array.from(ids.slice(1).flatMap((i) => [...model.tokenBytes(i)]))), emb, att, upd, lens, logits };
+      if (m.vocab) out.vocab = Array.from({ length: model.vocab }, (_, i) => tokText(model, i));
+      postMessage(out, [emb.buffer, att.buffer, upd.buffer, logits.buffer]);
       return;
     }
     if (m.type === "generate") {

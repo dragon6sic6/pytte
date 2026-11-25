@@ -173,6 +173,9 @@ export class Pytte {
     const D = this.dim, H = this.nHeads, KV = this.nKvHeads, HD = this.headDim, KVD = KV * HD, FF = this.ffDim;
     const scale = 1 / Math.sqrt(HD), x = this.x, h = this.h;
     this.embedRow(token, x);
+    // tap: set model.tap = {} before forward() to get the intermediate values (it only copies, the arithmetic is the same)
+    const tap = this.tap;
+    if (tap) { tap.emb = x.slice(); tap.att = new Array(this.nLayers * H); tap.upd = new Float32Array(this.nLayers * 2); tap.resid = new Array(this.nLayers); }
     for (let l = 0; l < this.nLayers; l++) {
       const L = this.layers[l], kc = this.kc[l], vc = this.vc[l];
       this.rmsnorm(h, x, L.attnNorm);
@@ -190,6 +193,7 @@ export class Pytte {
         }
         let sum = 0;
         for (let t = 0; t <= pos; t++) { att[t] = Math.exp(att[t] - mx); sum += att[t]; }
+        if (tap) { const a = new Float32Array(pos + 1); for (let t = 0; t <= pos; t++) a[t] = att[t] / sum; tap.att[l * H + hh] = a; }
         o.fill(0, qb, qb + HD);
         for (let t = 0; t <= pos; t++) {
           const vb = t * KVD + kvh, p = att[t] / sum;
@@ -197,16 +201,49 @@ export class Pytte {
         }
       }
       this.matvec(h, L.wo, o);
+      if (tap) tap.upd[l * 2] = Pytte.norm(h);
       for (let i = 0; i < D; i++) x[i] += h[i];
       this.rmsnorm(h, x, L.mlpNorm);
       this.matvec(this.g, L.w1, h); this.matvec(this.u, L.w3, h);
       const g = this.g, u = this.u;
       for (let i = 0; i < FF; i++) { const a = g[i]; g[i] = a / (1 + Math.exp(-a)) * u[i]; }
       this.matvec(h, L.w2, g);
+      if (tap) tap.upd[l * 2 + 1] = Pytte.norm(h);
       for (let i = 0; i < D; i++) x[i] += h[i];
+      if (tap) tap.resid[l] = x.slice();
     }
     this.rmsnorm(h, x, this.norm);
     this.matvec(this.logits, this.embed, h);
+  }
+
+  // ---------------------------------------------------------------- looking inside (used by the explainer page)
+  static norm(v) { let s = 0; for (let i = 0; i < v.length; i++) s += v[i] * v[i]; return Math.sqrt(s); }
+
+  // what the model would answer from an intermediate state: the final norm and the output table applied to it
+  lensLogits(xvec) {
+    const h = new Float32Array(this.dim), out = new Float32Array(this.vocab);
+    this.rmsnorm(h, xvec, this.norm); this.matvec(out, this.embed, h);
+    return out;
+  }
+
+  static top(logits, k) {
+    const n = logits.length, order = Array.from({ length: n }, (_, i) => i).sort((a, b) => logits[b] - logits[a]);
+    const mx = logits[order[0]]; let z = 0;
+    for (let i = 0; i < n; i++) z += Math.exp(logits[i] - mx);
+    return order.slice(0, k).map((id) => ({ id, p: Math.exp(logits[id] - mx) / z }));
+  }
+
+  // the tokens whose rows in the embedding table point in the most similar direction (cosine)
+  neighbors(id, k = 8) {
+    const D = this.dim, a = new Float32Array(D), b = new Float32Array(D), out = [];
+    this.embedRow(id, a); const na = Pytte.norm(a);
+    for (let t = 0; t < this.vocab; t++) {
+      if (t === id) continue;
+      this.embedRow(t, b); let dot = 0;
+      for (let i = 0; i < D; i++) dot += a[i] * b[i];
+      const nb = Pytte.norm(b); if (nb > 0 && na > 0) out.push({ id: t, cos: dot / (na * nb) });
+    }
+    return out.sort((x, y) => y.cos - x.cos).slice(0, k);
   }
 
   // ---------------------------------------------------------------- sampling
@@ -243,7 +280,7 @@ export class Pytte {
   }
 }
 
-// xorshift64* with the same seeding as run.c, so a seed gives the same story on both
+// xorshift64* with the same seeding as run.c, so both draw the same random numbers for a seed
 export function makeRng(seed) {
   let s = (BigInt(seed) * 0x9E3779B97F4A7C15n + 0x2545F4914F6CDD1Dn) & 0xFFFFFFFFFFFFFFFFn;
   const M = 0xFFFFFFFFFFFFFFFFn;

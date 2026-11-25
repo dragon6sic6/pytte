@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inuti Pytte</title>
+<meta name="description" content="Skriv en mening och se vad som händer inuti en liten språkmodell: token, inbäddning, attention, lager för lager, och slumpen som väljer nästa ord. Allt räknas i din webbläsare.">
+<link rel="icon" href="pytte-mark.svg">
+<style>
+:root {
+  --bg: #FBF8F1; --card: #FFFDF8; --ink: #1E2A4A; --muted: #5B6480; --line: #D9D2C0; --soft: #EFE9DA;
+  --accent: #F2B632; --neg: #2a78d6; --pos: #eb6834; --hot: #eb6834; --good: #1baf7a; --zero: #EFE9DA;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #131714; --card: #1C211D; --ink: #ECEBE4; --muted: #A3A79C; --line: #3C433C; --soft: #252B26;
+          --neg: #5a9ae6; --pos: #f08a5d; --hot: #f08a5d; --good: #3fc795; --zero: #252B26; }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 150px; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.6 -apple-system, "Segoe UI", system-ui, sans-serif; }
+main { max-width: 860px; margin: 0 auto; padding: 0 16px 96px; }
+h1 { font-size: clamp(32px, 6vw, 52px); line-height: 1.1; margin: 48px 0 12px; letter-spacing: -0.02em; }
+h2 { font-size: 28px; line-height: 1.2; margin: 0 0 10px; letter-spacing: -0.01em; }
+h3 { font-size: 13px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin: 22px 0 8px; font-weight: 600; }
+p { margin: 0 0 14px; max-width: 68ch; }
+.lead { font-size: 20px; color: var(--muted); }
+.muted { color: var(--muted); } .small { font-size: 14.5px; }
+.mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+section { padding: 56px 0 8px; border-top: 1px solid var(--line); margin-top: 48px; }
+.num { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--ink); color: var(--bg); font-weight: 700; font-size: 16px; margin-bottom: 12px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; margin: 16px 0; }
+
+/* the sticky input and map */
+.bar { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); margin: 0 -16px; padding: 10px 16px 8px; }
+.bar .row { display: flex; gap: 8px; align-items: center; max-width: 860px; margin: 0 auto; }
+.bar input[type=text] { flex: 1; min-width: 0; font: inherit; font-size: 18px; padding: 10px 14px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--card); color: var(--ink); }
+.bar input[type=text]:focus { outline: none; border-color: var(--accent); }
+select, button { font: inherit; color: inherit; }
+select { padding: 10px 8px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--card); font-size: 15px; }
+.btn { padding: 9px 16px; border-radius: 99px; border: 1.5px solid var(--line); background: var(--card); cursor: pointer; font-size: 15px; }
+.btn:hover { border-color: var(--ink); } .btn.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); font-weight: 600; }
+.btn:disabled { opacity: .5; cursor: default; }
+.map { display: flex; gap: 4px; overflow-x: auto; max-width: 860px; margin: 8px auto 0; scrollbar-width: none; }
+.map a { flex: none; font-size: 13.5px; text-decoration: none; color: var(--muted); padding: 3px 10px; border-radius: 99px; border: 1px solid transparent; white-space: nowrap; }
+.map a.on { color: var(--ink); border-color: var(--line); background: var(--card); }
+.status { font-size: 13.5px; color: var(--muted); max-width: 860px; margin: 4px auto 0; min-height: 20px; }
+.progress { height: 3px; background: var(--soft); border-radius: 2px; overflow: hidden; max-width: 860px; margin: 4px auto 0; }
+.progress div { height: 100%; width: 0; background: var(--accent); transition: width .15s; }
+
+/* tokens */
+.toks { display: flex; flex-wrap: wrap; gap: 6px; }
+.tok { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 15px; padding: 5px 9px; border-radius: 8px; background: var(--soft); border: 1.5px solid transparent; cursor: pointer; white-space: pre; position: relative; animation: pop .35s both; color: var(--ink); }
+.tok small { display: block; font-size: 10.5px; color: var(--muted); text-align: center; }
+.tok.sel { border-color: var(--accent); }
+.tok.start { color: var(--muted); font-style: italic; }
+@keyframes pop { from { transform: translateY(8px) scale(.9); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* embedding strips */
+.strips { display: grid; grid-template-columns: max-content 1fr; gap: 3px 10px; align-items: center; }
+.strips canvas { width: 100%; height: 16px; image-rendering: pixelated; border-radius: 3px; display: block; }
+.strips .lbl { font-family: ui-monospace, Menlo, monospace; font-size: 13.5px; white-space: pre; cursor: pointer; padding: 0 4px; border-radius: 4px; }
+.strips .lbl.sel { background: var(--accent); color: #1E2A4A; }
+.scale { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); margin-top: 10px; }
+.scale i { display: block; width: 120px; height: 10px; border-radius: 3px; background: linear-gradient(90deg, var(--neg), var(--zero), var(--pos)); }
+.nb { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.nb span { font-family: ui-monospace, Menlo, monospace; font-size: 14px; background: var(--soft); border-radius: 8px; padding: 3px 8px; white-space: pre; }
+.nb span b { font-weight: 400; color: var(--muted); font-size: 12px; margin-left: 6px; }
+
+/* attention */
+.pick { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin: 6px 0; font-size: 14px; }
+.pick b { font-weight: 600; margin-right: 6px; min-width: 62px; }
+.pick button { min-width: 34px; padding: 4px 8px; border-radius: 8px; border: 1.5px solid var(--line); background: var(--card); cursor: pointer; font-size: 14px; }
+.pick button[aria-pressed=true] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.att .tok { animation: none; transition: background-color .25s, color .25s; }
+.att .tok.later { opacity: .3; }
+.looks { font-size: 15px; margin-top: 12px; min-height: 26px; }
+.looks span { font-family: ui-monospace, Menlo, monospace; background: var(--soft); border-radius: 6px; padding: 1px 6px; white-space: pre; }
+#grid { width: 100%; display: block; cursor: pointer; image-rendering: pixelated; margin-top: 6px; border-radius: 6px; }
+
+/* layers and lens */
+.lens { display: grid; grid-template-columns: max-content minmax(70px, 130px) 1fr; gap: 6px 14px; align-items: center; font-size: 14.5px; }
+.lens .stage { font-weight: 600; white-space: nowrap; }
+.lens .upd { display: grid; gap: 2px; }
+.lens .upd i { display: block; height: 6px; border-radius: 2px; min-width: 2px; }
+.lens .guess { display: flex; flex-wrap: wrap; gap: 4px; }
+.lens .guess span { font-family: ui-monospace, Menlo, monospace; font-size: 13.5px; padding: 2px 7px; border-radius: 7px; background: var(--soft); white-space: pre; }
+.lens .guess span.win { background: var(--good); color: #fff; }
+.lens .guess span b { font-weight: 400; opacity: .75; margin-left: 5px; font-size: 12px; }
+.key { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 13.5px; color: var(--muted); margin-top: 10px; }
+.key i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; }
+
+/* sampling */
+.bars { display: grid; grid-template-columns: max-content 1fr max-content; gap: 5px 10px; align-items: center; font-size: 14.5px; }
+.bars .w { font-family: ui-monospace, Menlo, monospace; white-space: pre; }
+.bars .b { height: 14px; border-radius: 4px; background: var(--neg); min-width: 2px; transition: width .2s, background-color .2s; }
+.bars .p { font-variant-numeric: tabular-nums; color: var(--muted); text-align: right; }
+.bars .cut { opacity: .32; } .bars .cut .b, .bars .b.cut { background: var(--muted); }
+.bars .hit { outline: 2.5px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.sliders { display: grid; grid-template-columns: max-content 1fr max-content; gap: 8px 12px; align-items: center; margin: 4px 0 14px; font-size: 15px; }
+input[type=range] { width: 100%; accent-color: var(--accent); }
+.acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; align-items: center; }
+.story { font-family: Georgia, "Times New Roman", serif; font-size: 20px; line-height: 1.55; min-height: 2em; }
+.story .p0 { color: var(--muted); } .story .new { background: color-mix(in srgb, var(--accent) 45%, transparent); border-radius: 3px; }
+
+/* training */
+.time { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.time b { font-size: 34px; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+#curve { width: 100%; height: auto; display: block; margin-top: 8px; }
+#curve text { fill: var(--muted); font-size: 12px; }
+footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 15px; color: var(--muted); }
+a { color: inherit; }
+@media (max-width: 600px) { body { font-size: 16px; } .lead { font-size: 18px; } .story { font-size: 18px; } .lens { grid-template-columns: max-content 60px 1fr; gap: 6px 8px; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Inuti Pytte</h1>
+  <p class="lead">Skriv en mening. Allt du ser längre ner är vad modellen faktiskt räknar ut för just den meningen, i din webbläsare, medan du tittar.</p>
+
+  <div class="bar">
+    <div class="row">
+      <input id="text" type="text" value="Alma bor i en liten" spellcheck="false" autocomplete="off" aria-label="Din mening">
+      <select id="size" aria-label="Modellstorlek"></select>
+    </div>
+    <nav class="map" id="map" aria-label="Stegen"></nav>
+    <div class="progress" id="progress" hidden><div></div></div>
+    <div class="status" id="status" aria-live="polite"></div>
+  </div>
+
+  <section id="s-token" data-name="Token">
+    <span class="num">1</span>
+    <h2>Texten blir bitar</h2>
+    <p>Modellen ser inga bokstäver. Den ser <b>token</b>: bitar av ord som den har en nummerlapp för. Vanliga ord är en bit, ovanliga delas i flera. Mellanslaget hör till ordet efter.</p>
+    <div class="card"><div class="toks" id="toks"></div>
+      <p class="small muted" style="margin:12px 0 0" id="toks-note"></p></div>
+    <p class="small muted">Först i raden står ett starttoken. Det sätts in före varje saga under träningen och betyder ”här börjar en ny text”.</p>
+  </section>
+
+  <section id="s-emb" data-name="Tal">
+    <span class="num">2</span>
+    <h2>Varje bit blir en rad med tal</h2>
+    <p>Varje token byts mot sin rad i en tabell. Raden är modellens beskrivning av vad token betyder. Här är raderna för din mening, en ruta per tal: blått är negativt, orange positivt.</p>
+    <div class="card"><div class="strips" id="strips"></div>
+      <div class="scale"><span>negativt</span><i></i><span>positivt</span><span id="emb-dim"></span></div></div>
+    <p>Talen säger ingenting var för sig. Men token som används på liknande sätt får rader som pekar åt liknande håll. Klicka på ett token ovan så letar jag upp dem som ligger närmast i tabellen.</p>
+    <div class="card"><h3 style="margin-top:0" id="nb-title">Närmast i tabellen</h3><div class="nb" id="nb"></div>
+      <p class="small muted" style="margin:10px 0 0">Siffran är likheten mellan raderna, där 1 är samma riktning och 0 är ingen likhet alls. Ingen har talat om för modellen vilka ord som hör ihop. Det har den fått fram ur sagorna.</p></div>
+  </section>
+
+  <section id="s-att" data-name="Attention">
+    <span class="num">3</span>
+    <h2>Bitarna tittar på varandra</h2>
+    <p>Det här är <b>attention</b>, det enda stället där token utbyter information. Välj ett token. Färgen på de andra visar hur mycket det valda tittar på dem. Det kan bara titta bakåt, aldrig framåt.</p>
+    <div class="card att">
+      <div class="pick" id="pick-layer"><b>Lager</b></div>
+      <div class="pick" id="pick-head"><b>Huvud</b></div>
+      <div class="toks" id="att-toks" style="margin-top:14px"></div>
+      <div class="looks" id="looks"></div>
+    </div>
+    <p>Varje lager har flera <b>huvuden</b> som tittar efter olika saker samtidigt. Byt lager och huvud och se hur mönstret ändras. Några tittar mest på ordet precis före, några på starttoken, några långt bak i meningen.</p>
+    <div class="card"><h3 style="margin-top:0">Alla huvuden på en gång, för det valda token</h3>
+      <canvas id="grid" height="10"></canvas>
+      <p class="small muted" style="margin:10px 0 0">En rad per lager, en grupp per huvud, en ruta per token i meningen. Mörkare ruta betyder mer uppmärksamhet. Klicka på en grupp för att välja den.</p></div>
+    <p class="small muted">Vad ett visst huvud ”letar efter” har jag inte undersökt. Bilden visar vart det tittar, inte varför.</p>
+  </section>
+
+  <section id="s-layer" data-name="Lager">
+    <span class="num">4</span>
+    <h2>Svaret växer fram, lager för lager</h2>
+    <p>Efter attention bearbetas varje token för sig i ett litet nätverk, <b>feed-forward</b>. Sedan kommer nästa lager och gör samma två saker igen. Tabellen visar två saker för meningens sista token: hur mycket varje lager ändrade, och vad modellen skulle ha gissat om den hade fått sluta där.</p>
+    <div class="card"><div class="lens" id="lens"></div>
+      <div class="key"><span><i style="background:var(--pos)"></i>ändring från attention</span><span><i style="background:var(--good)"></i>ändring från feed-forward</span><span><i style="background:var(--good)"></i>grön gissning = den som till sist vinner</span></div></div>
+    <p class="small muted">Gissningen mitt i modellen får man genom att skicka mellanresultatet direkt till sista steget. Modellen är inte tränad att svara så, så de tidiga raderna ska läsas som en fingervisning. Sista raden är modellens riktiga svar. Första raden är nästan alltid samma token en gång till: utan några lager finns det inget annat att gå på än tokenet självt.</p>
+  </section>
+
+  <section id="s-pick" data-name="Slumpen">
+    <span class="num">5</span>
+    <h2>Slumpen väljer nästa bit</h2>
+    <p>Ut kommer inte ett ord utan en sannolikhet för vart och ett av modellens token. Sedan dras ett av dem. Två reglage styr dragningen. Dra i dem och se vad som händer med chanserna.</p>
+    <div class="card">
+      <div class="sliders">
+        <label for="temp">Temperatur</label><input id="temp" type="range" min="0.1" max="2" step="0.05" value="0.8"><span id="temp-v" class="mono"></span>
+        <label for="topp">Top-p</label><input id="topp" type="range" min="0.3" max="1" step="0.01" value="0.95"><span id="topp-v" class="mono"></span>
+      </div>
+      <div class="bars" id="bars"></div>
+      <p class="small muted" style="margin:12px 0 0" id="bars-note"></p>
+      <div class="acts"><button class="btn primary" id="draw">Dra ett token</button><button class="btn" id="auto">Skriv 15 till</button><button class="btn" id="reset">Börja om</button></div>
+    </div>
+    <div class="card"><div class="story" id="story"></div></div>
+    <p><b>Låg temperatur</b> gör de troliga ännu troligare, och sagan blir förutsägbar. <b>Hög temperatur</b> jämnar ut chanserna, och sagan blir vildare. <b>Top-p</b> stryker de minst troliga helt, så att ett riktigt olyckligt drag inte förstör meningen. Varje gång du drar ett token läggs det till meningen, och allt på den här sidan räknas om.</p>
+  </section>
+
+  <section id="s-train" data-name="Träningen">
+    <span class="num">6</span>
+    <h2>Så lärde den sig</h2>
+    <p>Från början är alla tal i modellen slump. Träningen är samma väg som ovan, miljontals gånger: modellen gissar nästa token i en riktig saga, får se rätt svar, och alla tal knuffas en liten bit åt det håll som hade gett en bättre gissning.</p>
+    <p>Jag tränade om den minsta modellen som skriver sammanhängande, med en miljon tal, och sparade vad den skrev under tiden. Dra i reglaget.</p>
+    <div class="card">
+      <div class="time"><b id="tr-time"></b><span class="muted" id="tr-seen"></span></div>
+      <input id="tr-slider" type="range" min="0" max="0" step="1" value="0" aria-label="Tid in i träningen">
+      <div class="story" id="tr-text" style="margin-top:14px"></div>
+      <svg id="curve" viewBox="0 0 800 260" role="img" aria-label="Förlusten sjunker snabbt de första sekunderna och sedan långsamt"></svg>
+      <p class="small muted" style="margin:8px 0 0" id="tr-note"></p>
+    </div>
+    <p><b>Förlusten</b> mäter hur förvånad modellen blir av rätt svar. Vid ren gissning bland 4&nbsp;096 token är den 8,3. I proverna här dyker punkterna upp efter fem sekunder och hela meningar efter tio. Efter drygt en minut handlar texten om Alma. Resten av tiden går åt till det svåra: att hålla ihop en hel saga.</p>
+  </section>
+
+  <footer>
+    <p>Allt på den här sidan räknas av samma program som i demon, med samma modellfiler. Inget skickas någonstans. Vill du se delarna som en ritning finns <a href="arkitektur.html">arkitekturbilden</a>.</p>
+  </footer>
+</main>
+
+<script type="module">
+const SIZES = [["0.3m", "0,3 M"], ["1m", "1 M"], ["2m", "2 M"], ["3m", "3 M"], ["7m", "7 M"], ["15m", "15 M"]];
+const $ = (id) => document.getElementById(id);
+const h = (tag, attrs = {}, ...kids) => { const e = document.createElement(tag); for (const k in attrs) { if (k === "class") e.className = attrs[k]; else if (k.startsWith("on")) e[k] = attrs[k]; else e.setAttribute(k, attrs[k]); } e.append(...kids); return e; };
+const pct = (p, d = 1) => (100 * p).toFixed(d).replace(".", ",") + " %";
+const show = (t) => t.replace(/^ /, "␣").replace(/\n/g, "↵");
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const rgb = (hex) => { const n = parseInt(hex.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; };
+const mix = (a, b, t) => `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * t)).join(",")})`;
+
+// ---------------------------------------------------------------- the worker
+const worker = new Worker("worker.js?v=4", { type: "module" });
+const pending = new Map(); let nextId = 1;
+worker.onmessage = (e) => {
+  const m = e.data;
+  if (m.type === "progress") { $("progress").hidden = false; $("progress").firstElementChild.style.width = (m.total ? 100 * m.got / m.total : 30) + "%"; return; }
+  if (m.type === "loaded") { $("progress").hidden = true; return; }
+  const r = pending.get(m.id); if (!r) return;
+  pending.delete(m.id); r(m);
+};
+const ask = (msg) => new Promise((res) => { const id = nextId++; pending.set(id, res); worker.postMessage({ ...msg, id }); });
+
+// ---------------------------------------------------------------- state
+const S = { size: "7m", t: null, vocab: {}, sel: 0, layer: 0, head: 0, base: 0, busy: false, seq: 0 };
+const file = () => `pytte-${S.size}.bin`;
+SIZES.forEach(([k, label]) => $("size").append(h("option", { value: k }, `${label} parametrar`)));
+$("size").value = S.size;
+
+async function run(input) {            // input: {text} or {ids}
+  const seq = ++S.seq;
+  $("status").textContent = "räknar…";
+  const t0 = performance.now();
+  const m = await ask({ type: "trace", file: file(), vocab: !S.vocab[S.size], ...input });
+  if (seq !== S.seq) return;
+  if (m.type === "error") { $("status").textContent = m.message; return; }
+  if (m.vocab) S.vocab[S.size] = m.vocab;
+  S.t = m;
+  if (input.text != null) S.base = m.T;                 // tokens typed by the user (the rest were drawn here)
+  if (S.sel >= m.T || input.keepSel !== true) S.sel = m.T - 1;
+  S.layer = Math.min(S.layer, m.L - 1); S.head = Math.min(S.head, m.H - 1);
+  $("status").textContent = `pytte-${S.size} · ${m.T - 1} token · ${m.L} lager · ${m.H} huvuden per lager · ${m.D} tal per token · räknat på ${Math.round(performance.now() - t0)} ms`
+    + (m.T >= 40 ? " · sidan visar högst 39 token" : "");
+  renderTokens(); renderEmb(); renderPickers(); renderAtt(); renderLens(); renderBars(); renderStory();
+}
+
+// ---------------------------------------------------------------- 1. tokens
+function renderTokens() {
+  const t = S.t, box = $("toks"); box.replaceChildren();
+  t.tokens.forEach((tk, i) => {
+    const e = h("span", { class: "tok" + (i === 0 ? " start" : ""), style: `animation-delay:${i * 35}ms`, title: i ? `token nummer ${tk.id}` : "starttoken" }, i ? show(tk.text) : "start", h("small", {}, "#" + tk.id));
+    box.append(e);
+  });
+  const words = t.text.trim().split(/\s+/).filter(Boolean).length;
+  $("toks-note").textContent = `${words} ord blev ${t.T - 1} token. Modellen har ${t.vocabSize.toLocaleString("sv-SE")} olika token att välja bland.`;
+}
+
+// ---------------------------------------------------------------- 2. embedding
+function renderEmb() {
+  const t = S.t, box = $("strips"); box.replaceChildren();
+  let amax = 0; for (let i = t.D; i < t.emb.length; i++) amax = Math.max(amax, Math.abs(t.emb[i]));
+  const neg = rgb(css("--neg")), pos = rgb(css("--pos")), zero = rgb(css("--zero"));
+  for (let i = 1; i < t.T; i++) {
+    const c = h("canvas", { width: t.D, height: 1 }), ctx = c.getContext("2d");
+    for (let d = 0; d < t.D; d++) { const v = t.emb[i * t.D + d] / amax; ctx.fillStyle = mix(zero, v < 0 ? neg : pos, Math.min(1, Math.abs(v) ** 0.7)); ctx.fillRect(d, 0, 1, 1); }
+    box.append(h("span", { class: "lbl" + (i === S.sel ? " sel" : ""), onclick: () => select(i) }, show(t.tokens[i].text)), c);
+  }
+  $("emb-dim").textContent = `· ${t.D} tal per token`;
+  neighbors();
+}
+async function neighbors() {
+  const t = S.t, i = Math.max(1, S.sel), tk = t.tokens[i], seq = S.seq, sel = S.sel;
+  $("nb-title").textContent = `Närmast ”${show(tk.text)}” i tabellen`;
+  const m = await ask({ type: "neighbors", file: file(), token: tk.id, k: 10 });
+  if (seq !== S.seq || sel !== S.sel || m.type !== "neighbors") return;
+  $("nb").replaceChildren(...m.list.map((n) => h("span", {}, show(n.text), h("b", {}, n.cos.toFixed(2).replace(".", ",")))));
+}
+
+// ---------------------------------------------------------------- 3. attention
+const attRow = (l, hd, pos) => { const t = S.t, o = ((l * t.H + hd) * t.T + pos) * t.T; return t.att.subarray(o, o + pos + 1); };
+function renderPickers() {
+  const t = S.t;
+  const fill = (el, n, cur, set) => { el.replaceChildren(el.firstElementChild, ...Array.from({ length: n }, (_, i) => h("button", { "aria-pressed": i === cur, onclick: () => { set(i); renderPickers(); renderAtt(); } }, String(i + 1)))); };
+  fill($("pick-layer"), t.L, S.layer, (i) => S.layer = i); fill($("pick-head"), t.H, S.head, (i) => S.head = i);
+}
+function select(i) { S.sel = i; document.querySelectorAll("#strips .lbl").forEach((e, k) => e.classList.toggle("sel", k + 1 === i)); renderAtt(); neighbors(); }
+function renderAtt() {
+  const t = S.t, box = $("att-toks"), row = attRow(S.layer, S.head, S.sel), hot = rgb(css("--hot")), base = rgb(css("--soft")), ink = css("--ink");
+  box.replaceChildren(...t.tokens.map((tk, i) => {
+    const w = i <= S.sel ? row[i] : 0, e = h("span", { class: "tok" + (i === S.sel ? " sel" : "") + (i > S.sel ? " later" : "") + (i === 0 ? " start" : ""), title: i <= S.sel ? `${pct(w)} av uppmärksamheten` : "kommer senare, syns inte", onclick: () => select(i) }, i ? show(tk.text) : "start");
+    if (i <= S.sel) { e.style.backgroundColor = mix(base, hot, Math.sqrt(w)); if (w > 0.35) e.style.color = "#fff"; }
+    return e;
+  }));
+  const top = [...row].map((w, i) => [w, i]).sort((a, b) => b[0] - a[0]).slice(0, 3).filter(([w]) => w > 0.02);
+  $("looks").replaceChildren(h("span", {}, S.sel ? show(t.tokens[S.sel].text) : "start"), " tittar mest på ", ...top.flatMap(([w, i], k) => [k ? ", " : "", h("span", {}, i ? show(t.tokens[i].text) : "start"), ` ${pct(w, 0)}`]), ".");
+  drawGrid();
+}
+function drawGrid() {
+  const t = S.t, c = $("grid"), n = S.sel + 1, cell = Math.max(2, Math.min(9, Math.floor(820 / (t.H * (n + 1.5))))), gap = Math.ceil(cell * 1.5), rowH = 16, rowGap = 5;
+  const W = t.H * (n * cell + gap) - gap, H = t.L * (rowH + rowGap) - rowGap, dpr = 2;
+  c.width = W * dpr; c.height = H * dpr; c.style.aspectRatio = `${W} / ${H}`; c.style.maxWidth = W * 1.6 + "px";
+  const ctx = c.getContext("2d"); ctx.scale(dpr, dpr);
+  const hot = rgb(css("--hot")), base = rgb(css("--soft"));
+  for (let l = 0; l < t.L; l++) for (let hd = 0; hd < t.H; hd++) {
+    const row = attRow(l, hd, S.sel), x0 = hd * (n * cell + gap), y0 = l * (rowH + rowGap);
+    for (let i = 0; i < n; i++) { ctx.fillStyle = mix(base, hot, Math.sqrt(row[i])); ctx.fillRect(x0 + i * cell, y0, cell - (cell > 3 ? 1 : 0), rowH); }
+    if (l === S.layer && hd === S.head) { ctx.strokeStyle = css("--accent"); ctx.lineWidth = 2; ctx.strokeRect(x0 - 2, y0 - 2, n * cell + 3, rowH + 4); }
+  }
+  c.onclick = (e) => { const r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width * W, y = (e.clientY - r.top) / r.height * H;
+    S.head = Math.min(t.H - 1, Math.floor(x / (n * cell + gap))); S.layer = Math.min(t.L - 1, Math.floor(y / (rowH + rowGap))); renderPickers(); renderAtt(); };
+}
+
+// ---------------------------------------------------------------- 4. layer by layer
+function renderLens() {
+  const t = S.t, box = $("lens"), last = t.T - 1, winner = t.lens[t.L][0].id;
+  let umax = 0; for (let l = 0; l < t.L * 2; l++) umax = Math.max(umax, t.upd[last * t.L * 2 + l]);
+  box.replaceChildren();
+  t.lens.forEach((top, s) => {
+    const a = s ? t.upd[(last * t.L + s - 1) * 2] / umax : 0, f = s ? t.upd[(last * t.L + s - 1) * 2 + 1] / umax : 0;
+    box.append(h("div", { class: "stage" }, s ? `Efter lager ${s}` : "Bara inbäddningen"),
+      h("div", { class: "upd", title: s ? "hur mycket lagret ändrade tokenets tal" : "" }, ...(s ? [h("i", { style: `width:${100 * a}%;background:var(--pos)` }), h("i", { style: `width:${100 * f}%;background:var(--good)` })] : [])),
+      h("div", { class: "guess" }, ...top.slice(0, 4).map((g) => h("span", { class: g.id === winner ? "win" : "" }, g.id === t.eot ? "slut" : show(g.text), h("b", {}, pct(g.p, 0))))));
+  });
+}
+
+// ---------------------------------------------------------------- 5. sampling (the same procedure as the model's own)
+function dist() {
+  const t = S.t, temp = +$("temp").value, topP = +$("topp").value, n = t.logits.length;
+  const order = Array.from({ length: n }, (_, i) => i).sort((a, b) => t.logits[b] - t.logits[a]);
+  const mx = t.logits[order[0]]; let sum = 0; const p = new Float64Array(n);
+  for (let i = 0; i < n; i++) { p[i] = Math.exp((t.logits[order[i]] - mx) / temp); sum += p[i]; }
+  let cum = 0, keep = 0;
+  for (; keep < n; keep++) { if (cum >= topP) break; cum += p[keep] / sum; }
+  keep = Math.max(keep, 1); let ksum = 0; for (let i = 0; i < keep; i++) ksum += p[i];
+  return { order, p, sum, keep, ksum };
+}
+function renderBars(hit = -1) {
+  const t = S.t, d = dist(), vocab = S.vocab[S.size], box = $("bars"), N = 12; box.replaceChildren();
+  $("temp-v").textContent = (+$("temp").value).toFixed(2).replace(".", ","); $("topp-v").textContent = (+$("topp").value).toFixed(2).replace(".", ",");
+  const pmax = d.p[0] / d.ksum;
+  for (let i = 0; i < N; i++) {
+    const kept = i < d.keep, prob = kept ? d.p[i] / d.ksum : d.p[i] / d.sum, id = d.order[i];
+    box.append(h("span", { class: "w" + (kept ? "" : " cut") + (i === hit ? " hit" : "") }, id === t.eot ? "slut på sagan" : show(vocab[id])),
+      h("div", { class: "b" + (kept ? "" : " cut"), style: `width:${Math.max(0.5, 100 * prob / pmax)}%` }), h("span", { class: "p" + (kept ? "" : " cut") }, kept ? pct(prob) : "struken"));
+  }
+  $("bars-note").textContent = `${d.keep.toLocaleString("sv-SE")} av ${t.logits.length.toLocaleString("sv-SE")} token är kvar i dragningen. De tolv troligaste visas.`;
+}
+function renderStory() {
+  const t = S.t, toks = t.tokens.slice(1).map((x) => x.text);
+  $("story").replaceChildren(h("span", { class: "p0" }, toks.slice(0, S.base - 1).join("")), ...toks.slice(S.base - 1).map((x, i, a) => h("span", { class: i === a.length - 1 ? "new" : "" }, x)));
+}
+async function draw() {
+  if (S.busy || !S.t) return false; S.busy = true;
+  const t = S.t, d = dist(); let r = Math.random() * d.ksum, k = 0, acc = 0;
+  for (; k < d.keep; k++) { acc += d.p[k]; if (r < acc) break; }
+  k = Math.min(k, d.keep - 1);
+  if (k < 12) { renderBars(k); await new Promise((r) => setTimeout(r, 380)); }
+  const id = d.order[k]; let ok = true;
+  if (id === t.eot) { $("bars-note").textContent = "Modellen drog ”slut på sagan”. Den tycker att sagan är klar."; ok = false; }
+  else if (t.T >= 40) { $("bars-note").textContent = "Sidan visar högst 39 token. Tryck på Börja om för en ny mening."; ok = false; }
+  else { const ids = [...t.ids, id]; await run({ ids }); $("text").value = S.t.text; }
+  S.busy = false; return ok;
+}
+$("draw").onclick = draw;
+$("auto").onclick = async () => { $("auto").disabled = true; for (let i = 0; i < 15; i++) if (!(await draw())) break; $("auto").disabled = false; };
+$("reset").onclick = () => { $("text").value = "Alma bor i en liten"; run({ text: $("text").value }); };
+$("temp").oninput = $("topp").oninput = () => renderBars();
+
+// ---------------------------------------------------------------- 6. training (a real run, see inuti-training.json)
+const TR = await fetch("inuti-training.json").then((r) => r.json()).catch(() => null);
+if (TR) {
+  const sl = $("tr-slider"), n = TR.snapshots.length; sl.max = n - 1;
+  const W = 800, H = 260, L = 46, R = 12, T = 14, B = 34, tmax = TR.curve.at(-1)[0];
+  const x = (s) => L + (W - L - R) * Math.log10(1 + s) / Math.log10(1 + tmax), y = (v) => T + (H - T - B) * (1 - (v - 1) / (8.6 - 1));
+  const NS = "http://www.w3.org/2000/svg", el = (name, a, txt) => { const e = document.createElementNS(NS, name); for (const k in a) e.setAttribute(k, a[k]); if (txt != null) e.textContent = txt; return e; };
+  const svg = $("curve");
+  for (const v of [2, 4, 6, 8]) svg.append(el("line", { x1: L, x2: W - R, y1: y(v), y2: y(v), stroke: "var(--line)", "stroke-width": 1 }), el("text", { x: L - 8, y: y(v) + 4, "text-anchor": "end" }, String(v)));
+  for (const [s, lab] of [[1, "1 s"], [10, "10 s"], [60, "1 min"], [240, "4 min"], [480, "8 min"]]) if (s <= tmax + 5) svg.append(el("text", { x: x(s), y: H - 10, "text-anchor": "middle" }, lab), el("line", { x1: x(s), x2: x(s), y1: H - B, y2: H - B + 5, stroke: "var(--muted)" }));
+  const guess = Math.log(TR.vocab);
+  svg.append(el("line", { x1: L, x2: W - R, y1: y(guess), y2: y(guess), stroke: "var(--muted)", "stroke-dasharray": "5 5" }), el("text", { x: W - R, y: y(guess) - 6, "text-anchor": "end" }, `ren gissning: ${guess.toFixed(1).replace(".", ",")}`));
+  svg.append(el("polyline", { points: TR.curve.map(([s, v]) => `${x(s).toFixed(1)},${y(v).toFixed(1)}`).join(" "), fill: "none", stroke: "var(--neg)", "stroke-width": 2, "stroke-linejoin": "round" }));
+  svg.append(el("text", { x: L, y: 12 }, "förlust"));
+  const dot = el("circle", { r: 6, fill: "var(--accent)", stroke: "var(--card)", "stroke-width": 2 }); svg.append(dot);
+  const fmt = (s) => s < 1 ? "0 sekunder" : s < 90 ? `${Math.round(s)} sekunder` : `${(s / 60).toFixed(1).replace(".", ",")} minuter`;
+  const draw = () => {
+    const sn = TR.snapshots[+sl.value], loss = sn.loss ?? guess;
+    $("tr-time").textContent = fmt(sn.s);
+    $("tr-seen").textContent = sn.step ? `${(sn.step * TR.tokens_per_step).toLocaleString("sv-SE")} token lästa · förlust ${loss.toFixed(2).replace(".", ",")}` : "inget läst än, alla tal är slump";
+    $("tr-text").replaceChildren(h("span", { class: "p0" }, TR.prompt), sn.text);
+    dot.setAttribute("cx", x(sn.s)); dot.setAttribute("cy", y(Math.min(8.6, loss)));
+  };
+  sl.oninput = draw; draw();
+  $("tr-note").textContent = `En riktig körning på en MacBook: pytte-1m, ${TR.params.toLocaleString("sv-SE")} parametrar, ${TR.steps.toLocaleString("sv-SE")} steg på ${String(TR.minutes).replace(".", ",")} minuter, ${Math.round(TR.tokens / 1e6)} miljoner token lästa. Tidsaxeln är hoptryckt så att de första sekunderna syns. Texterna är dragna med slump och hade blivit annorlunda med ett annat frö.`;
+}
+
+// ---------------------------------------------------------------- wiring
+const secs = [...document.querySelectorAll("section[data-name]")];
+$("map").append(...secs.map((s, i) => h("a", { href: "#" + s.id }, `${i + 1} ${s.dataset.name}`)));
+const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) [...$("map").children].forEach((a) => a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id)); }), { rootMargin: "-40% 0px -55% 0px" });
+secs.forEach((s) => io.observe(s));
+let timer; $("text").oninput = () => { clearTimeout(timer); timer = setTimeout(() => { if ($("text").value.trim()) run({ text: $("text").value }); }, 350); };
+$("size").onchange = () => { S.size = $("size").value; run({ text: $("text").value }); };
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => S.t && (renderEmb(), renderAtt()));
+run({ text: $("text").value });
+</script>
+</body>
+</html>

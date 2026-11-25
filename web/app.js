@@ -11,7 +11,7 @@ const baseFile = (s) => `pytte-${s.key}.bin`;
 const chatFile = (s) => `pytte-${s.key}-chat.bin`;
 
 const $ = (id) => document.getElementById(id);
-const worker = new Worker("worker.js", { type: "module" });
+const worker = new Worker("worker.js?v=4", { type: "module" });
 let nextId = 1;
 const handlers = new Map();          // request id -> {onToken, onDone, onError}
 const progressBars = new Map();      // file -> progress element waiting for it
