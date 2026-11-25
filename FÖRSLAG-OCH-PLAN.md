@@ -841,6 +841,8 @@ Båda spakarna verkar, och tiden är den stora: tät data gav +11 punkter på su
 
 **Sidan byggd (2026-11-25, rapport från sajtsessionen, kontrollerad härifrån).** Grenen `pytte` i `mathiaskarlsson2026final` har två commits som inte finns på `origin/master`: `/pytte` och `/en/pytte` i sajtens design med briefens sektionsordning, kort på `/sidoprojekt` och på startsidan, delningsbild, sitemap. `pytte.js` och `worker.js` ligger oförändrade i `public/pytte/` (identiska filer), de tolv modellerna i `public/pytte/models/` och rapporten som `public/pytte/pytte.pdf` (samma fil som `paper/pytte.pdf`). Lokal förhandsvisning på `localhost:3001/pytte` svarar på båda språken och serverar modellfilerna. Briefens tre kontroller går igenom enligt sajtsessionen (frö 624419 på 2M ger den kända sagan). GitHub-länk, run.c och data visar "Kommer snart" bakom en flagga tills repot är publikt. Inget är pushat eller publicerat; hosting och repots synlighet ligger hos Mathias.
 
+**Repot publikt (2026-11-25).** `github.com/dragon6sic6/pytte` är publikt sedan i dag, med ärenden avstängda; avsnitt 21 skrevs medan det var privat. På sajtens `pytte`-gren pekar kod- och run.c-länkarna nu på GitHub, medan träningsdatan fortfarande står som kommande. Sajten är inte publicerad ännu.
+
 ## Källor som verifierades i den här genomgången
 
 - Hugging Face: `tdde19-llm-from-scratch/TinyStoriesSwe` och tillhörande modeller, `qwrt/Swedish0.1M`, `Dxniz/TinyStories-Multilingual` (API-anrop 2026-11-06)

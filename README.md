@@ -17,7 +17,8 @@ The same code trains a Swedish and an English twin on matched data, so we can as
 > on three corpus mixes plus two English controls, the release family is instruction-tuned,
 > exported to one int8 file per model, and runs in `run.c` and in the browser (`web/`). A 0.33M
 > model writes grammatical Swedish sentences; coherent stories need about 1M parameters. The lab
-> log with every run is `FÖRSLAG-OCH-PLAN.md` (Swedish). The repository is private until launch.
+> log with every run is `FÖRSLAG-OCH-PLAN.md` (Swedish). This is a hobby project by one person and
+> has not been reviewed by anyone else.
 
 ## What this is not
 
