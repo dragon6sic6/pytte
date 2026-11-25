@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inside Pytte</title>
+<meta name="description" content="Type a sentence and see what happens inside a tiny language model: tokens, embedding, attention, layer by layer, and the chance that picks the next word. Everything is computed in your browser.">
+<link rel="icon" href="pytte-mark.svg">
+<style>
+:root {
+  --bg: #FBF8F1; --card: #FFFDF8; --ink: #1E2A4A; --muted: #5B6480; --line: #D9D2C0; --soft: #EFE9DA;
+  --accent: #F2B632; --neg: #2a78d6; --pos: #eb6834; --hot: #eb6834; --good: #1baf7a; --zero: #EFE9DA;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #131714; --card: #1C211D; --ink: #ECEBE4; --muted: #A3A79C; --line: #3C433C; --soft: #252B26;
+          --neg: #5a9ae6; --pos: #f08a5d; --hot: #f08a5d; --good: #3fc795; --zero: #252B26; }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 150px; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.6 -apple-system, "Segoe UI", system-ui, sans-serif; }
+main { max-width: 860px; margin: 0 auto; padding: 0 16px 96px; }
+h1 { font-size: clamp(32px, 6vw, 52px); line-height: 1.1; margin: 48px 0 12px; letter-spacing: -0.02em; }
+h2 { font-size: 28px; line-height: 1.2; margin: 0 0 10px; letter-spacing: -0.01em; }
+h3 { font-size: 13px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin: 22px 0 8px; font-weight: 600; }
+p { margin: 0 0 14px; max-width: 68ch; }
+.lead { font-size: 20px; color: var(--muted); }
+.muted { color: var(--muted); } .small { font-size: 14.5px; }
+.mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+section { padding: 56px 0 8px; border-top: 1px solid var(--line); margin-top: 48px; }
+.num { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--ink); color: var(--bg); font-weight: 700; font-size: 16px; margin-bottom: 12px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; margin: 16px 0; }
+
+/* the sticky input and map */
+.bar { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); margin: 0 -16px; padding: 10px 16px 8px; }
+.bar .row { display: flex; gap: 8px; align-items: center; max-width: 860px; margin: 0 auto; }
+.bar input[type=text] { flex: 1; min-width: 0; font: inherit; font-size: 18px; padding: 10px 14px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--card); color: var(--ink); }
+.bar input[type=text]:focus { outline: none; border-color: var(--accent); }
+select, button { font: inherit; color: inherit; }
+select { padding: 10px 8px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--card); font-size: 15px; }
+.btn { padding: 9px 16px; border-radius: 99px; border: 1.5px solid var(--line); background: var(--card); cursor: pointer; font-size: 15px; }
+.btn:hover { border-color: var(--ink); } .btn.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); font-weight: 600; }
+.btn:disabled { opacity: .5; cursor: default; }
+.map { display: flex; gap: 4px; overflow-x: auto; max-width: 860px; margin: 8px auto 0; scrollbar-width: none; }
+.map a { flex: none; font-size: 13.5px; text-decoration: none; color: var(--muted); padding: 3px 10px; border-radius: 99px; border: 1px solid transparent; white-space: nowrap; }
+.map a.on { color: var(--ink); border-color: var(--line); background: var(--card); }
+.status { font-size: 13.5px; color: var(--muted); max-width: 860px; margin: 4px auto 0; min-height: 20px; }
+.progress { height: 3px; background: var(--soft); border-radius: 2px; overflow: hidden; max-width: 860px; margin: 4px auto 0; }
+.progress div { height: 100%; width: 0; background: var(--accent); transition: width .15s; }
+
+/* tokens */
+.toks { display: flex; flex-wrap: wrap; gap: 6px; }
+.tok { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 15px; padding: 5px 9px; border-radius: 8px; background: var(--soft); border: 1.5px solid transparent; cursor: pointer; white-space: pre; position: relative; animation: pop .35s both; color: var(--ink); }
+.tok small { display: block; font-size: 10.5px; color: var(--muted); text-align: center; }
+.tok.sel { border-color: var(--accent); }
+.tok.start { color: var(--muted); font-style: italic; }
+@keyframes pop { from { transform: translateY(8px) scale(.9); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* embedding strips */
+.strips { display: grid; grid-template-columns: max-content 1fr; gap: 3px 10px; align-items: center; }
+.strips canvas { width: 100%; height: 16px; image-rendering: pixelated; border-radius: 3px; display: block; }
+.strips .lbl { font-family: ui-monospace, Menlo, monospace; font-size: 13.5px; white-space: pre; cursor: pointer; padding: 0 4px; border-radius: 4px; }
+.strips .lbl.sel { background: var(--accent); color: #1E2A4A; }
+.scale { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); margin-top: 10px; }
+.scale i { display: block; width: 120px; height: 10px; border-radius: 3px; background: linear-gradient(90deg, var(--neg), var(--zero), var(--pos)); }
+.nb { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.nb span { font-family: ui-monospace, Menlo, monospace; font-size: 14px; background: var(--soft); border-radius: 8px; padding: 3px 8px; white-space: pre; }
+.nb span b { font-weight: 400; color: var(--muted); font-size: 12px; margin-left: 6px; }
+
+/* attention */
+.pick { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin: 6px 0; font-size: 14px; }
+.pick b { font-weight: 600; margin-right: 6px; min-width: 62px; }
+.pick button { min-width: 34px; padding: 4px 8px; border-radius: 8px; border: 1.5px solid var(--line); background: var(--card); cursor: pointer; font-size: 14px; }
+.pick button[aria-pressed=true] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.att .tok { animation: none; transition: background-color .25s, color .25s; }
+.att .tok.later { opacity: .3; }
+.looks { font-size: 15px; margin-top: 12px; min-height: 26px; }
+.looks span { font-family: ui-monospace, Menlo, monospace; background: var(--soft); border-radius: 6px; padding: 1px 6px; white-space: pre; }
+#grid { width: 100%; display: block; cursor: pointer; image-rendering: pixelated; margin-top: 6px; border-radius: 6px; }
+
+/* layers and lens */
+.lens { display: grid; grid-template-columns: max-content minmax(70px, 130px) minmax(0, 1fr); gap: 6px 14px; align-items: center; font-size: 14.5px; }
+.lens .stage { font-weight: 600; white-space: nowrap; }
+.lens .upd { display: grid; gap: 2px; }
+.lens .upd i { display: block; height: 6px; border-radius: 2px; min-width: 2px; }
+.lens .guess { display: flex; flex-wrap: wrap; gap: 4px; }
+.lens .guess span { font-family: ui-monospace, Menlo, monospace; font-size: 13.5px; padding: 2px 7px; border-radius: 7px; background: var(--soft); white-space: pre; }
+.lens .guess span.win { background: var(--good); color: #fff; }
+.lens .guess span b { font-weight: 400; opacity: .75; margin-left: 5px; font-size: 12px; }
+.key { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 13.5px; color: var(--muted); margin-top: 10px; }
+.key i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; }
+
+/* sampling */
+.bars { display: grid; grid-template-columns: max-content 1fr max-content; gap: 5px 10px; align-items: center; font-size: 14.5px; }
+.bars .w { font-family: ui-monospace, Menlo, monospace; white-space: pre; }
+.bars .b { height: 14px; border-radius: 4px; background: var(--neg); min-width: 2px; transition: width .2s, background-color .2s; }
+.bars .p { font-variant-numeric: tabular-nums; color: var(--muted); text-align: right; }
+.bars .cut { opacity: .32; } .bars .cut .b, .bars .b.cut { background: var(--muted); }
+.bars .hit { outline: 2.5px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.sliders { display: grid; grid-template-columns: max-content 1fr max-content; gap: 8px 12px; align-items: center; margin: 4px 0 14px; font-size: 15px; }
+input[type=range] { width: 100%; accent-color: var(--accent); }
+.acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; align-items: center; }
+.story { font-family: Georgia, "Times New Roman", serif; font-size: 20px; line-height: 1.55; min-height: 2em; }
+.story .p0 { color: var(--muted); } .story .new { background: color-mix(in srgb, var(--accent) 45%, transparent); border-radius: 3px; }
+
+/* training */
+.time { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.time b { font-size: 34px; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+#curve { width: 100%; height: auto; display: block; margin-top: 8px; }
+#curve text { fill: var(--muted); font-size: 12px; }
+footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 15px; color: var(--muted); }
+a { color: inherit; }
+@media (max-width: 600px) { body { font-size: 16px; } .lead { font-size: 18px; } .story { font-size: 18px; } .lens { grid-template-columns: max-content minmax(0, 1fr); gap: 4px 10px; } .lens .guess { grid-column: 1 / -1; margin-bottom: 10px; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Inside Pytte</h1>
+  <p class="lead">Type a sentence. Everything further down is what the model actually computes for that sentence, in your browser, while you watch. Pytte only knows Swedish: the sentence below means “Alma lives in a small”.</p>
+
+  <div class="bar">
+    <div class="row">
+      <input id="text" type="text" value="Alma bor i en liten" spellcheck="false" autocomplete="off" aria-label="Your sentence">
+      <select id="size" aria-label="Model size"></select>
+    </div>
+    <nav class="map" id="map" aria-label="The steps"></nav>
+    <div class="progress" id="progress" hidden><div></div></div>
+    <div class="status" id="status" aria-live="polite"></div>
+  </div>
+
+  <section id="s-token" data-name="Tokens">
+    <span class="num">1</span>
+    <h2>The text becomes pieces</h2>
+    <p>The model does not see letters. It sees <b>tokens</b>: pieces of words that each have a number. Common words are one piece, rare ones are split into several. The space belongs to the word after it.</p>
+    <div class="card"><div class="toks" id="toks"></div>
+      <p class="small muted" style="margin:12px 0 0" id="toks-note"></p></div>
+    <p class="small muted">First in the row is a start token. It is put before every story during training and means “a new text begins here”.</p>
+  </section>
+
+  <section id="s-emb" data-name="Numbers">
+    <span class="num">2</span>
+    <h2>Each piece becomes a row of numbers</h2>
+    <p>Each token is swapped for its row in a table. The row is the model's description of what the token means. Here are the rows for your sentence, one cell per number: blue is negative, orange positive.</p>
+    <div class="card"><div class="strips" id="strips"></div>
+      <div class="scale"><span>negative</span><i></i><span>positive</span><span id="emb-dim"></span></div></div>
+    <p>The numbers say nothing one by one. But tokens that are used in similar ways get rows that point in similar directions. Click a token above and the page finds the ones closest to it in the table.</p>
+    <div class="card"><h3 style="margin-top:0" id="nb-title">Closest in the table</h3><div class="nb" id="nb"></div>
+      <p class="small muted" style="margin:10px 0 0">The number is the similarity between the rows, where 1 is the same direction and 0 is no similarity at all. Nobody told the model which words belong together. It worked that out from the stories.</p></div>
+  </section>
+
+  <section id="s-att" data-name="Attention">
+    <span class="num">3</span>
+    <h2>The pieces look at each other</h2>
+    <p>This is <b>attention</b>, the only place where tokens exchange information. Pick a token. The colour of the others shows how much the chosen one looks at them. It can only look backwards, never ahead.</p>
+    <div class="card att">
+      <div class="pick" id="pick-layer"><b>Layer</b></div>
+      <div class="pick" id="pick-head"><b>Head</b></div>
+      <div class="toks" id="att-toks" style="margin-top:14px"></div>
+      <div class="looks" id="looks"></div>
+    </div>
+    <p>Every layer has several <b>heads</b> that look for different things at the same time. Change layer and head and watch the pattern change. Some look mostly at the word just before, some at the start token, some far back in the sentence.</p>
+    <div class="card"><h3 style="margin-top:0">All heads at once, for the chosen token</h3>
+      <canvas id="grid" height="10"></canvas>
+      <p class="small muted" style="margin:10px 0 0">One row per layer, one group per head, one cell per token in the sentence. A darker cell means more attention. Click a group to select it.</p></div>
+    <p class="small muted">I have not investigated what a particular head is “looking for”. The picture shows where it looks, not why.</p>
+  </section>
+
+  <section id="s-layer" data-name="Layers">
+    <span class="num">4</span>
+    <h2>The answer takes shape, layer by layer</h2>
+    <p>After attention each token is processed on its own in a small network, the <b>feed-forward</b> part. Then the next layer does the same two things again. The table shows two things for the last token of the sentence: how much each layer changed, and what the model would have guessed had it stopped there.</p>
+    <div class="card"><div class="lens" id="lens"></div>
+      <div class="key"><span><i style="background:var(--pos)"></i>change from attention</span><span><i style="background:var(--good)"></i>change from feed-forward</span><span><i style="background:var(--good)"></i>green guess = the one that wins in the end</span></div></div>
+    <p class="small muted">The guess in the middle of the model comes from sending the intermediate result straight to the last step. The model is not trained to answer that way, so read the early rows as a hint. The last row is the model's real answer. The first row is almost always the same token once more: without any layers there is nothing to go on but the token itself.</p>
+  </section>
+
+  <section id="s-pick" data-name="Chance">
+    <span class="num">5</span>
+    <h2>Chance picks the next piece</h2>
+    <p>What comes out is not a word but a probability for every one of the model's tokens. Then one of them is drawn. Two sliders control the draw. Move them and see what happens to the odds.</p>
+    <div class="card">
+      <div class="sliders">
+        <label for="temp">Temperature</label><input id="temp" type="range" min="0.1" max="2" step="0.05" value="0.8"><span id="temp-v" class="mono"></span>
+        <label for="topp">Top-p</label><input id="topp" type="range" min="0.3" max="1" step="0.01" value="0.95"><span id="topp-v" class="mono"></span>
+      </div>
+      <div class="bars" id="bars"></div>
+      <p class="small muted" style="margin:12px 0 0" id="bars-note"></p>
+      <div class="acts"><button class="btn primary" id="draw">Draw a token</button><button class="btn" id="auto">Write 15 more</button><button class="btn" id="reset">Start over</button></div>
+    </div>
+    <div class="card"><div class="story" id="story"></div></div>
+    <p><b>Low temperature</b> makes the likely ones even more likely, and the story becomes predictable. <b>High temperature</b> evens out the odds, and the story gets wilder. <b>Top-p</b> removes the least likely ones altogether, so that one really unlucky draw does not ruin the sentence. Every time you draw a token it is added to the sentence, and everything on this page is computed again.</p>
+  </section>
+
+  <section id="s-train" data-name="Training">
+    <span class="num">6</span>
+    <h2>How it learned</h2>
+    <p>At the start every number in the model is random. Training is the same path as above, millions of times: the model guesses the next token in a real story, is shown the right answer, and every number is nudged a little in the direction that would have given a better guess.</p>
+    <p>I retrained the smallest model that writes coherently, with one million numbers, and saved what it wrote along the way. Move the slider. The texts are in Swedish; watch them go from noise to sentences.</p>
+    <div class="card">
+      <div class="time"><b id="tr-time"></b><span class="muted" id="tr-seen"></span></div>
+      <input id="tr-slider" type="range" min="0" max="0" step="1" value="0" aria-label="Time into training">
+      <div class="story" id="tr-text" style="margin-top:14px"></div>
+      <svg id="curve" viewBox="0 0 800 260" role="img" aria-label="The loss falls quickly in the first seconds and then slowly"></svg>
+      <p class="small muted" style="margin:8px 0 0" id="tr-note"></p>
+    </div>
+    <p><b>The loss</b> measures how surprised the model is by the right answer. For a pure guess among 4,096 tokens it is 8.3. In the samples here full stops appear after five seconds and whole sentences after ten. After a little over a minute the text is about Alma. The rest of the time goes to the hard part: holding a whole story together.</p>
+  </section>
+
+  <footer>
+    <p>Everything on this page is computed by the same program as the demo, with the same model files. Nothing is sent anywhere. <a href="inuti.html">Den här sidan på svenska</a>.</p>
+  </footer>
+</main>
+
+<script type="module">
+const SIZES = [["0.3m", "0,3 M"], ["1m", "1 M"], ["2m", "2 M"], ["3m", "3 M"], ["7m", "7 M"], ["15m", "15 M"]];
+const $ = (id) => document.getElementById(id);
+const h = (tag, attrs = {}, ...kids) => { const e = document.createElement(tag); for (const k in attrs) { if (k === "class") e.className = attrs[k]; else if (k.startsWith("on")) e[k] = attrs[k]; else e.setAttribute(k, attrs[k]); } e.append(...kids); return e; };
+const pct = (p, d = 1) => (100 * p).toFixed(d) + " %";
+const show = (t) => t.replace(/^ /, "␣").replace(/\n/g, "↵");
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const rgb = (hex) => { const n = parseInt(hex.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; };
+const mix = (a, b, t) => `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * t)).join(",")})`;
+
+// ---------------------------------------------------------------- the worker
+const worker = new Worker("worker.js?v=4", { type: "module" });
+const pending = new Map(); let nextId = 1;
+worker.onmessage = (e) => {
+  const m = e.data;
+  if (m.type === "progress") { $("progress").hidden = false; $("progress").firstElementChild.style.width = (m.total ? 100 * m.got / m.total : 30) + "%"; return; }
+  if (m.type === "loaded") { $("progress").hidden = true; return; }
+  const r = pending.get(m.id); if (!r) return;
+  pending.delete(m.id); r(m);
+};
+const ask = (msg) => new Promise((res) => { const id = nextId++; pending.set(id, res); worker.postMessage({ ...msg, id }); });
+
+// ---------------------------------------------------------------- state
+const S = { size: "7m", t: null, vocab: {}, sel: 0, layer: 0, head: 0, base: 0, busy: false, seq: 0 };
+const file = () => `pytte-${S.size}.bin`;
+SIZES.forEach(([k, label]) => $("size").append(h("option", { value: k }, `${label} parameters`)));
+$("size").value = S.size;
+
+async function run(input) {            // input: {text} or {ids}
+  const seq = ++S.seq;
+  $("status").textContent = "computing…";
+  const t0 = performance.now();
+  const m = await ask({ type: "trace", file: file(), vocab: !S.vocab[S.size], ...input });
+  if (seq !== S.seq) return;
+  if (m.type === "error") { $("status").textContent = m.message; return; }
+  if (m.vocab) S.vocab[S.size] = m.vocab;
+  S.t = m;
+  if (input.text != null) S.base = m.T;                 // tokens typed by the user (the rest were drawn here)
+  if (S.sel >= m.T || input.keepSel !== true) S.sel = m.T - 1;
+  S.layer = Math.min(S.layer, m.L - 1); S.head = Math.min(S.head, m.H - 1);
+  $("status").textContent = `pytte-${S.size} · ${m.T - 1} tokens · ${m.L} layers · ${m.H} heads per layer · ${m.D} numbers per token · computed in ${Math.round(performance.now() - t0)} ms`
+    + (m.T >= 40 ? " · the page shows at most 39 tokens" : "");
+  renderTokens(); renderEmb(); renderPickers(); renderAtt(); renderLens(); renderBars(); renderStory();
+}
+
+// ---------------------------------------------------------------- 1. tokens
+function renderTokens() {
+  const t = S.t, box = $("toks"); box.replaceChildren();
+  t.tokens.forEach((tk, i) => {
+    const e = h("span", { class: "tok" + (i === 0 ? " start" : ""), style: `animation-delay:${i * 35}ms`, title: i ? `token number ${tk.id}` : "start token" }, i ? show(tk.text) : "start", h("small", {}, "#" + tk.id));
+    box.append(e);
+  });
+  const words = t.text.trim().split(/\s+/).filter(Boolean).length;
+  $("toks-note").textContent = `${words} words became ${t.T - 1} tokens. The model has ${t.vocabSize.toLocaleString("en-US")} different tokens to choose from.`;
+}
+
+// ---------------------------------------------------------------- 2. embedding
+function renderEmb() {
+  const t = S.t, box = $("strips"); box.replaceChildren();
+  let amax = 0; for (let i = t.D; i < t.emb.length; i++) amax = Math.max(amax, Math.abs(t.emb[i]));
+  const neg = rgb(css("--neg")), pos = rgb(css("--pos")), zero = rgb(css("--zero"));
+  for (let i = 1; i < t.T; i++) {
+    const c = h("canvas", { width: t.D, height: 1 }), ctx = c.getContext("2d");
+    for (let d = 0; d < t.D; d++) { const v = t.emb[i * t.D + d] / amax; ctx.fillStyle = mix(zero, v < 0 ? neg : pos, Math.min(1, Math.abs(v) ** 0.7)); ctx.fillRect(d, 0, 1, 1); }
+    box.append(h("span", { class: "lbl" + (i === S.sel ? " sel" : ""), onclick: () => select(i) }, show(t.tokens[i].text)), c);
+  }
+  $("emb-dim").textContent = `· ${t.D} numbers per token`;
+  neighbors();
+}
+async function neighbors() {
+  const t = S.t, i = Math.max(1, S.sel), tk = t.tokens[i], seq = S.seq, sel = S.sel;
+  $("nb-title").textContent = `Closest to “${show(tk.text)}” in the table`;
+  const m = await ask({ type: "neighbors", file: file(), token: tk.id, k: 10 });
+  if (seq !== S.seq || sel !== S.sel || m.type !== "neighbors") return;
+  $("nb").replaceChildren(...m.list.map((n) => h("span", {}, show(n.text), h("b", {}, n.cos.toFixed(2)))));
+}
+
+// ---------------------------------------------------------------- 3. attention
+const attRow = (l, hd, pos) => { const t = S.t, o = ((l * t.H + hd) * t.T + pos) * t.T; return t.att.subarray(o, o + pos + 1); };
+function renderPickers() {
+  const t = S.t;
+  const fill = (el, n, cur, set) => { el.replaceChildren(el.firstElementChild, ...Array.from({ length: n }, (_, i) => h("button", { "aria-pressed": i === cur, onclick: () => { set(i); renderPickers(); renderAtt(); } }, String(i + 1)))); };
+  fill($("pick-layer"), t.L, S.layer, (i) => S.layer = i); fill($("pick-head"), t.H, S.head, (i) => S.head = i);
+}
+function select(i) { S.sel = i; document.querySelectorAll("#strips .lbl").forEach((e, k) => e.classList.toggle("sel", k + 1 === i)); renderAtt(); neighbors(); }
+function renderAtt() {
+  const t = S.t, box = $("att-toks"), row = attRow(S.layer, S.head, S.sel), hot = rgb(css("--hot")), base = rgb(css("--soft")), ink = css("--ink");
+  box.replaceChildren(...t.tokens.map((tk, i) => {
+    const w = i <= S.sel ? row[i] : 0, e = h("span", { class: "tok" + (i === S.sel ? " sel" : "") + (i > S.sel ? " later" : "") + (i === 0 ? " start" : ""), title: i <= S.sel ? `${pct(w)} of the attention` : "comes later, cannot be seen", onclick: () => select(i) }, i ? show(tk.text) : "start");
+    if (i <= S.sel) { e.style.backgroundColor = mix(base, hot, Math.sqrt(w)); if (w > 0.35) e.style.color = "#fff"; }
+    return e;
+  }));
+  const top = [...row].map((w, i) => [w, i]).sort((a, b) => b[0] - a[0]).slice(0, 3).filter(([w]) => w > 0.02);
+  $("looks").replaceChildren(h("span", {}, S.sel ? show(t.tokens[S.sel].text) : "start"), " looks mostly at ", ...top.flatMap(([w, i], k) => [k ? ", " : "", h("span", {}, i ? show(t.tokens[i].text) : "start"), ` ${pct(w, 0)}`]), ".");
+  drawGrid();
+}
+function drawGrid() {
+  const t = S.t, c = $("grid"), n = S.sel + 1, cell = Math.max(2, Math.min(9, Math.floor(820 / (t.H * (n + 1.5))))), gap = Math.ceil(cell * 1.5), rowH = 16, rowGap = 5;
+  const W = t.H * (n * cell + gap) - gap, H = t.L * (rowH + rowGap) - rowGap, dpr = 2;
+  c.width = W * dpr; c.height = H * dpr; c.style.aspectRatio = `${W} / ${H}`; c.style.maxWidth = W * 1.6 + "px";
+  const ctx = c.getContext("2d"); ctx.scale(dpr, dpr);
+  const hot = rgb(css("--hot")), base = rgb(css("--soft"));
+  for (let l = 0; l < t.L; l++) for (let hd = 0; hd < t.H; hd++) {
+    const row = attRow(l, hd, S.sel), x0 = hd * (n * cell + gap), y0 = l * (rowH + rowGap);
+    for (let i = 0; i < n; i++) { ctx.fillStyle = mix(base, hot, Math.sqrt(row[i])); ctx.fillRect(x0 + i * cell, y0, cell - (cell > 3 ? 1 : 0), rowH); }
+    if (l === S.layer && hd === S.head) { ctx.strokeStyle = css("--accent"); ctx.lineWidth = 2; ctx.strokeRect(x0 - 2, y0 - 2, n * cell + 3, rowH + 4); }
+  }
+  c.onclick = (e) => { const r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width * W, y = (e.clientY - r.top) / r.height * H;
+    S.head = Math.min(t.H - 1, Math.floor(x / (n * cell + gap))); S.layer = Math.min(t.L - 1, Math.floor(y / (rowH + rowGap))); renderPickers(); renderAtt(); };
+}
+
+// ---------------------------------------------------------------- 4. layer by layer
+function renderLens() {
+  const t = S.t, box = $("lens"), last = t.T - 1, winner = t.lens[t.L][0].id;
+  let umax = 0; for (let l = 0; l < t.L * 2; l++) umax = Math.max(umax, t.upd[last * t.L * 2 + l]);
+  box.replaceChildren();
+  t.lens.forEach((top, s) => {
+    const a = s ? t.upd[(last * t.L + s - 1) * 2] / umax : 0, f = s ? t.upd[(last * t.L + s - 1) * 2 + 1] / umax : 0;
+    box.append(h("div", { class: "stage" }, s ? `After layer ${s}` : "Embedding only"),
+      h("div", { class: "upd", title: s ? "how much the layer changed the token's numbers" : "" }, ...(s ? [h("i", { style: `width:${100 * a}%;background:var(--pos)` }), h("i", { style: `width:${100 * f}%;background:var(--good)` })] : [])),
+      h("div", { class: "guess" }, ...top.slice(0, 4).map((g) => h("span", { class: g.id === winner ? "win" : "" }, g.id === t.eot ? "end" : show(g.text), h("b", {}, pct(g.p, 0))))));
+  });
+}
+
+// ---------------------------------------------------------------- 5. sampling (the same procedure as the model's own)
+function dist() {
+  const t = S.t, temp = +$("temp").value, topP = +$("topp").value, n = t.logits.length;
+  const order = Array.from({ length: n }, (_, i) => i).sort((a, b) => t.logits[b] - t.logits[a]);
+  const mx = t.logits[order[0]]; let sum = 0; const p = new Float64Array(n);
+  for (let i = 0; i < n; i++) { p[i] = Math.exp((t.logits[order[i]] - mx) / temp); sum += p[i]; }
+  let cum = 0, keep = 0;
+  for (; keep < n; keep++) { if (cum >= topP) break; cum += p[keep] / sum; }
+  keep = Math.max(keep, 1); let ksum = 0; for (let i = 0; i < keep; i++) ksum += p[i];
+  return { order, p, sum, keep, ksum };
+}
+function renderBars(hit = -1) {
+  const t = S.t, d = dist(), vocab = S.vocab[S.size], box = $("bars"), N = 12; box.replaceChildren();
+  $("temp-v").textContent = (+$("temp").value).toFixed(2); $("topp-v").textContent = (+$("topp").value).toFixed(2);
+  const pmax = d.p[0] / d.ksum;
+  for (let i = 0; i < N; i++) {
+    const kept = i < d.keep, prob = kept ? d.p[i] / d.ksum : d.p[i] / d.sum, id = d.order[i];
+    box.append(h("span", { class: "w" + (kept ? "" : " cut") + (i === hit ? " hit" : "") }, id === t.eot ? "end of story" : show(vocab[id])),
+      h("div", { class: "b" + (kept ? "" : " cut"), style: `width:${Math.max(0.5, 100 * prob / pmax)}%` }), h("span", { class: "p" + (kept ? "" : " cut") }, kept ? pct(prob) : "removed"));
+  }
+  $("bars-note").textContent = `${d.keep.toLocaleString("en-US")} of ${t.logits.length.toLocaleString("en-US")} tokens are left in the draw. The twelve most likely are shown.`;
+}
+function renderStory() {
+  const t = S.t, toks = t.tokens.slice(1).map((x) => x.text);
+  $("story").replaceChildren(h("span", { class: "p0" }, toks.slice(0, S.base - 1).join("")), ...toks.slice(S.base - 1).map((x, i, a) => h("span", { class: i === a.length - 1 ? "new" : "" }, x)));
+}
+async function draw() {
+  if (S.busy || !S.t) return false; S.busy = true;
+  const t = S.t, d = dist(); let r = Math.random() * d.ksum, k = 0, acc = 0;
+  for (; k < d.keep; k++) { acc += d.p[k]; if (r < acc) break; }
+  k = Math.min(k, d.keep - 1);
+  if (k < 12) { renderBars(k); await new Promise((r) => setTimeout(r, 380)); }
+  const id = d.order[k]; let ok = true;
+  if (id === t.eot) { $("bars-note").textContent = "The model drew “end of story”. It thinks the story is finished."; ok = false; }
+  else if (t.T >= 40) { $("bars-note").textContent = "The page shows at most 39 tokens. Press Start over for a new sentence."; ok = false; }
+  else { const ids = [...t.ids, id]; await run({ ids }); $("text").value = S.t.text; }
+  S.busy = false; return ok;
+}
+$("draw").onclick = draw;
+$("auto").onclick = async () => { $("auto").disabled = true; for (let i = 0; i < 15; i++) if (!(await draw())) break; $("auto").disabled = false; };
+$("reset").onclick = () => { $("text").value = "Alma bor i en liten"; run({ text: $("text").value }); };
+$("temp").oninput = $("topp").oninput = () => renderBars();
+
+// ---------------------------------------------------------------- 6. training (a real run, see inuti-training.json)
+const TR = await fetch("inuti-training.json").then((r) => r.json()).catch(() => null);
+if (TR) {
+  const sl = $("tr-slider"), n = TR.snapshots.length; sl.max = n - 1;
+  const W = 800, H = 260, L = 46, R = 12, T = 14, B = 34, tmax = TR.curve.at(-1)[0];
+  const x = (s) => L + (W - L - R) * Math.log10(1 + s) / Math.log10(1 + tmax), y = (v) => T + (H - T - B) * (1 - (v - 1) / (8.6 - 1));
+  const NS = "http://www.w3.org/2000/svg", el = (name, a, txt) => { const e = document.createElementNS(NS, name); for (const k in a) e.setAttribute(k, a[k]); if (txt != null) e.textContent = txt; return e; };
+  const svg = $("curve");
+  for (const v of [2, 4, 6, 8]) svg.append(el("line", { x1: L, x2: W - R, y1: y(v), y2: y(v), stroke: "var(--line)", "stroke-width": 1 }), el("text", { x: L - 8, y: y(v) + 4, "text-anchor": "end" }, String(v)));
+  for (const [s, lab] of [[1, "1 s"], [10, "10 s"], [60, "1 min"], [240, "4 min"], [480, "8 min"]]) if (s <= tmax + 5) svg.append(el("text", { x: x(s), y: H - 10, "text-anchor": "middle" }, lab), el("line", { x1: x(s), x2: x(s), y1: H - B, y2: H - B + 5, stroke: "var(--muted)" }));
+  const guess = Math.log(TR.vocab);
+  svg.append(el("line", { x1: L, x2: W - R, y1: y(guess), y2: y(guess), stroke: "var(--muted)", "stroke-dasharray": "5 5" }), el("text", { x: W - R, y: y(guess) - 6, "text-anchor": "end" }, `pure guess: ${guess.toFixed(1)}`));
+  svg.append(el("polyline", { points: TR.curve.map(([s, v]) => `${x(s).toFixed(1)},${y(v).toFixed(1)}`).join(" "), fill: "none", stroke: "var(--neg)", "stroke-width": 2, "stroke-linejoin": "round" }));
+  svg.append(el("text", { x: L, y: 12 }, "loss"));
+  const dot = el("circle", { r: 6, fill: "var(--accent)", stroke: "var(--card)", "stroke-width": 2 }); svg.append(dot);
+  const fmt = (s) => s < 1 ? "0 seconds" : s < 90 ? `${Math.round(s)} seconds` : `${(s / 60).toFixed(1)} minutes`;
+  const draw = () => {
+    const sn = TR.snapshots[+sl.value], loss = sn.loss ?? guess;
+    $("tr-time").textContent = fmt(sn.s);
+    $("tr-seen").textContent = sn.step ? `${(sn.step * TR.tokens_per_step).toLocaleString("en-US")} tokens read · loss ${loss.toFixed(2)}` : "nothing read yet, every number is random";
+    $("tr-text").replaceChildren(h("span", { class: "p0" }, TR.prompt), sn.text);
+    dot.setAttribute("cx", x(sn.s)); dot.setAttribute("cy", y(Math.min(8.6, loss)));
+  };
+  sl.oninput = draw; draw();
+  $("tr-note").textContent = `A real run on a MacBook: pytte-1m, ${TR.params.toLocaleString("en-US")} parameters, ${TR.steps.toLocaleString("en-US")} steps in ${String(TR.minutes)} minutes, ${Math.round(TR.tokens / 1e6)} million tokens read. The time axis is compressed so that the first seconds show. The texts are drawn at random and would have come out differently with another seed.`;
+}
+
+// ---------------------------------------------------------------- wiring
+const secs = [...document.querySelectorAll("section[data-name]")];
+$("map").append(...secs.map((s, i) => h("a", { href: "#" + s.id }, `${i + 1} ${s.dataset.name}`)));
+const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) [...$("map").children].forEach((a) => a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id)); }), { rootMargin: "-40% 0px -55% 0px" });
+secs.forEach((s) => io.observe(s));
+let timer; $("text").oninput = () => { clearTimeout(timer); timer = setTimeout(() => { if ($("text").value.trim()) run({ text: $("text").value }); }, 350); };
+$("size").onchange = () => { S.size = $("size").value; run({ text: $("text").value }); };
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => S.t && (renderEmb(), renderAtt()));
+run({ text: $("text").value });
+</script>
+</body>
+</html>
