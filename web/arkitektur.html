@@ -85,7 +85,7 @@ dialog::backdrop { background: rgba(10, 12, 10, .6); }
 </head>
 <body>
 <main>
-  <span class="draft">Utkast</span>
+  <p style="margin:0 0 16px"><a class="muted" id="back" href="../pytte" style="font-size:15px;text-decoration:none">← Pytte</a> <span class="muted">·</span> <a class="muted" href="inuti.html" style="font-size:15px;text-decoration:none">Inuti Pytte</a></p>
   <h1>Så fungerar Pytte</h1>
   <p>Pytte gör en enda sak: gissar nästa bit text. Bilden visar vägen från det du skriver till den gissningen. Klicka på den för att se varje del, vad den gör och hur stor den är.</p>
 
@@ -365,6 +365,7 @@ function panel() {
 }
 
 // ---- wiring
+if (!location.pathname.startsWith("/pytte/")) document.getElementById("back").href = "index.html";   // local preview: the demo page
 for (const k of Object.keys(M)) { const b = document.createElement("button"); b.textContent = M[k].label; b.dataset.size = k; b.onclick = () => { size = k; draw(); }; $("sizes").append(b); }
 document.querySelectorAll("#dia .part").forEach((p) => {
   const pick = () => { sel = sel === p.dataset.part ? null : p.dataset.part; draw(); };

@@ -19,7 +19,9 @@
 html { scroll-behavior: smooth; scroll-padding-top: 150px; }
 body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.6 -apple-system, "Segoe UI", system-ui, sans-serif; }
 main { max-width: 860px; margin: 0 auto; padding: 0 16px 96px; }
-h1 { font-size: clamp(32px, 6vw, 52px); line-height: 1.1; margin: 48px 0 12px; letter-spacing: -0.02em; }
+h1 { font-size: clamp(32px, 6vw, 52px); line-height: 1.1; margin: 20px 0 12px; letter-spacing: -0.02em; }
+.back { display: inline-block; margin-top: 28px; font-size: 15px; color: var(--muted); text-decoration: none; }
+.back:hover { color: var(--ink); text-decoration: underline; }
 h2 { font-size: 28px; line-height: 1.2; margin: 0 0 10px; letter-spacing: -0.01em; }
 h3 { font-size: 13px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin: 22px 0 8px; font-weight: 600; }
 p { margin: 0 0 14px; max-width: 68ch; }
@@ -114,6 +116,7 @@ a { color: inherit; }
 </head>
 <body>
 <main>
+  <a class="back" id="back" href="../en/pytte">← Pytte</a>
   <h1>Inside Pytte</h1>
   <p class="lead">Type a sentence. Everything further down is what the model actually computes for that sentence, in your browser, while you watch. Pytte only knows Swedish: the sentence below means “Alma lives in a small”.</p>
 
@@ -405,6 +408,7 @@ if (TR) {
 }
 
 // ---------------------------------------------------------------- wiring
+if (!location.pathname.startsWith("/pytte/")) document.getElementById("back").href = "index.html";   // local preview: the demo page
 const secs = [...document.querySelectorAll("section[data-name]")];
 $("map").append(...secs.map((s, i) => h("a", { href: "#" + s.id }, `${i + 1} ${s.dataset.name}`)));
 const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) [...$("map").children].forEach((a) => a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id)); }), { rootMargin: "-40% 0px -55% 0px" });

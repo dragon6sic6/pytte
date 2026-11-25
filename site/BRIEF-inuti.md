@@ -30,7 +30,7 @@ JSON are placed next to the files the site already serves in `public/pytte/`, an
 there are replaced by the new ones, the pages work at `/pytte/inuti.html` and `/pytte/inuti.en.html` with no
 other change. A link from the demo section of `/pytte` ("Se vad som händer inuti" / "See what happens
 inside") is the natural entrance. Redoing the page inside the site's own layout is your call; the pages
-follow the system light/dark setting and work at phone width.
+follow the system light/dark setting and work at phone width. Each page has a back link at the top: `../pytte` on the Swedish pages and `../en/pytte` on the English one, which resolve to `/pytte` and `/en/pytte` when the files are served from `/pytte/`. Anywhere else (the local preview) a line of script points the link at `index.html` instead.
 
 ## What must hold after the move
 

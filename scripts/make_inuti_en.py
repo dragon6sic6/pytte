@@ -13,6 +13,7 @@ ALL = [  # replaced wherever they occur
 ]
 ONCE = [
     ('<html lang="sv">', '<html lang="en">'),
+    ('id="back" href="../pytte"', 'id="back" href="../en/pytte"'),
     ("Skriv en mening och se vad som händer inuti en liten språkmodell: token, inbäddning, attention, lager för lager, och slumpen som väljer nästa ord. Allt räknas i din webbläsare.",
      "Type a sentence and see what happens inside a tiny language model: tokens, embedding, attention, layer by layer, and the chance that picks the next word. Everything is computed in your browser."),
     ("Skriv en mening. Allt du ser längre ner är vad modellen faktiskt räknar ut för just den meningen, i din webbläsare, medan du tittar.",
