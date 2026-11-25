@@ -2,6 +2,8 @@
 
 *Sammanställt 2026-11-06 utifrån de tre researchrapporterna i mappen, kompletterat med egen verifiering mot Hugging Face, PyPI och webben samt en inventering av din Mac.*
 
+*Avsnitt 1–9 är planen som Claude skrev på mitt uppdrag den 6 november, innan arbetet började, lätt redigerad: delen om lansering och spridning är borttagen. Mycket av planen blev inte av; avsnitt 23 berättar varför. Från avsnitt 10 är det arbetsloggen.*
+
 ---
 
 ## 1. Kortversionen
