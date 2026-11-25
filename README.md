@@ -155,8 +155,8 @@ to have learned the v1 template rather than Swedish: on v2 text they cost 1.06�
 against 0.41–0.44 on their own validation set, whereas the `sv2` models cost 0.52–0.58 on v2 text
 and 0.00–0.02 more on v1 text (so the `sv` and `sv2` bits/byte columns above, each measured on
 its own validation set, are not comparable). The price is coherence: the judge gives the `sv2`
-models 1.1–1.9 points less from 1M up, with grammar unchanged, and its comments point at
-character names being swapped mid-story in the two- and three-child tales that v2 added.
+models 1.1–2.0 points less from 1M up, with grammar unchanged, and its comments point at
+character names being swapped mid-story in the stories with more than one character that v2 added.
 The `sv3` rows (13 November) are the resolution: all of v1.1 plus only the one-child v2 stories.
 Grammar stays where `sv2` put it (88.5–94.5% from 1M, plurals 90–95%), coherence comes back to
 8.3–8.4 at 1M–3M and to 9.0 / 8.9 at 7M / 15M (against 9.1 / 9.4 for `sv`), language errors are
