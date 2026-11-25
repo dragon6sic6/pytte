@@ -815,6 +815,20 @@ Båda spakarna verkar, och tiden är den stora: tät data gav +11 punkter på su
 
 **Kvar i fas 5.** Rapporten (avsnitt 6, fas 5), Zenodo-DOI, länkarna i demons sidfot, modellkortens länk till rapporten.
 
+## 22. Fas 5b: rapporten, 2026-11-25
+
+**Beslut (Mathias, 2026-11-25):** rapporten skrivs före Hugging Face-uppladdningen, så att modell- och datasetkorten kan länka till den.
+
+**Resultat:** `paper/pytte.pdf`, 19 sidor A4, engelska med svensk sammanfattning. Titel: *Pytte: Tiny Language Models That Write Coherent Swedish, Trained from Scratch on a Laptop*. Mathias Karlsson ensam författare, med ett eget avsnitt (9) om vad AI-assistenten gjorde, vad författaren beslutade och vilka misstag som begicks. Struktur: sammanfattning, inledning med bidrag, tidigare arbete, data (generatorval, recept v1, mallfyndet, recept v2, de tre seten, `<image|>`-buggen), modell och träning, mätmetod med kvalitetsgolv och brusanalys, resultat (v1.1-familjen, tvillingarna, de tre datablandningarna, chattfamiljen med överanpassning och x3-testet, export/run.c/webbläsare), diskussion, begränsningar, reproducerbarhet och kostnad, slutsats, referenser, bilagor (de 20 fynden, oselekterade exempel, grammatik per kategori).
+
+**Hur den byggs (allt i `paper/`, `make paper`).** `collect_results.py` läser alla 36 modellers summary/eval/judge/eval_pairs och chattmodellernas valideringskurvor till `results.json` (kontrollerad mot loggens tabeller). `make_figures.py` ritar sex figurer som SVG utan beroenden (parameterbudget, skalning sv/en/en8m, tre datablandningar, grammatik per kategori, instruktionsföljning, överanpassningen i 15M-chat) med en färgblindhetskontrollerad palett, 2 px linjer, ändetiketter och förklaring. `build.py` fyller tabellerna i `pytte.src.html` ur `results.json` (familjetabell, tvillingar, blandningar, släppfamilj, chattfamilj, x1 mot x3, kategorier, exempelsagor) och skriver PDF med Chrome i headless-läge. Ingen LaTeX finns på maskinen, därav HTML-vägen; typsnitt STIX Two Text. Siffror i löptexten är hämtade ur den här loggen.
+
+**Ärlighetspunkter som rapporten själv tar upp.** Kvalitetsgolvet anges som det formulerades i avsnitt 4 (domare ≥ 8 av 10 på grammatik och sammanhang, minimala par ≥ 70 %), med noten att 50–100 exempel bedömdes i stället för 200 och att inget blindtest med människor gjordes. Med det golvet är 1M den minsta modellen som klarar det; 0,3M klarar grammatik och minimala par men inte sammanhang. Exemplen i bilaga B är det första av varje modells utvärderingsexempel, och de två första småpratsexemplen i grupperna "vem" och "utanför" råkar vara de två av 24 som modellen svarade fel på; de står kvar.
+
+**Följdändringar.** README:s statusruta (som fortfarande sa 9 november och "0,3M skriver sammanhängande svenska") är uppdaterad och pekar på rapporten; modellkorten länkar till den (`scripts/make_model_cards.py`, korten omgenererade).
+
+**Kvar.** Mathias läser igenom; Zenodo-DOI vid lansering (läggs in på förstasidan och i korten); sedan Hugging Face-uppladdningen (avsnitt 21).
+
 ## Källor som verifierades i den här genomgången
 
 - Hugging Face: `tdde19-llm-from-scratch/TinyStoriesSwe` och tillhörande modeller, `qwrt/Swedish0.1M`, `Dxniz/TinyStories-Multilingual` (API-anrop 2026-11-06)

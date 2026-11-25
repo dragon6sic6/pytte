@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 330" width="680" height="330" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<rect width="680" height="330" fill="#ffffff"/>
+<line x1="70" x2="92" y1="22" y2="22" stroke="#2a78d6" stroke-width="2" stroke-linecap="round"/>
+<circle cx="81" cy="22" r="4" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<text x="100" y="26" font-size="11" fill="#0b0b0b">Swedish v1.1 (8M tokens)</text>
+<line x1="250" x2="272" y1="22" y2="22" stroke="#eb6834" stroke-width="2" stroke-linecap="round"/>
+<circle cx="261" cy="22" r="4" fill="#eb6834" stroke="#ffffff" stroke-width="2"/>
+<text x="280" y="26" font-size="11" fill="#0b0b0b">English (553M tokens)</text>
+<line x1="430" x2="452" y1="22" y2="22" stroke="#1baf7a" stroke-width="2" stroke-linecap="round"/>
+<circle cx="441" cy="22" r="4" fill="#1baf7a" stroke="#ffffff" stroke-width="2"/>
+<text x="460" y="26" font-size="11" fill="#0b0b0b">English (8M tokens)</text>
+<line x1="70" x2="500" y1="250.0" y2="250.0" stroke="#e4e2dc" stroke-width="1"/>
+<text x="62" y="254.0" font-size="11" text-anchor="end" fill="#52514e">0.4</text>
+<line x1="70" x2="500" y1="210.0" y2="210.0" stroke="#e4e2dc" stroke-width="1"/>
+<text x="62" y="214.0" font-size="11" text-anchor="end" fill="#52514e">0.5</text>
+<line x1="70" x2="500" y1="170.0" y2="170.0" stroke="#e4e2dc" stroke-width="1"/>
+<text x="62" y="174.0" font-size="11" text-anchor="end" fill="#52514e">0.6</text>
+<line x1="70" x2="500" y1="130.0" y2="130.0" stroke="#e4e2dc" stroke-width="1"/>
+<text x="62" y="134.0" font-size="11" text-anchor="end" fill="#52514e">0.7</text>
+<line x1="70" x2="500" y1="90.0" y2="90.0" stroke="#e4e2dc" stroke-width="1"/>
+<text x="62" y="94.0" font-size="11" text-anchor="end" fill="#52514e">0.8</text>
+<line x1="70" x2="500" y1="50.0" y2="50.0" stroke="#e4e2dc" stroke-width="1"/>
+<text x="62" y="54.0" font-size="11" text-anchor="end" fill="#52514e">0.9</text>
+<line x1="70.0" x2="70.0" y1="270" y2="274" stroke="#52514e" stroke-width="1"/>
+<text x="70.0" y="288" font-size="11" text-anchor="middle" fill="#52514e">0.3M</text>
+<line x1="225.3" x2="225.3" y1="270" y2="274" stroke="#52514e" stroke-width="1"/>
+<text x="225.3" y="288" font-size="11" text-anchor="middle" fill="#52514e">1M</text>
+<line x1="283.6" x2="283.6" y1="270" y2="274" stroke="#52514e" stroke-width="1"/>
+<text x="283.6" y="288" font-size="11" text-anchor="middle" fill="#52514e">2M</text>
+<line x1="331.2" x2="331.2" y1="270" y2="274" stroke="#52514e" stroke-width="1"/>
+<text x="331.2" y="288" font-size="11" text-anchor="middle" fill="#52514e">3M</text>
+<line x1="412.4" x2="412.4" y1="270" y2="274" stroke="#52514e" stroke-width="1"/>
+<text x="412.4" y="288" font-size="11" text-anchor="middle" fill="#52514e">7M</text>
+<line x1="500.0" x2="500.0" y1="270" y2="274" stroke="#52514e" stroke-width="1"/>
+<text x="500.0" y="288" font-size="11" text-anchor="middle" fill="#52514e">15M</text>
+<line x1="70" x2="500" y1="270" y2="270" stroke="#52514e" stroke-width="1"/>
+<text x="285.0" y="306" font-size="11" text-anchor="middle" fill="#52514e">Parameters</text>
+<text x="30" y="160.0" font-size="11" text-anchor="middle" fill="#52514e" transform="rotate(-90 30 160.0)">Bits per byte on held-out stories (lower is better)</text>
+<path d="M70.0,66.3 L225.3,134.0 L283.6,147.3 L331.2,152.9 L412.4,160.7 L500.0,162.1" fill="none" stroke="#1baf7a" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="70.0" cy="66.3" r="4" fill="#1baf7a" stroke="#ffffff" stroke-width="2"/>
+<circle cx="225.3" cy="134.0" r="4" fill="#1baf7a" stroke="#ffffff" stroke-width="2"/>
+<circle cx="283.6" cy="147.3" r="4" fill="#1baf7a" stroke="#ffffff" stroke-width="2"/>
+<circle cx="331.2" cy="152.9" r="4" fill="#1baf7a" stroke="#ffffff" stroke-width="2"/>
+<circle cx="412.4" cy="160.7" r="4" fill="#1baf7a" stroke="#ffffff" stroke-width="2"/>
+<circle cx="500.0" cy="162.1" r="4" fill="#1baf7a" stroke="#ffffff" stroke-width="2"/>
+<path d="M70.0,73.3 L225.3,150.1 L283.6,156.3 L331.2,167.5 L412.4,179.4 L500.0,189.7" fill="none" stroke="#eb6834" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="70.0" cy="73.3" r="4" fill="#eb6834" stroke="#ffffff" stroke-width="2"/>
+<circle cx="225.3" cy="150.1" r="4" fill="#eb6834" stroke="#ffffff" stroke-width="2"/>
+<circle cx="283.6" cy="156.3" r="4" fill="#eb6834" stroke="#ffffff" stroke-width="2"/>
+<circle cx="331.2" cy="167.5" r="4" fill="#eb6834" stroke="#ffffff" stroke-width="2"/>
+<circle cx="412.4" cy="179.4" r="4" fill="#eb6834" stroke="#ffffff" stroke-width="2"/>
+<circle cx="500.0" cy="189.7" r="4" fill="#eb6834" stroke="#ffffff" stroke-width="2"/>
+<path d="M70.0,194.6 L225.3,236.6 L283.6,243.4 L331.2,246.5 L412.4,248.8 L500.0,248.0" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="70.0" cy="194.6" r="4" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<circle cx="225.3" cy="236.6" r="4" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<circle cx="283.6" cy="243.4" r="4" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<circle cx="331.2" cy="246.5" r="4" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<circle cx="412.4" cy="248.8" r="4" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<circle cx="500.0" cy="248.0" r="4" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<text x="510" y="166.1" font-size="11" fill="#0b0b0b">English, 8M tokens</text>
+<text x="510" y="193.7" font-size="11" fill="#0b0b0b">English, 553M tokens</text>
+<text x="510" y="252.0" font-size="11" fill="#0b0b0b">Swedish v1.1, 8M tokens</text>
+</svg>

@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 340" width="680" height="340" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<rect width="680" height="340" fill="#ffffff"/>
+<line x1="222" x2="244" y1="20" y2="20" stroke="#2a78d6" stroke-width="2" stroke-linecap="round"/>
+<circle cx="233" cy="20" r="4" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<text x="252" y="24" font-size="11" fill="#0b0b0b">v1.1</text>
+<line x1="312" x2="334" y1="20" y2="20" stroke="#1baf7a" stroke-width="2" stroke-linecap="round"/>
+<circle cx="323" cy="20" r="4" fill="#1baf7a" stroke="#ffffff" stroke-width="2"/>
+<text x="342" y="24" font-size="11" fill="#0b0b0b">mix1 (release)</text>
+<line x1="276.3" x2="276.3" y1="46" y2="286" stroke="#e4e2dc" stroke-width="1"/>
+<text x="276.3" y="302" font-size="11" text-anchor="middle" fill="#52514e">40%</text>
+<line x1="330.6" x2="330.6" y1="46" y2="286" stroke="#e4e2dc" stroke-width="1"/>
+<text x="330.6" y="302" font-size="11" text-anchor="middle" fill="#52514e">50%</text>
+<line x1="384.9" x2="384.9" y1="46" y2="286" stroke="#e4e2dc" stroke-width="1"/>
+<text x="384.9" y="302" font-size="11" text-anchor="middle" fill="#52514e">60%</text>
+<line x1="439.1" x2="439.1" y1="46" y2="286" stroke="#e4e2dc" stroke-width="1"/>
+<text x="439.1" y="302" font-size="11" text-anchor="middle" fill="#52514e">70%</text>
+<line x1="493.4" x2="493.4" y1="46" y2="286" stroke="#e4e2dc" stroke-width="1"/>
+<text x="493.4" y="302" font-size="11" text-anchor="middle" fill="#52514e">80%</text>
+<line x1="547.7" x2="547.7" y1="46" y2="286" stroke="#e4e2dc" stroke-width="1"/>
+<text x="547.7" y="302" font-size="11" text-anchor="middle" fill="#52514e">90%</text>
+<line x1="602.0" x2="602.0" y1="46" y2="286" stroke="#e4e2dc" stroke-width="1"/>
+<text x="602.0" y="302" font-size="11" text-anchor="middle" fill="#52514e">100%</text>
+<line x1="330.6" x2="330.6" y1="46" y2="286" stroke="#52514e" stroke-width="1"/>
+<text x="330.6" y="40" font-size="10.5" text-anchor="middle" fill="#52514e">chance</text>
+<text x="412.0" y="320" font-size="11" text-anchor="middle" fill="#52514e">Minimal pairs correct, mean of the five models from 1M to 15M (20 pairs per category)</text>
+<text x="210" y="62" font-size="11.5" text-anchor="end" fill="#0b0b0b">Plural agreement</text>
+<line x1="314.3" x2="553.1" y1="58" y2="58" stroke="#52514e" stroke-width="1.5"/>
+<circle cx="314.3" cy="58" r="5" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<circle cx="553.1" cy="58" r="5" fill="#1baf7a" stroke="#ffffff" stroke-width="2"/>
+<text x="565.1" y="62" font-size="10.5" fill="#52514e">47 → 91</text>
+<text x="210" y="86" font-size="11.5" text-anchor="end" fill="#0b0b0b">Adjective agreement</text>
+<line x1="401.1" x2="569.4" y1="82" y2="82" stroke="#52514e" stroke-width="1.5"/>
+<circle cx="401.1" cy="82" r="5" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<circle cx="569.4" cy="82" r="5" fill="#1baf7a" stroke="#ffffff" stroke-width="2"/>
+<text x="581.4" y="86" font-size="10.5" fill="#52514e">63 → 94</text>
+<text x="210" y="110" font-size="11.5" text-anchor="end" fill="#0b0b0b">Verb-second word order</text>
+<line x1="466.3" x2="580.3" y1="106" y2="106" stroke="#52514e" stroke-width="1.5"/>
+<circle cx="466.3" cy="106" r="5" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<circle cx="580.3" cy="106" r="5" fill="#1baf7a" stroke="#ffffff" stroke-width="2"/>
+<text x="592.3" y="110" font-size="10.5" fill="#52514e">75 → 96</text>
+<text x="210" y="134" font-size="11.5" text-anchor="end" fill="#0b0b0b">Past tense</text>
+<line x1="542.3" x2="596.6" y1="130" y2="130" stroke="#52514e" stroke-width="1.5"/>
+<circle cx="542.3" cy="130" r="5" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<circle cx="596.6" cy="130" r="5" fill="#1baf7a" stroke="#ffffff" stroke-width="2"/>
+<text x="608.6" y="134" font-size="10.5" fill="#52514e">89 → 99</text>
+<text x="210" y="158" font-size="11.5" text-anchor="end" fill="#0b0b0b">Present tense</text>
+<line x1="498.9" x2="564.0" y1="154" y2="154" stroke="#52514e" stroke-width="1.5"/>
+<circle cx="498.9" cy="154" r="5" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<circle cx="564.0" cy="154" r="5" fill="#1baf7a" stroke="#ffffff" stroke-width="2"/>
+<text x="576.0" y="158" font-size="10.5" fill="#52514e">81 → 93</text>
+<text x="210" y="182" font-size="11.5" text-anchor="end" fill="#0b0b0b">Pronoun case</text>
+<line x1="488.0" x2="526.0" y1="178" y2="178" stroke="#52514e" stroke-width="1.5"/>
+<circle cx="488.0" cy="178" r="5" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<circle cx="526.0" cy="178" r="5" fill="#1baf7a" stroke="#ffffff" stroke-width="2"/>
+<text x="538.0" y="182" font-size="10.5" fill="#52514e">79 → 86</text>
+<text x="210" y="206" font-size="11.5" text-anchor="end" fill="#0b0b0b">Definiteness</text>
+<line x1="542.3" x2="585.7" y1="202" y2="202" stroke="#52514e" stroke-width="1.5"/>
+<circle cx="542.3" cy="202" r="5" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<circle cx="585.7" cy="202" r="5" fill="#1baf7a" stroke="#ffffff" stroke-width="2"/>
+<text x="597.7" y="206" font-size="10.5" fill="#52514e">89 → 97</text>
+<text x="210" y="230" font-size="11.5" text-anchor="end" fill="#0b0b0b">Modal + infinitive</text>
+<line x1="564.0" x2="585.7" y1="226" y2="226" stroke="#52514e" stroke-width="1.5"/>
+<circle cx="564.0" cy="226" r="5" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<circle cx="585.7" cy="226" r="5" fill="#1baf7a" stroke="#ffffff" stroke-width="2"/>
+<text x="597.7" y="230" font-size="10.5" fill="#52514e">93 → 97</text>
+<text x="210" y="254" font-size="11.5" text-anchor="end" fill="#0b0b0b">Gender (en/ett)</text>
+<line x1="596.6" x2="596.6" y1="250" y2="250" stroke="#52514e" stroke-width="1.5"/>
+<circle cx="596.6" cy="250" r="5" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<circle cx="596.6" cy="250" r="5" fill="#1baf7a" stroke="#ffffff" stroke-width="2"/>
+<text x="608.6" y="254" font-size="10.5" fill="#52514e">99 → 99</text>
+<text x="210" y="278" font-size="11.5" text-anchor="end" fill="#0b0b0b">Negation in subordinate clause</text>
+<line x1="401.1" x2="444.6" y1="274" y2="274" stroke="#52514e" stroke-width="1.5"/>
+<circle cx="401.1" cy="274" r="5" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<circle cx="444.6" cy="274" r="5" fill="#1baf7a" stroke="#ffffff" stroke-width="2"/>
+<text x="456.6" y="278" font-size="10.5" fill="#52514e">63 → 71</text>
+</svg>

@@ -10,7 +10,7 @@ TOK     = $(ROOT)/data/tok-$(LANG_)-4096
 TOKENS  = $(ROOT)/data/tokens-$(LANG_)-4096
 CKPT    = $(ROOT)/checkpoints/$(CONFIG)-$(LANG_)
 
-.PHONY: bench train sample eval gen clean-stories family run export
+.PHONY: bench train sample eval gen clean-stories family run export paper
 
 family:        ## print the model family table
 	$(PY) -m pytte.model
@@ -42,3 +42,6 @@ run:           ## compile run.c
 
 export:        ## export CKPT + TOK to one int8 .bin (make export CONFIG=pytte-7m LANG_=sv3-chat)
 	$(PY) -m pytte.export --model $(CKPT) --tok $(TOK) --out $(ROOT)/bin/$(CONFIG)-$(LANG_).bin
+
+paper:         ## rebuild the report (results.json -> figures -> pytte.html -> pytte.pdf)
+	python3 paper/collect_results.py && python3 paper/make_figures.py && python3 paper/build.py

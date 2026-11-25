@@ -77,7 +77,9 @@ def card(size, chat, src, bin_mb):
         lines.append(f"| Stories that end on their own | {100*ev['ended_naturally']:.0f}% |")
     lines += [
         f"| int8 export | {bin_mb:.2f} MB, {SPEED[size]:,} tokens/s on one M2 Pro core (run.c) |".replace(",0", " 0").replace(",5", " 5").replace(",9", " 9").replace(",1", " 1").replace(",8", " 8"), "",
-        "The measurements, the minimal-pair test and the judge prompts are in the repository; the lab log "
+        "The report, [Pytte: Tiny Language Models That Write Coherent Swedish, Trained from Scratch on a Laptop]"
+        "(https://github.com/dragon6sic6/pytte/blob/main/paper/pytte.pdf), describes the data, the training and every "
+        "measurement. The minimal-pair test and the judge prompts are in the repository; the lab log "
         "(`FÖRSLAG-OCH-PLAN.md`, Swedish) records every run, including the ones that failed.", "",
         "## Files", "",
         "- `model.safetensors`, `config.json`: the MLX checkpoint (`pytte.model.Pytte.load`)",

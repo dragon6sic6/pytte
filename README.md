@@ -11,12 +11,13 @@ is fine-tuned, distilled or wrapped. The weights start random.
 The same code trains a Swedish and an English twin on matched data, so we can ask:
 *how many parameters does Swedish need compared to English?*
 
-> **Status (9 November 2026): work in progress.** SagoSvenska (60 000 stories) is generated
-> and cleaned, and three model families of six sizes each (0.3M to 15M parameters) have been
-> trained with identical time budgets on an M2 Pro: Swedish on SagoSvenska, English on all of
-> TinyStories, and English on a TinyStories subset the exact size of SagoSvenska (the control). Pytte-0.3M already writes coherent
-> Swedish after five minutes of training. Results and the lab log are in
-> `FÖRSLAG-OCH-PLAN.md` (sections 10–15, Swedish). No models are released yet.
+> **Status (25 November 2026).** The work is done and written up: **the report is
+> [`paper/pytte.pdf`](paper/pytte.pdf)** (19 pages, English with a Swedish summary). SagoSvenska
+> has 120 649 stories in three sets, six model sizes (0.3M to 15.7M parameters) have been trained
+> on three corpus mixes plus two English controls, the release family is instruction-tuned,
+> exported to one int8 file per model, and runs in `run.c` and in the browser (`web/`). A 0.33M
+> model writes grammatical Swedish sentences; coherent stories need about 1M parameters. The lab
+> log with every run is `FÖRSLAG-OCH-PLAN.md` (Swedish). The repository is private until launch.
 
 ## What this is not
 
@@ -44,6 +45,7 @@ scripts/          train_family.sh, reeval_family.sh, judge_family.py, family_tab
                   chain_sft_family.sh, eval_sft.py, chat_family_table.py (the chat family),
                   check_run.py, pairs_run.py, q8_eval.py (run.c and int8 against Python)
 bench/            MLX vs PyTorch throughput and generation-model tests
+paper/            the report: pytte.pdf, its source, results.json, and the scripts that build tables and figures
 FÖRSLAG-OCH-PLAN.md   the plan and the measurement log (Swedish)
 ```
 
