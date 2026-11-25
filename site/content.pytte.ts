@@ -137,6 +137,7 @@ export const pytte = {
       data: {
         title: "Träningsdatan",
         body: "SagoSvenska: 120 000 svenska barnsagor med receptet som skapade varje saga. Fri att använda med angivande av källa (CC BY 4.0).",
+        cta: "Ladda ner datan (zip, 49 MB)",
       },
       license: "Kod och modeller: Apache-2.0. Data: CC BY 4.0.",
     },
@@ -275,6 +276,7 @@ export const pytte = {
       data: {
         title: "The training data",
         body: "SagoSvenska: 120,000 Swedish children's stories, each with the recipe that produced it. Free to use with attribution (CC BY 4.0).",
+        cta: "Download the data (zip, 49 MB)",
       },
       license: "Code and models: Apache-2.0. Data: CC BY 4.0.",
     },
@@ -292,6 +294,8 @@ export const pytte = {
   ],
   // file names: `pytte-${key}.bin` (base) and `pytte-${key}-chat.bin` (chat)
   runCommands: ["cc -O3 -o run run.c -lm", "./run pytte-7m-chat.bin -chat"],
-  github: "https://github.com/dragon6sic6/pytte", // private until Mathias makes it public
+  github: "https://github.com/dragon6sic6/pytte", // public since 2026-11-25
+  dataRelease: "https://github.com/dragon6sic6/pytte/releases/tag/sagosvenska-1.1", // SagoSvenska 1.1, published 2026-11-25
+  dataZip: "https://github.com/dragon6sic6/pytte/releases/download/sagosvenska-1.1/sagosvenska.zip",
   reportFile: "pytte.pdf",
 };

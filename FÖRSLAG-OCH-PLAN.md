@@ -843,6 +843,8 @@ Båda spakarna verkar, och tiden är den stora: tät data gav +11 punkter på su
 
 **Repot publikt (2026-11-25).** `github.com/dragon6sic6/pytte` är publikt sedan i dag, med ärenden avstängda; avsnitt 21 skrevs medan det var privat. På sajtens `pytte`-gren pekar kod- och run.c-länkarna nu på GitHub, medan träningsdatan fortfarande står som kommande. Sajten är inte publicerad ännu.
 
+**Träningsdatan släppt (2026-11-25, rapport från sajtsessionen; beslutet är Mathias).** SagoSvenska ligger som GitHub-släpp `sagosvenska-1.1` (https://github.com/dragon6sic6/pytte/releases/tag/sagosvenska-1.1): `sagosvenska.zip`, 49 MB, med mapparna `v1.1/`, `v2/` och `mix1/` (train/val/test.jsonl och stats.json i varje) och en README byggd på datasetkortet i `scripts/hf_upload.py`, CC BY 4.0. Sajtsessionen uppger att delningarna stämmer mot rapportens tabell 2 och att en ordsökning efter våld och skräp inte gav något. Härifrån är kontrollerat att släppet finns, är publicerat (inte utkast), att filen är 49 301 322 byte och att taggen pekar på `main`; zip-filens innehåll är inte öppnat härifrån. README pekar nu på släppet, och licensraden där är rättad: den sa "Code: MIT" och "to be confirmed", men filen `LICENSE` i repot är Apache-2.0, rapporten och sidan säger Apache-2.0 för kod och modeller, och datan är CC BY 4.0.
+
 ## Källor som verifierades i den här genomgången
 
 - Hugging Face: `tdde19-llm-from-scratch/TinyStoriesSwe` och tillhörande modeller, `qwrt/Swedish0.1M`, `Dxniz/TinyStories-Multilingual` (API-anrop 2026-11-06)

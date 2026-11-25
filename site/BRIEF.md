@@ -1,6 +1,6 @@
 # Pytte on mathiaskarlsson.se: handoff brief
 
-*Status: done. The page was built from this brief on 2026-11-25 on the site's `pytte` branch. The brief is kept as a record; the repository has since been made public, so the notes below about a private repository are out of date.*
+*Status: done. The page was built from this brief on 2026-11-25 on the site's `pytte` branch. The brief is kept as a record; the repository has since been made public, so the notes below about a private repository are out of date, and the training data now has a download: the GitHub release `sagosvenska-1.1` (49 MB zipped).*
 
 Written 2026-11-25 in the smallestllm session ("Världens minsta LLM-projekt") for the session
 that owns the site (`mathiaskarlsson2026final`). Mathias decided that Pytte is published as a

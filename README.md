@@ -255,6 +255,10 @@ folder statically (`python3 -m http.server 8765 --directory web`); the model fil
 
 ## Data
 
+**Download:** the three sets described below (v1.1, v2 and mix1, each with train/val/test
+splits and the recipe behind every story; JSON Lines, 49 MB zipped) are in the GitHub release
+[`sagosvenska-1.1`](https://github.com/dragon6sic6/pytte/releases/tag/sagosvenska-1.1), under CC BY 4.0.
+
 **SagoSvenska** (v1.1, 2026-11-09): 60 426 short Swedish stories for 3-4 year olds,
 6.7M words, generated locally in 54 hours with Gemma 4 12B (Apache-2.0) using the
 TinyStories recipe (random name, place, noun, verb, adjective and story feature per prompt),
@@ -298,4 +302,4 @@ trained on.
 
 ## License
 
-Code: MIT. Models and dataset: Apache-2.0 (to be confirmed at release).
+Code and models: Apache-2.0 (see [`LICENSE`](LICENSE)). SagoSvenska, the training data: CC BY 4.0.
