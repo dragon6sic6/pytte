@@ -4,16 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pytte</title>
-  <meta name="description" content="Pytte: en pytteliten språkmodell som skriver svenska, tränad från noll på en laptop. Körs helt i din webbläsare.">
+  <meta name="description" content="Pytte: en pytteliten språkmodell som skriver svenska, tränad från grunden på en laptop. Körs helt i din webbläsare.">
   <link rel="icon" href="pytte-mark.svg">
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
   <header class="top">
     <img class="mark" src="pytte-mark.svg" alt="" width="56" height="56">
     <div>
       <h1>Pytte</h1>
-      <p class="tagline">En pytteliten språkmodell som skriver svenska. Tränad från noll på en laptop. Allt här körs i din webbläsare, inget skickas någonstans.</p>
+      <p class="tagline">En pytteliten språkmodell som skriver svenska. Tränad från grunden på en laptop. Allt här körs i din webbläsare, inget skickas någonstans.</p>
     </div>
   </header>
 
@@ -25,10 +25,11 @@
 
   <!-- ------------------------------------------------ 1. the emergence slider -->
   <section id="tab-grow" class="panel" role="tabpanel">
-    <p class="lead">Samma början, samma slumpfrö, sex modeller. Dra i reglaget och se språk uppstå: från ordsallad vid 0,3 miljoner parametrar till en saga vid 7.</p>
+    <p class="lead">Samma början, samma slumpfrö, sex modeller. Dra i reglaget och se språket ta form: från lösa meningar vid 0,3 miljoner parametrar till en saga vid 7.</p>
+    <p class="lead expect">Sagorna blir ofta lite konstiga. Modellerna kan grammatiken men tappar lätt tråden, och de har bara läst sagor om barn i vardagen. Börja med en räv som vill flyga, så handlar sagan snart om ett barn i stället. Prova gärna: det är så man ser var gränsen går.</p>
     <label class="field">
       <span>Börja sagan</span>
-      <input id="grow-prompt" type="text" value="Det var en gång en liten älg som" spellcheck="false" autocomplete="off">
+      <input id="grow-prompt" type="text" value="Alma bor i en liten stuga i skogen. En dag" spellcheck="false" autocomplete="off">
     </label>
     <div class="slider-wrap">
       <input id="grow-size" type="range" min="0" max="5" step="1" value="2" aria-label="Modellstorlek">
@@ -45,7 +46,7 @@
 
   <!-- ------------------------------------------------ 2. chat -->
   <section id="tab-chat" class="panel" role="tabpanel" hidden>
-    <p class="lead">Be om en saga: <em>Berätta en saga om en räv som vill flyga.</em> Fråga sedan <em>Vad händer sedan?</em> Modellen är instruktionstränad på begäranden byggda ur sagornas egna recept.</p>
+    <p class="lead">Be om en saga: <em>Berätta en saga om Freja och en katt som utspelar sig på en bondgård.</em> Fråga sedan <em>Vad händer sedan?</em> Pytte kan bara en sak, sagor för små barn. Sagorna handlar om ett barn, och Pytte följer namnet och platsen du ger oftare än föremålet.</p>
     <div class="row">
       <span class="sizes" id="chat-sizes" role="radiogroup" aria-label="Modellstorlek"></span>
       <button id="chat-reset">Börja om</button>
@@ -78,10 +79,10 @@
   </section>
 
   <footer>
-    <p><strong>Vad är det här?</strong> Pytte är en familj av språkmodeller på 0,3–15 miljoner parametrar (en vanlig stor modell har tusentals gånger fler), byggda från noll och tränade på en MacBook på 60 000 svenska barnsagor. Samma arkitektur som de stora: token, inbäddningar, attention, lager, sampling. Hela sagan om hur det gick till, med varje mätning, finns i rapporten.</p>
+    <p><strong>Vad är det här?</strong> Pytte är en familj av språkmodeller på 0,3–15 miljoner parametrar (en vanlig stor modell har tusentals gånger fler), tränade från grunden på en MacBook på 60 000 svenska barnsagor. Samma arkitektur som de stora: token, inbäddningar, attention, lager, sampling. Hela sagan om hur det gick till, med varje mätning, finns i rapporten.</p>
     <p class="small">Modellfilerna är 0,4–16 MB och laddas när du väljer dem. Kod, rapport och logg: <a href="https://github.com/dragon6sic6/pytte">github.com/dragon6sic6/pytte</a>.</p>
   </footer>
 
-  <script type="module" src="app.js?v=2"></script>
+  <script type="module" src="app.js?v=3"></script>
 </body>
 </html>

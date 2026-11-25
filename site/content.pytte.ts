@@ -8,33 +8,34 @@ export const pytte = {
     meta: {
       title: "Pytte: en pytteliten språkmodell som skriver svenska",
       description:
-        "Ett hobbyprojekt: sex små språkmodeller byggda från noll och tränade på en laptop. Prova dem direkt i webbläsaren, läs rapporten och ladda ner allt.",
+        "Ett hobbyprojekt: sex små språkmodeller tränade från grunden på en laptop. Prova dem direkt i webbläsaren, läs rapporten och ladda ner allt.",
     },
     card: {
       // for the grid on /sidoprojekt
       title: "Pytte",
       tag: "Hobbyprojekt · AI",
-      body: "En pytteliten språkmodell som skriver svenska sagor. Byggd från noll och tränad på min laptop, för att förstå hur en språkmodell faktiskt fungerar. Prova den i webbläsaren.",
+      body: "En pytteliten språkmodell som skriver svenska sagor. Tränad från grunden på min laptop, för att förstå hur en språkmodell faktiskt fungerar. Prova den i webbläsaren.",
       cta: "Till Pytte",
     },
     hero: {
       eyebrow: "Hobbyprojekt",
       title: "Pytte",
-      lead: "En pytteliten språkmodell som skriver svenska sagor. Jag byggde den från noll och tränade den på min laptop, för att förstå hur en språkmodell faktiskt fungerar.",
+      lead: "En pytteliten språkmodell som skriver svenska sagor. Jag tränade den från grunden på min laptop, för att förstå hur en språkmodell faktiskt fungerar.",
       note: "Allt nedan körs i din webbläsare. Inget skickas någonstans.",
     },
     demo: {
       tabs: { grow: "Sagan växer", chat: "Prata med Pytte", inside: "Under huven" },
       grow: {
         lead: "Samma början, samma slumpfrö, sex modeller. Dra i reglaget och se språket ta form: från lösa meningar vid 0,3 miljoner parametrar till en saga vid 7.",
+        expect: "Sagorna blir ofta lite konstiga. Modellerna kan grammatiken men tappar lätt tråden, och de har bara läst sagor om barn i vardagen. Börja med en räv som vill flyga, så handlar sagan snart om ett barn i stället. Prova gärna: det är så man ser var gränsen går.",
         promptLabel: "Börja sagan",
-        promptDefault: "Det var en gång en liten älg som",
+        promptDefault: "Alma bor i en liten stuga i skogen. En dag",
         run: "Skriv sagan",
         reseed: "Nytt frö",
         sliderLabel: "Modellstorlek",
       },
       chat: {
-        lead: "Be om en saga: Berätta en saga om en räv som vill flyga. Fråga sedan: Vad händer sedan? Pytte kan bara en sak, sagor för små barn, och följer namnet du ger oftare än föremålet.",
+        lead: "Be om en saga: Berätta en saga om Freja och en katt som utspelar sig på en bondgård. Fråga sedan: Vad händer sedan? Pytte kan bara en sak, sagor för små barn. Sagorna handlar om ett barn, och Pytte följer namnet och platsen du ger oftare än föremålet.",
         placeholder: "Berätta en saga om…",
         send: "Skicka",
         reset: "Börja om",
@@ -148,32 +149,33 @@ export const pytte = {
     meta: {
       title: "Pytte: a tiny language model that writes Swedish",
       description:
-        "A hobby project: six small language models built from scratch and trained on a laptop. Try them in your browser, read the report and download everything.",
+        "A hobby project: six small language models trained from scratch on a laptop. Try them in your browser, read the report and download everything.",
     },
     card: {
       title: "Pytte",
       tag: "Hobby project · AI",
-      body: "A tiny language model that writes Swedish children's stories. Built from scratch and trained on my laptop, to understand how a language model actually works. Try it in your browser.",
+      body: "A tiny language model that writes Swedish children's stories. Trained from scratch on my laptop, to understand how a language model actually works. Try it in your browser.",
       cta: "See Pytte",
     },
     hero: {
       eyebrow: "Hobby project",
       title: "Pytte",
-      lead: "A tiny language model that writes Swedish children's stories. I built it from scratch and trained it on my laptop, to understand how a language model actually works.",
+      lead: "A tiny language model that writes Swedish children's stories. I trained it from scratch on my laptop, to understand how a language model actually works.",
       note: "Everything below runs in your browser. Nothing is sent anywhere.",
     },
     demo: {
       tabs: { grow: "The story grows", chat: "Talk to Pytte", inside: "Under the hood" },
       grow: {
-        lead: "The same opening, the same random seed, six models. Drag the slider and watch language take shape: from loose sentences at 0.3 million parameters to a story at 7. Pytte writes in Swedish; “Det var en gång” means “Once upon a time”.",
+        lead: "The same opening, the same random seed, six models. Drag the slider and watch language take shape: from loose sentences at 0.3 million parameters to a story at 7. Pytte writes in Swedish; The default opening means “Alma lives in a small cottage in the forest. One day”.",
+        expect: "The stories often turn out a little odd. The models know the grammar but easily lose the thread, and they have only read stories about children in everyday life. Start with a fox who wants to fly, and the story is soon about a child instead. Do try it: that is how you see where the limit is.",
         promptLabel: "Start the story (in Swedish)",
-        promptDefault: "Det var en gång en liten älg som",
+        promptDefault: "Alma bor i en liten stuga i skogen. En dag",
         run: "Write the story",
         reseed: "New seed",
         sliderLabel: "Model size",
       },
       chat: {
-        lead: "Ask for a story in Swedish: Berätta en saga om en räv som vill flyga (Tell a story about a fox who wants to fly). Then ask: Vad händer sedan? (What happens next?) Pytte can do one thing, stories for small children, and follows the name you give more often than the object.",
+        lead: "Ask for a story in Swedish: Berätta en saga om Freja och en katt som utspelar sig på en bondgård (Tell a story about Freja and a cat, set on a farm). Then ask: Vad händer sedan? (What happens next?) Pytte can do one thing, stories for small children. The stories are about a child, and Pytte follows the name and the place you give more often than the object.",
         placeholder: "Berätta en saga om…",
         send: "Send",
         reset: "Start over",

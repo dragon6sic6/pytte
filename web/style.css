@@ -21,6 +21,7 @@ h3 { margin: 20px 0 8px; font-size: 15px; text-transform: uppercase; letter-spac
 }
 .tabs button[aria-selected="true"] { color: var(--navy); border-bottom-color: var(--yellow); }
 .lead { margin: 0 0 16px; }
+.lead.expect { color: var(--muted); font-size: 15px; }
 .lead em { font-style: normal; background: #FBE9B8; padding: 0 4px; border-radius: 4px; }
 .field { display: block; margin: 12px 0; }
 .field span { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
