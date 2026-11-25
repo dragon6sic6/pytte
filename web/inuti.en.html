@@ -6,41 +6,76 @@
 <title>Inside Pytte</title>
 <meta name="description" content="Type a sentence and see what happens inside a tiny language model: tokens, embedding, attention, layer by layer, and the chance that picks the next word. Everything is computed in your browser.">
 <link rel="icon" href="pytte-mark.svg">
+<script>(function () { var t = new URLSearchParams(location.search).get("theme"); try { if (t !== "light" && t !== "dark") t = localStorage.getItem("mk-theme"); } catch (e) {} if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t); })();</script>
 <style>
 :root {
-  --bg: #FBF8F1; --card: #FFFDF8; --ink: #1E2A4A; --muted: #5B6480; --line: #D9D2C0; --soft: #EFE9DA;
-  --accent: #F2B632; --neg: #2a78d6; --pos: #eb6834; --hot: #eb6834; --good: #1baf7a; --zero: #EFE9DA;
+  --bg: #f5f6f3; --card: #ffffff; --ink: #222b27; --muted: #626b63; --line: #dce1d9; --soft: #e9ede7;
+  --primary: #263d31; --on-primary: #ffffff; --accent: #ff6844; --hot: #ff6844; --good: #537653; --on-good: #ffffff;
+  --neg: #2a78d6; --pos: #eb6834; --zero: #e9ede7; --c-emb: #2a78d6; --c-attn: #eb6834; --c-ff: #1baf7a;
 }
-@media (prefers-color-scheme: dark) {
-  :root { --bg: #131714; --card: #1C211D; --ink: #ECEBE4; --muted: #A3A79C; --line: #3C433C; --soft: #252B26;
-          --neg: #5a9ae6; --pos: #f08a5d; --hot: #f08a5d; --good: #3fc795; --zero: #252B26; }
-}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #111a17; --card: #1b2721; --ink: #edf1e9; --muted: #a8b3a8; --line: #344139; --soft: #233229;
+  --primary: #d0dfc7; --on-primary: #1b2b1f; --accent: #ff7a58; --hot: #ff7a58; --good: #abc39c; --on-good: #1b2b1f;
+  --neg: #5a9ae6; --pos: #f08a5d; --zero: #233229; --c-emb: #5a9ae6; --c-attn: #f08a5d; --c-ff: #3fc795; } }
+:root[data-theme="dark"] { --bg: #111a17; --card: #1b2721; --ink: #edf1e9; --muted: #a8b3a8; --line: #344139; --soft: #233229;
+  --primary: #d0dfc7; --on-primary: #1b2b1f; --accent: #ff7a58; --hot: #ff7a58; --good: #abc39c; --on-good: #1b2b1f;
+  --neg: #5a9ae6; --pos: #f08a5d; --zero: #233229; --c-emb: #5a9ae6; --c-attn: #f08a5d; --c-ff: #3fc795; }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: 150px; }
-body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.6 -apple-system, "Segoe UI", system-ui, sans-serif; }
-main { max-width: 860px; margin: 0 auto; padding: 0 16px 96px; }
-h1 { font-size: clamp(32px, 6vw, 52px); line-height: 1.1; margin: 20px 0 12px; letter-spacing: -0.02em; }
-.back { display: inline-block; margin-top: 28px; font-size: 15px; color: var(--muted); text-decoration: none; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.6 "Helvetica Neue", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+main { min-width: 0; padding: 0 0 96px; }
+.top { max-width: 1160px; margin: 0 auto; padding: 0 20px; }
+.kicker { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin: 14px 0 0; }
+.layout { max-width: 1160px; margin: 0 auto; padding: 0 20px; display: flex; flex-direction: column; }
+.rail { order: 2; margin: 0 0 64px; }
+.railbox { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 16px; }
+.railbox h3 { margin: 0 0 4px; } .railbox .hint { font-size: 13.5px; color: var(--muted); margin: 0 0 8px; }
+#m-dia { display: block; width: 100%; max-width: 380px; height: auto; margin: 0 auto; }
+.share { display: flex; gap: 2px; height: 10px; margin: 12px 0 6px; border-radius: 3px; overflow: hidden; } .share span { display: block; }
+.legend { display: flex; flex-wrap: wrap; gap: 2px 10px; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; }
+@media (min-width: 1100px) {
+  .layout { display: grid; grid-template-columns: 330px minmax(0, 1fr); gap: 44px; align-items: start; }
+  .rail { order: 0; position: sticky; top: 14px; margin: 0; }
+  #m-dia { height: calc(100vh - 176px); min-height: 420px; width: auto; max-width: 100%; }
+  #m-dia .t { font-size: 17px; } #m-dia text.s { font-size: 14px; }
+  .map { display: none !important; }
+  main { max-width: 780px; }
+}
+/* the map (drawn in the same way as the diagram on the Pytte page) */
+svg text { fill: currentColor; font-family: inherit; }
+.box { fill: var(--card); stroke: var(--line); stroke-width: 1.5; transition: stroke .2s; }
+.t { font-size: 15px; font-weight: 700; } svg text.s, .s { font-size: 12.5px; fill: var(--muted); }
+.flow { stroke: currentColor; stroke-width: 1.5; fill: none; } .dash { stroke-dasharray: 5 5; }
+.frame { fill: var(--soft); stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 6 5; }
+.chip { fill: var(--soft); stroke: var(--line); } .plus { fill: var(--card); stroke: currentColor; stroke-width: 1.5; } .pbar { fill: var(--muted); }
+.edge-emb { fill: var(--c-emb); } .edge-attn { fill: var(--c-attn); } .edge-ff { fill: var(--c-ff); }
+.part { cursor: pointer; } .part:focus { outline: none; }
+.part:hover .box, .part:focus-visible .box { stroke: var(--ink); }
+.part.on .box { stroke: var(--accent); stroke-width: 3; }
+.fact { font-size: 15px; color: var(--muted); border-left: 3px solid var(--line); padding: 2px 0 2px 14px; margin: 18px 0 0; max-width: 68ch; }
+.fact b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+h1 { font-size: clamp(40px, 8vw, 84px); line-height: .98; margin: 6px 0 18px; letter-spacing: -0.06em; font-weight: 700; }
+.back { display: inline-block; margin-top: 26px; font-size: 15px; color: var(--muted); text-decoration: none; }
 .back:hover { color: var(--ink); text-decoration: underline; }
-h2 { font-size: 28px; line-height: 1.2; margin: 0 0 10px; letter-spacing: -0.01em; }
+h2 { font-size: clamp(26px, 4vw, 36px); line-height: 1.1; margin: 0 0 12px; letter-spacing: -0.035em; font-weight: 700; }
 h3 { font-size: 13px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin: 22px 0 8px; font-weight: 600; }
 p { margin: 0 0 14px; max-width: 68ch; }
-.lead { font-size: 20px; color: var(--muted); }
+.lead { font-size: clamp(18px, 2.4vw, 22px); color: var(--muted); max-width: 60ch; margin-bottom: 26px; }
 .muted { color: var(--muted); } .small { font-size: 14.5px; }
 .mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
-section { padding: 56px 0 8px; border-top: 1px solid var(--line); margin-top: 48px; }
-.num { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--ink); color: var(--bg); font-weight: 700; font-size: 16px; margin-bottom: 12px; }
-.card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; margin: 16px 0; }
+section { padding: 60px 0 8px; border-top: 1px solid var(--line); margin-top: 52px; }
+.num { display: inline-grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: var(--primary); color: var(--on-primary); font-weight: 700; font-size: 16px; margin-bottom: 14px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 20px; margin: 18px 0; }
 
 /* the sticky input and map */
-.bar { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); margin: 0 -16px; padding: 10px 16px 8px; }
+.bar { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--bg) 90%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); padding: 12px 0 8px; }
 .bar .row { display: flex; gap: 8px; align-items: center; max-width: 860px; margin: 0 auto; }
 .bar input[type=text] { flex: 1; min-width: 0; font: inherit; font-size: 18px; padding: 10px 14px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--card); color: var(--ink); }
 .bar input[type=text]:focus { outline: none; border-color: var(--accent); }
 select, button { font: inherit; color: inherit; }
 select { padding: 10px 8px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--card); font-size: 15px; }
 .btn { padding: 9px 16px; border-radius: 99px; border: 1.5px solid var(--line); background: var(--card); cursor: pointer; font-size: 15px; }
-.btn:hover { border-color: var(--ink); } .btn.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); font-weight: 600; }
+.btn:hover { border-color: var(--ink); } .btn.primary { background: var(--primary); color: var(--on-primary); border-color: var(--primary); font-weight: 600; }
 .btn:disabled { opacity: .5; cursor: default; }
 .map { display: flex; gap: 4px; overflow-x: auto; max-width: 860px; margin: 8px auto 0; scrollbar-width: none; }
 .map a { flex: none; font-size: 13.5px; text-decoration: none; color: var(--muted); padding: 3px 10px; border-radius: 99px; border: 1px solid transparent; white-space: nowrap; }
@@ -61,7 +96,7 @@ select { padding: 10px 8px; border-radius: 12px; border: 1.5px solid var(--line)
 .strips { display: grid; grid-template-columns: max-content 1fr; gap: 3px 10px; align-items: center; }
 .strips canvas { width: 100%; height: 16px; image-rendering: pixelated; border-radius: 3px; display: block; }
 .strips .lbl { font-family: ui-monospace, Menlo, monospace; font-size: 13.5px; white-space: pre; cursor: pointer; padding: 0 4px; border-radius: 4px; }
-.strips .lbl.sel { background: var(--accent); color: #1E2A4A; }
+.strips .lbl.sel { background: var(--accent); color: #fff; }
 .scale { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); margin-top: 10px; }
 .scale i { display: block; width: 120px; height: 10px; border-radius: 3px; background: linear-gradient(90deg, var(--neg), var(--zero), var(--pos)); }
 .nb { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
@@ -72,7 +107,7 @@ select { padding: 10px 8px; border-radius: 12px; border: 1.5px solid var(--line)
 .pick { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin: 6px 0; font-size: 14px; }
 .pick b { font-weight: 600; margin-right: 6px; min-width: 62px; }
 .pick button { min-width: 34px; padding: 4px 8px; border-radius: 8px; border: 1.5px solid var(--line); background: var(--card); cursor: pointer; font-size: 14px; }
-.pick button[aria-pressed=true] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.pick button[aria-pressed=true] { background: var(--primary); color: var(--on-primary); border-color: var(--primary); }
 .att .tok { animation: none; transition: background-color .25s, color .25s; }
 .att .tok.later { opacity: .3; }
 .looks { font-size: 15px; margin-top: 12px; min-height: 26px; }
@@ -86,7 +121,7 @@ select { padding: 10px 8px; border-radius: 12px; border: 1.5px solid var(--line)
 .lens .upd i { display: block; height: 6px; border-radius: 2px; min-width: 2px; }
 .lens .guess { display: flex; flex-wrap: wrap; gap: 4px; }
 .lens .guess span { font-family: ui-monospace, Menlo, monospace; font-size: 13.5px; padding: 2px 7px; border-radius: 7px; background: var(--soft); white-space: pre; }
-.lens .guess span.win { background: var(--good); color: #fff; }
+.lens .guess span.win { background: var(--good); color: var(--on-good); }
 .lens .guess span b { font-weight: 400; opacity: .75; margin-left: 5px; font-size: 12px; }
 .key { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 13.5px; color: var(--muted); margin-top: 10px; }
 .key i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; }
@@ -115,10 +150,129 @@ a { color: inherit; }
 </style>
 </head>
 <body>
-<main>
+<header class="top">
   <a class="back" id="back" href="../en/pytte">← Pytte</a>
+  <p class="kicker">How a language model works</p>
   <h1>Inside Pytte</h1>
   <p class="lead">Type a sentence. Everything further down is what the model actually computes for that sentence, in your browser, while you watch. Pytte only knows Swedish: the sentence below means “Alma lives in a small”.</p>
+</header>
+<div class="layout">
+<aside class="rail" aria-label="The map of the model">
+  <div class="railbox">
+    <h3>The map</h3>
+    <p class="hint">Click a part to go there.</p>
+    <svg id="m-dia" viewBox="0 0 440 1130" role="img" aria-label="The architecture from top to bottom: text, tokenizer, embedding, the layers with normalisation, attention and feed-forward, the final normalisation, output, probabilities and the choice of the next token.">
+          <defs><marker id="m-a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="currentColor"/></marker></defs>
+
+          <!-- the loop back to the text, and the shared table -->
+          <path class="flow" d="M90 1068 H18 V40 H86" marker-end="url(#m-a2)"/>
+          <text class="s" transform="translate(12 560) rotate(-90)" text-anchor="middle">added to the text, then one more round</text>
+          <path class="flow dash" d="M350 210 H422 V856 H354" marker-end="url(#m-a2)"/>
+          <text class="s" transform="translate(435 533) rotate(-90)" text-anchor="middle">the same table is used again</text>
+
+          <!-- main line -->
+          <path class="flow" d="M220 60 V82" marker-end="url(#m-a2)"/>
+          <path class="flow" d="M220 158 V180" marker-end="url(#m-a2)"/>
+          <path class="flow" d="M220 238 V298" marker-end="url(#m-a2)"/>
+          <path class="flow" d="M220 334 V350" marker-end="url(#m-a2)"/>
+          <path class="flow" d="M220 448 V468" marker-end="url(#m-a2)"/>
+          <path class="flow" d="M220 494 V520" marker-end="url(#m-a2)"/>
+          <path class="flow" d="M220 556 V572" marker-end="url(#m-a2)"/>
+          <path class="flow" d="M220 670 V690" marker-end="url(#m-a2)"/>
+          <path class="flow" d="M220 716 V774" marker-end="url(#m-a2)"/>
+          <path class="flow" d="M220 810 V826" marker-end="url(#m-a2)"/>
+          <path class="flow" d="M220 884 V900" marker-end="url(#m-a2)"/>
+          <path class="flow" d="M220 1020 V1038" marker-end="url(#m-a2)"/>
+
+          <g class="part" data-part="text" tabindex="0" role="button" aria-label="The text">
+            <rect class="box" x="90" y="20" width="260" height="40" rx="20"/>
+            <text class="t mono" x="220" y="45" text-anchor="middle">Alma bor i en liten</text>
+          </g>
+
+          <g class="part" data-part="tok" tabindex="0" role="button" aria-label="Tokenizer">
+            <rect class="box" x="90" y="84" width="260" height="74" rx="10"/>
+            <text class="t" x="104" y="107">Tokenizer</text>
+            <g id="m-chips"></g>
+          </g>
+
+          <g class="part" data-part="emb" tabindex="0" role="button" aria-label="Embedding">
+            <rect class="box" x="90" y="182" width="260" height="56" rx="10"/>
+            <rect class="edge-emb" x="90" y="190" width="5" height="40" rx="2"/>
+            <text class="t" x="104" y="206">Embedding</text>
+            <text class="s" x="104" y="225" id="m-emb-sub"></text>
+          </g>
+
+          <!-- one layer, with the others stacked behind it -->
+          <rect class="frame" x="56" y="242" width="352" height="488" rx="14" opacity=".5"/>
+          <rect class="frame" x="50" y="248" width="352" height="488" rx="14" opacity=".75"/>
+          <g class="part" data-part="layer" tabindex="0" role="button" aria-label="The layers">
+            <rect class="frame box" x="44" y="254" width="352" height="488" rx="14"/>
+            <text class="t" x="58" y="276" id="m-layer-title"></text>
+            <text class="s" x="382" y="276" text-anchor="end" id="m-layer-sub"></text>
+          </g>
+
+          <!-- skip connections -->
+          <g class="part" data-part="res" tabindex="0" role="button" aria-label="Skip connection">
+            <path class="flow" d="M220 292 H66 V481 H206" marker-end="url(#m-a2)"/>
+            <path class="flow" d="M220 508 H66 V703 H206" marker-end="url(#m-a2)"/>
+            <circle cx="220" cy="292" r="3" fill="currentColor"/><circle cx="220" cy="508" r="3" fill="currentColor"/>
+            <text class="s" transform="translate(60 388) rotate(-90)" text-anchor="middle">skip connection</text>
+            <text class="s" transform="translate(60 606) rotate(-90)" text-anchor="middle">skip connection</text>
+            <circle class="plus" cx="220" cy="481" r="12"/><path class="flow" d="M213 481 H227 M220 474 V488"/>
+            <circle class="plus" cx="220" cy="703" r="12"/><path class="flow" d="M213 703 H227 M220 696 V710"/>
+          </g>
+
+          <g class="part" data-part="norm" tabindex="0" role="button" aria-label="Normalisation">
+            <rect class="box" x="90" y="300" width="260" height="34" rx="8"/>
+            <text class="t" x="104" y="322">Normalisation</text>
+          </g>
+          <g class="part" data-part="attn" tabindex="0" role="button" aria-label="Attention">
+            <rect class="box" x="90" y="352" width="260" height="96" rx="10"/>
+            <rect class="edge-attn" x="90" y="360" width="5" height="80" rx="2"/>
+            <text class="t" x="104" y="377">Attention</text>
+            <text class="s" x="104" y="397">each token looks back in the text</text>
+            <text class="s" x="104" y="415">and fetches what it needs</text>
+            <text class="s" x="104" y="435" id="m-attn-sub"></text>
+          </g>
+          <g class="part" data-part="norm" tabindex="0" role="button" aria-label="Normalisation">
+            <rect class="box" x="90" y="522" width="260" height="34" rx="8"/>
+            <text class="t" x="104" y="544">Normalisation</text>
+          </g>
+          <g class="part" data-part="ff" tabindex="0" role="button" aria-label="Feed-forward">
+            <rect class="box" x="90" y="574" width="260" height="96" rx="10"/>
+            <rect class="edge-ff" x="90" y="582" width="5" height="80" rx="2"/>
+            <text class="t" x="104" y="599">Feed-forward</text>
+            <text class="s" x="104" y="619">each token on its own</text>
+            <text class="s" x="104" y="637">through a small network</text>
+            <text class="s" x="104" y="657" id="m-ff-sub"></text>
+          </g>
+
+          <g class="part" data-part="norm" tabindex="0" role="button" aria-label="The final normalisation">
+            <rect class="box" x="90" y="776" width="260" height="34" rx="8"/>
+            <text class="t" x="104" y="798">Normalisation</text>
+          </g>
+          <g class="part" data-part="out" tabindex="0" role="button" aria-label="Output">
+            <rect class="box" x="90" y="828" width="260" height="56" rx="10"/>
+            <rect class="edge-emb" x="90" y="836" width="5" height="40" rx="2"/>
+            <text class="t" x="104" y="852">Output</text>
+            <text class="s" x="104" y="871" id="m-out-sub"></text>
+          </g>
+          <g class="part" data-part="prob" tabindex="0" role="button" aria-label="Probabilities">
+            <rect class="box" x="90" y="902" width="260" height="118" rx="10"/>
+            <text class="t" x="104" y="925">Probabilities</text>
+            <g id="m-probs"></g>
+          </g>
+          <g class="part" data-part="pick" tabindex="0" role="button" aria-label="Chance picks">
+            <rect class="box" x="90" y="1040" width="260" height="56" rx="10"/>
+            <text class="t" x="104" y="1064">Chance picks</text>
+            <text class="s" x="104" y="1083" id="m-pick-sub"></text>
+          </g>
+        </svg>
+    <div class="share" id="m-share"></div>
+    <div class="legend" id="m-legend"></div>
+  </div>
+</aside>
+<main>
 
   <div class="bar">
     <div class="row">
@@ -137,6 +291,7 @@ a { color: inherit; }
     <div class="card"><div class="toks" id="toks"></div>
       <p class="small muted" style="margin:12px 0 0" id="toks-note"></p></div>
     <p class="small muted">First in the row is a start token. It is put before every story during training and means “a new text begins here”.</p>
+    <p class="fact" id="fact-tok"></p>
   </section>
 
   <section id="s-emb" data-name="Numbers">
@@ -148,6 +303,7 @@ a { color: inherit; }
     <p>The numbers say nothing one by one. But tokens that are used in similar ways get rows that point in similar directions. Click a token above and the page finds the ones closest to it in the table.</p>
     <div class="card"><h3 style="margin-top:0" id="nb-title">Closest in the table</h3><div class="nb" id="nb"></div>
       <p class="small muted" style="margin:10px 0 0">The number is the similarity between the rows, where 1 is the same direction and 0 is no similarity at all. Nobody told the model which words belong together. It worked that out from the stories.</p></div>
+    <p class="fact" id="fact-emb"></p>
   </section>
 
   <section id="s-att" data-name="Attention">
@@ -165,6 +321,8 @@ a { color: inherit; }
       <canvas id="grid" height="10"></canvas>
       <p class="small muted" style="margin:10px 0 0">One row per layer, one group per head, one cell per token in the sentence. A darker cell means more attention. Click a group to select it.</p></div>
     <p class="small muted">I have not investigated what a particular head is “looking for”. The picture shows where it looks, not why.</p>
+    <p>Two helper parts show on the map. <b>Normalisation</b> keeps the numbers at a sensible size before every step. <b>The skip connection</b> means that what is computed is added to what came in, instead of replacing it. Each layer then only has to learn a change.</p>
+    <p class="fact" id="fact-attn"></p>
   </section>
 
   <section id="s-layer" data-name="Layers">
@@ -174,6 +332,7 @@ a { color: inherit; }
     <div class="card"><div class="lens" id="lens"></div>
       <div class="key"><span><i style="background:var(--pos)"></i>change from attention</span><span><i style="background:var(--good)"></i>change from feed-forward</span><span><i style="background:var(--good)"></i>green guess = the one that wins in the end</span></div></div>
     <p class="small muted">The guess in the middle of the model comes from sending the intermediate result straight to the last step. The model is not trained to answer that way, so read the early rows as a hint. The last row is the model's real answer. The first row is almost always the same token once more: without any layers there is nothing to go on but the token itself.</p>
+    <p class="fact" id="fact-ff"></p>
   </section>
 
   <section id="s-pick" data-name="Chance">
@@ -191,6 +350,7 @@ a { color: inherit; }
     </div>
     <div class="card"><div class="story" id="story"></div></div>
     <p><b>Low temperature</b> makes the likely ones even more likely, and the story becomes predictable. <b>High temperature</b> evens out the odds, and the story gets wilder. <b>Top-p</b> removes the least likely ones altogether, so that one really unlucky draw does not ruin the sentence. Every time you draw a token it is added to the sentence, and everything on this page is computed again.</p>
+    <p class="fact" id="fact-out"></p>
   </section>
 
   <section id="s-train" data-name="Training">
@@ -209,9 +369,10 @@ a { color: inherit; }
   </section>
 
   <footer>
-    <p>Everything on this page is computed by the same program as the demo, with the same model files. Nothing is sent anywhere. If you want to see the parts as a drawing, there is <a href="arkitektur.en.html">the architecture diagram</a>. <a href="inuti.html">Den här sidan på svenska</a>.</p>
+    <p>Everything on this page is computed by the same program as the demo, with the same model files. Nothing is sent anywhere. <a href="inuti.html">Den här sidan på svenska</a>.</p>
   </footer>
 </main>
+</div>
 
 <script type="module">
 const SIZES = [["0.3m", "0,3 M"], ["1m", "1 M"], ["2m", "2 M"], ["3m", "3 M"], ["7m", "7 M"], ["15m", "15 M"]];
@@ -224,7 +385,7 @@ const rgb = (hex) => { const n = parseInt(hex.slice(1), 16); return [n >> 16 & 2
 const mix = (a, b, t) => `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * t)).join(",")})`;
 
 // ---------------------------------------------------------------- the worker
-const worker = new Worker("worker.js?v=4", { type: "module" });
+const worker = new Worker("worker.js?v=6", { type: "module" });
 const pending = new Map(); let nextId = 1;
 worker.onmessage = (e) => {
   const m = e.data;
@@ -255,8 +416,49 @@ async function run(input) {            // input: {text} or {ids}
   S.layer = Math.min(S.layer, m.L - 1); S.head = Math.min(S.head, m.H - 1);
   $("status").textContent = `pytte-${S.size} · ${m.T - 1} tokens · ${m.L} layers · ${m.H} heads per layer · ${m.D} numbers per token · computed in ${Math.round(performance.now() - t0)} ms`
     + (m.T >= 40 ? " · the page shows at most 39 tokens" : "");
-  renderTokens(); renderEmb(); renderPickers(); renderAtt(); renderLens(); renderBars(); renderStory();
+  renderTokens(); renderEmb(); renderPickers(); renderAtt(); renderLens(); renderBars(); renderStory(); renderMap();
 }
+
+// ---------------------------------------------------------------- the map: the diagram with this sentence's own values
+const NSV = "http://www.w3.org/2000/svg";
+const sv = (name, a, txt) => { const e = document.createElementNS(NSV, name); for (const k in a) e.setAttribute(k, a[k]); if (txt != null) e.textContent = txt; return e; };
+const nf = (x) => x.toLocaleString("en-US").replace(/\s/g, "\u00a0");
+const STATION = { text: "s-token", tok: "s-token", emb: "s-emb", layer: "s-att", norm: "s-att", attn: "s-att", res: "s-att", ff: "s-layer", out: "s-pick", prob: "s-pick", pick: "s-pick" };
+function renderMap() {
+  const t = S.t, hd = t.D / t.H, V = t.vocabSize;
+  const emb = V * t.D, attn = t.L * (2 * t.D * t.D + 2 * t.D * t.kv * hd), ffp = t.L * 3 * t.D * t.ff, norm = (2 * t.L + 1) * t.D, total = emb + attn + ffp + norm;
+  const short = t.text.length > 24 ? t.text.slice(0, 23) + "…" : t.text;
+  document.querySelector('#m-dia .part[data-part="text"] text').textContent = short;
+  $("m-emb-sub").textContent = `each token becomes ${t.D} numbers`;
+  $("m-layer-title").textContent = `Layer 1 of ${t.L}`; $("m-layer-sub").textContent = `${t.L} alike, in a row`;
+  $("m-attn-sub").textContent = `${t.H} heads with ${hd} numbers each`; $("m-ff-sub").textContent = `${t.D} numbers → ${nf(t.ff)} → ${t.D}`;
+  $("m-out-sub").textContent = `${t.D} numbers → ${nf(V)} scores`;
+  const chips = $("m-chips"); chips.replaceChildren(); let x = 104; const toks = t.tokens.slice(1);
+  for (let i = 0; i < toks.length; i++) {
+    const full = Math.round(show(toks[i].text).length * 7.4 + 10), last = x + full > (i < toks.length - 1 ? 318 : 344), label = last ? "…" : show(toks[i].text), w = last ? 22 : full;
+    chips.append(sv("rect", { class: "chip", x, y: 120, width: w, height: 26, rx: 6 }), sv("text", { class: "mono", x: x + w / 2, y: 137, "text-anchor": "middle", "font-size": 12 }, label));
+    x += w + 4; if (last) break;
+  }
+  const mx = Math.max(...t.logits); let z = 0; for (const v of t.logits) z += Math.exp(v - mx);
+  const top = [...t.logits].map((v, i) => [Math.exp(v - mx) / z, i]).sort((a, b) => b[0] - a[0]).slice(0, 4), vocab = S.vocab[S.size];
+  const probs = $("m-probs"); probs.replaceChildren();
+  top.forEach(([p, id], i) => { const y = 944 + i * 19, name = id === t.eot ? "end" : show(vocab[id]);
+    probs.append(sv("text", { class: "mono", x: 104, y, "font-size": 12 }, name.length > 10 ? name.slice(0, 9) + "…" : name), sv("rect", { class: "pbar", x: 190, y: y - 9, width: Math.max(2, p * 100), height: 10, rx: 2 }), sv("text", { class: "s", x: 340, y, "text-anchor": "end" }, pct(p))); });
+  $("m-pick-sub").textContent = `for example ${top[0][1] === t.eot ? "end" : show(vocab[top[0][1]])}`;
+  $("m-share").replaceChildren(...[[emb, "--c-emb"], [attn, "--c-attn"], [ffp, "--c-ff"]].map(([v, c]) => h("span", { style: `flex:${v};background:var(${c})` })));
+  $("m-legend").replaceChildren(...[["Embedding", emb, "--c-emb"], ["Attention", attn, "--c-attn"], ["Feed-forward", ffp, "--c-ff"]].map(([name, v, c]) => h("span", {}, h("i", { style: `background:var(${c})` }), `${name} ${pct(v / total, 0)}`)));
+  const fact = (id, ...kids) => $(id).replaceChildren(...kids), b = (x) => h("b", {}, x);
+  fact("fact-tok", `In pytte-${S.size}: `, b(nf(V)), " different tokens. The tokenizer has no parameters, it is a word list.");
+  fact("fact-emb", `In pytte-${S.size}: the table is `, b(`${nf(V)} × ${t.D}`), ", that is ", b(nf(emb)), " parameters. That is ", b(pct(emb / total, 0)), " of the model.");
+  fact("fact-attn", `In pytte-${S.size}: `, b(`${t.L} layers`), " with ", b(`${t.H} heads`), ` of ${hd} numbers each. Attention has `, b(nf(attn)), " parameters, ", b(pct(attn / total, 0)), " of the model.");
+  fact("fact-ff", `In pytte-${S.size}: in feed-forward the ${t.D} numbers are expanded to `, b(nf(t.ff)), " and squeezed back. ", b(nf(ffp)), " parameters are here, ", b(pct(ffp / total, 0)), ` of the model's ${nf(total)}.`);
+  fact("fact-out", `In pytte-${S.size}: the last step compares the numbers with the same table as in step 2, and so has no parameters of its own. That saves `, b(nf(emb)), ".");
+}
+document.querySelectorAll("#m-dia .part").forEach((p) => {
+  const go = () => $(STATION[p.dataset.part]).scrollIntoView({ block: "start" });
+  p.addEventListener("click", go); p.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
+});
+const markMap = (id) => document.querySelectorAll("#m-dia .part").forEach((p) => p.classList.toggle("on", STATION[p.dataset.part] === id));
 
 // ---------------------------------------------------------------- 1. tokens
 function renderTokens() {
@@ -411,11 +613,12 @@ if (TR) {
 if (!location.pathname.startsWith("/pytte/")) document.getElementById("back").href = "index.html";   // local preview: the demo page
 const secs = [...document.querySelectorAll("section[data-name]")];
 $("map").append(...secs.map((s, i) => h("a", { href: "#" + s.id }, `${i + 1} ${s.dataset.name}`)));
-const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) [...$("map").children].forEach((a) => a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id)); }), { rootMargin: "-40% 0px -55% 0px" });
+const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { [...$("map").children].forEach((a) => a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id)); markMap(e.target.id); } }), { rootMargin: "-40% 0px -55% 0px" });
 secs.forEach((s) => io.observe(s));
 let timer; $("text").oninput = () => { clearTimeout(timer); timer = setTimeout(() => { if ($("text").value.trim()) run({ text: $("text").value }); }, 350); };
 $("size").onchange = () => { S.size = $("size").value; run({ text: $("text").value }); };
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => S.t && (renderEmb(), renderAtt()));
+addEventListener("storage", (e) => { if (e.key === "mk-theme" && (e.newValue === "light" || e.newValue === "dark")) { document.documentElement.dataset.theme = e.newValue; S.t && (renderEmb(), renderAtt()); } });
 run({ text: $("text").value });
 </script>
 </body>

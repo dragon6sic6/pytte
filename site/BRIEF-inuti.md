@@ -32,6 +32,18 @@ other change. A link from the demo section of `/pytte` ("Se vad som händer inut
 inside") is the natural entrance. Redoing the page inside the site's own layout is your call; the pages
 follow the system light/dark setting and work at phone width. Each page has a back link at the top: `../pytte` on the Swedish pages and `../en/pytte` on the English one, which resolve to `/pytte` and `/en/pytte` when the files are served from `/pytte/`. Anywhere else (the local preview) a line of script points the link at `index.html` instead.
 
+## The merged page (later the same day)
+
+At Mathias's request ("gör sidan snyggare och bygg ihop dem till en") `inuti.html` now has the diagram built
+in as a live map: a sticky rail on screens from 1100 px, a card at the end of the page below that. The map
+shows the visitor's own sentence, tokens and probabilities, marks the part that belongs to the step in view,
+and a click on a part scrolls to its step. Each step ends with the part's size in the chosen model. The page
+uses the site's colours and type (taken from `app/globals.css`) and its theme: `?theme=`, then the site's
+`mk-theme` key in localStorage, then the system setting; it also follows a change of that key in another tab.
+`worker.js` changed twice more (now loaded as `worker.js?v=6`): `trace` reports two more fields, and a race is
+fixed (see the log, section 24): a story restarted mid-generation on the same model could come out garbled.
+The fix matters for the demo on `/pytte` too, which uses the same worker.
+
 ## The diagram as an embed (added later the same day)
 
 Mathias wants the diagram clearly visible on `/pytte` itself. For that there are two more generated files,

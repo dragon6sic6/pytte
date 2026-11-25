@@ -863,7 +863,13 @@ Båda spakarna verkar, och tiden är den stora: tät data gav +11 punkter på su
 
 **Träningen på sidan är en riktig körning.** `pytte/train.py` har fått `--snapshots` och `--snap-prompt`, som skriver ett textprov vid valda steg. pytte-1m tränades om på mix1 med samma inställningar som släppmodellen (8 minuter, lr 0,002): 10 147 steg, 83,1M token, bästa valideringsförlust 1,509 mot släppmodellens 1,508. Proverna (`web/inuti-training.json`): vid 0 s slumpade token, vid 5 s (förlust 5,5) de första punkterna, vid 10 s (3,9) korta meningar, vid 77 s (1,9) första provet som nämner Alma. Ett prov per tidpunkt, draget med slump, så det är en illustration och inte en mätning. Körningen ligger i `checkpoints/pytte-1m-sv3-snap`.
 
-**Kvar.** Sidan ligger bara i repot och är inte på sajten. Engelsk version saknas. Sajtens kopior av `pytte.js` och `worker.js` behöver bytas om sidan ska dit.
+**Ute på sajten samma dag.** Sajtsessionen lade ut `inuti.html`, en engelsk version (`inuti.en.html`, skapad ur den svenska av `scripts/make_inuti_en.py`), arkitekturbilden som helsida och som inbäddad bild på Pytte-sidan (`arkitektur-embed*.html`, skapade av `scripts/make_arkitektur.py`), och den rättade rapporten. Kontrollerat härifrån: filerna på sajten är identiska med repots.
+
+**Sammanslagen och omklädd (på Mathias uppdrag).** `inuti.html` har nu arkitekturbilden inbyggd som en levande karta: en fast kolumn på breda skärmar, ett kort sist på smala. Kartan visar besökarens egen mening, token och sannolikheter, markerar den del som hör till steget man läser, och ett klick på en del leder till steget. Varje steg avslutas med delens storlek i den valda modellen (parametrarna räknas ur konfigurationen, som i arkitekturbilden). Sidan har sajtens färger och typsnitt och följer sajtens temaval.
+
+**Fynd 22: en kapplöpning i `worker.js` kunde ge en rörig saga.** Startades en saga om medan en annan skrevs på samma modell (knappen "Skriv sagan" eller "Nytt frö" mitt i en saga, eller ett nytt chattmeddelande), nollställde den nya körningen flaggan `cancelled` innan den gamla slingan hunnit se den. Två slingor skrev då i samma modells cache, och den nya sagan blev osammanhängande. Det syntes som "En dag går hon ut. dag går hon ut ser en stor, är himl" när jag klickade under en pågående saga. Byte av modellstorlek berördes inte, eftersom varje storlek har sin egen modell. Rättat med ett löpnummer per körning: en ny körning, ett avbrott eller en `trace`/`probs` stoppar den äldre vid nästa paus. Prov: tre omstarter i snabb följd ger nu samma saga som en ostörd körning med samma frö, och den börjar som `run.c`. Buggen har funnits sedan demon byggdes (avsnitt 20) och fanns därmed också på sajten.
+
+**Kvar.** Den sammanslagna sidan och den rättade `worker.js` ligger i repot men inte på sajten.
 
 ## Källor som verifierades i den här genomgången
 

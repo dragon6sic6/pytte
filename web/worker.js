@@ -10,7 +10,10 @@
 import { Pytte, makeRng, chatPromptIds } from "./pytte.js?v=4";
 
 const models = new Map();
-let cancelled = false;
+// Every generation gets a number. A cancel, a newer generation or anything else that runs the model stops the
+// older one at its next pause. (A plain "cancelled" flag was reset by the next generate before the old loop had
+// seen it, so two loops could write into the same model's cache and the new story came out garbled.)
+let run = 0;
 
 async function get(file) {
   if (models.has(file)) return models.get(file);
@@ -30,7 +33,7 @@ function tokenList(model, ids) {
 onmessage = async (e) => {
   const m = e.data;
   try {
-    if (m.type === "cancel") { cancelled = true; return; }
+    if (m.type === "cancel") { run++; return; }
     if (m.type === "load") { await get(m.file); return; }
     const model = await get(m.file);
     if (m.type === "tokenize") {
@@ -38,6 +41,7 @@ onmessage = async (e) => {
       return;
     }
     if (m.type === "probs") {
+      run++;
       const ids = [model.eot, ...model.encode(m.text)];
       for (let i = 0; i < ids.length && i < model.maxSeq; i++) model.forward(ids[i], i);
       const top = model.topProbs(12).map((t) => ({ ...t, text: new TextDecoder().decode(model.tokenBytes(t.id)) }));
@@ -49,6 +53,7 @@ onmessage = async (e) => {
       return;
     }
     if (m.type === "trace") {
+      run++;
       const MAXT = 40, L = model.nLayers, H = model.nHeads, D = model.dim;
       const ids = [model.eot, ...(m.ids ?? model.encode(m.text))].slice(0, MAXT), T = ids.length;
       const emb = new Float32Array(T * D), att = new Float32Array(L * H * T * T), upd = new Float32Array(T * L * 2);
@@ -64,14 +69,14 @@ onmessage = async (e) => {
       const named = (list) => list.map((t) => ({ ...t, text: tokText(model, t.id) }));
       const lens = [named(Pytte.top(model.lensLogits(last.emb), 5)), ...last.resid.map((x) => named(Pytte.top(model.lensLogits(x), 5)))];
       const logits = model.logits.slice();
-      const out = { type: "trace", id: m.id, T, L, H, D, vocabSize: model.vocab, eot: model.eot, tokens: tokenList(model, ids), ids: ids.slice(1),
+      const out = { type: "trace", id: m.id, T, L, H, D, kv: model.nKvHeads, ff: model.ffDim, vocabSize: model.vocab, eot: model.eot, tokens: tokenList(model, ids), ids: ids.slice(1),
                     text: new TextDecoder().decode(Uint8Array.from(ids.slice(1).flatMap((i) => [...model.tokenBytes(i)]))), emb, att, upd, lens, logits };
       if (m.vocab) out.vocab = Array.from({ length: model.vocab }, (_, i) => tokText(model, i));
       postMessage(out, [emb.buffer, att.buffer, upd.buffer, logits.buffer]);
       return;
     }
     if (m.type === "generate") {
-      cancelled = false;
+      const mine = ++run;
       const ids = m.turns ? chatPromptIds(model, m.turns) : (m.prompt ? model.encode(m.prompt) : [model.eot]);
       if (ids.length >= model.maxSeq) { postMessage({ type: "error", id: m.id, message: "texten är längre än modellens kontext" }); return; }
       const rng = makeRng(m.seed ?? 0);
@@ -96,7 +101,7 @@ onmessage = async (e) => {
         if (text) postMessage({ type: "token", id: m.id, text });
         model.forward(id, pos++);
         if (n % 4 === 0) await new Promise((r) => setTimeout(r, 0));   // let a cancel message through
-        if (cancelled) { postMessage({ type: "cancelled", id: m.id }); return; }
+        if (mine !== run) { postMessage({ type: "cancelled", id: m.id }); return; }
       }
       if (pending) postMessage({ type: "token", id: m.id, text: pending });
       const secs = (performance.now() - t0) / 1000;

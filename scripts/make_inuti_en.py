@@ -10,6 +10,40 @@ from pathlib import Path
 WEB = Path(__file__).resolve().parent.parent / "web"
 ALL = [  # replaced wherever they occur
     ('.replace(".", ",")', ""), ('"sv-SE"', '"en-US"'), ("Inuti Pytte", "Inside Pytte"),
+    (">Normalisering</text>", ">Normalisation</text>"), (">hopplänk</text>", ">skip connection</text>"), ('aria-label="Normalisering"', 'aria-label="Normalisation"'),
+]
+MAP = [  # the map in the side rail and the facts under each step
+    ('<p class="kicker">Så fungerar en språkmodell</p>', '<p class="kicker">How a language model works</p>'),
+    ('aria-label="Kartan över modellen"', 'aria-label="The map of the model"'), ("<h3>Kartan</h3>", "<h3>The map</h3>"),
+    ('<p class="hint">Klicka på en del för att gå dit.</p>', '<p class="hint">Click a part to go there.</p>'),
+    ("Arkitekturen uppifrån och ner: text, tokeniserare, inbäddning, lagren med normalisering, attention och feed-forward, sista normalisering, utmatning, sannolikheter och val av nästa token.",
+     "The architecture from top to bottom: text, tokenizer, embedding, the layers with normalisation, attention and feed-forward, the final normalisation, output, probabilities and the choice of the next token."),
+    ("läggs till texten, sedan ett varv till</text>", "added to the text, then one more round</text>"), ("samma tabell används igen</text>", "the same table is used again</text>"),
+    ('aria-label="Texten"', 'aria-label="The text"'), ('aria-label="Tokeniserare"', 'aria-label="Tokenizer"'), ('aria-label="Inbäddning"', 'aria-label="Embedding"'),
+    ('aria-label="Lagren"', 'aria-label="The layers"'), ('aria-label="Hopplänk"', 'aria-label="Skip connection"'), ('aria-label="Sista normaliseringen"', 'aria-label="The final normalisation"'),
+    ('aria-label="Utmatning"', 'aria-label="Output"'), ('aria-label="Sannolikheter"', 'aria-label="Probabilities"'), ('aria-label="Slumpen väljer"', 'aria-label="Chance picks"'),
+    (">Tokeniserare</text>", ">Tokenizer</text>"), (">Inbäddning</text>", ">Embedding</text>"),
+    (">varje token tittar bakåt i texten</text>", ">each token looks back in the text</text>"), (">och hämtar det den behöver</text>", ">and fetches what it needs</text>"),
+    (">varje token bearbetas för sig</text>", ">each token on its own</text>"), (">genom ett litet nätverk</text>", ">through a small network</text>"),
+    (">Utmatning</text>", ">Output</text>"), (">Sannolikheter</text>", ">Probabilities</text>"), (">Slumpen väljer</text>", ">Chance picks</text>"),
+    ("`varje token blir ${t.D} tal`", "`each token becomes ${t.D} numbers`"), ("`Lager 1 av ${t.L}`", "`Layer 1 of ${t.L}`"), ("`${t.L} likadana efter varandra`", "`${t.L} alike, in a row`"),
+    ("`${t.H} huvuden med ${hd} tal var`", "`${t.H} heads with ${hd} numbers each`"), ("`${t.D} tal → ${nf(t.ff)} → ${t.D}`", "`${t.D} numbers → ${nf(t.ff)} → ${t.D}`"),
+    ("`${t.D} tal → ${nf(V)} poäng, en per token`", "`${t.D} numbers → ${nf(V)} scores`"),
+    ('name = id === t.eot ? "slut" : show(vocab[id])', 'name = id === t.eot ? "end" : show(vocab[id])'),
+    ('`till exempel ${top[0][1] === t.eot ? "slut" : show(vocab[top[0][1]])}`', '`for example ${top[0][1] === t.eot ? "end" : show(vocab[top[0][1]])}`'),
+    ('[["Inbäddning", emb, "--c-emb"], ["Attention", attn, "--c-attn"], ["Feed-forward", ffp, "--c-ff"]]', '[["Embedding", emb, "--c-emb"], ["Attention", attn, "--c-attn"], ["Feed-forward", ffp, "--c-ff"]]'),
+    ('fact("fact-tok", `I pytte-${S.size}: `, b(nf(V)), " olika token. Tokeniseraren har inga parametrar, den är en ordlista.");',
+     'fact("fact-tok", `In pytte-${S.size}: `, b(nf(V)), " different tokens. The tokenizer has no parameters, it is a word list.");'),
+    ('fact("fact-emb", `I pytte-${S.size}: tabellen är `, b(`${nf(V)} × ${t.D}`), ", alltså ", b(nf(emb)), " parametrar. Det är ", b(pct(emb / total, 0)), " av modellen.");',
+     'fact("fact-emb", `In pytte-${S.size}: the table is `, b(`${nf(V)} × ${t.D}`), ", that is ", b(nf(emb)), " parameters. That is ", b(pct(emb / total, 0)), " of the model.");'),
+    ('fact("fact-attn", `I pytte-${S.size}: `, b(`${t.L} lager`), " med ", b(`${t.H} huvuden`), ` på ${hd} tal var. Attention har `, b(nf(attn)), " parametrar, ", b(pct(attn / total, 0)), " av modellen.");',
+     'fact("fact-attn", `In pytte-${S.size}: `, b(`${t.L} layers`), " with ", b(`${t.H} heads`), ` of ${hd} numbers each. Attention has `, b(nf(attn)), " parameters, ", b(pct(attn / total, 0)), " of the model.");'),
+    ('fact("fact-ff", `I pytte-${S.size}: i feed-forward blåses de ${t.D} talen upp till `, b(nf(t.ff)), " och trycks ihop igen. Här ligger ", b(nf(ffp)), " parametrar, ", b(pct(ffp / total, 0)), ` av modellens ${nf(total)}.`);',
+     'fact("fact-ff", `In pytte-${S.size}: in feed-forward the ${t.D} numbers are expanded to `, b(nf(t.ff)), " and squeezed back. ", b(nf(ffp)), " parameters are here, ", b(pct(ffp / total, 0)), ` of the model\'s ${nf(total)}.`);'),
+    ('fact("fact-out", `I pytte-${S.size}: sista steget jämför talen med samma tabell som i steg 2, och har därför inga egna parametrar. Det sparar `, b(nf(emb)), ".");',
+     'fact("fact-out", `In pytte-${S.size}: the last step compares the numbers with the same table as in step 2, and so has no parameters of its own. That saves `, b(nf(emb)), ".");'),
+    ("<p>Två hjälpdelar syns på kartan. <b>Normaliseringen</b> håller talen i lagom storlek före varje steg. <b>Hopplänken</b> gör att det som räknas fram läggs till det som kom in, i stället för att ersätta det. Då behöver varje lager bara lära sig en ändring.</p>",
+     "<p>Two helper parts show on the map. <b>Normalisation</b> keeps the numbers at a sensible size before every step. <b>The skip connection</b> means that what is computed is added to what came in, instead of replacing it. Each layer then only has to learn a change.</p>"),
 ]
 ONCE = [
     ('<html lang="sv">', '<html lang="en">'),
@@ -75,8 +109,8 @@ ONCE = [
     ('aria-label="Förlusten sjunker snabbt de första sekunderna och sedan långsamt"', 'aria-label="The loss falls quickly in the first seconds and then slowly"'),
     ("<b>Förlusten</b> mäter hur förvånad modellen blir av rätt svar. Vid ren gissning bland 4&nbsp;096 token är den 8,3. I proverna här dyker punkterna upp efter fem sekunder och hela meningar efter tio. Efter drygt en minut handlar texten om Alma. Resten av tiden går åt till det svåra: att hålla ihop en hel saga.",
      "<b>The loss</b> measures how surprised the model is by the right answer. For a pure guess among 4,096 tokens it is 8.3. In the samples here full stops appear after five seconds and whole sentences after ten. After a little over a minute the text is about Alma. The rest of the time goes to the hard part: holding a whole story together."),
-    ("Allt på den här sidan räknas av samma program som i demon, med samma modellfiler. Inget skickas någonstans. Vill du se delarna som en ritning finns <a href=\"arkitektur.html\">arkitekturbilden</a>. <a href=\"inuti.en.html\">This page in English</a>.",
-     "Everything on this page is computed by the same program as the demo, with the same model files. Nothing is sent anywhere. If you want to see the parts as a drawing, there is <a href=\"arkitektur.en.html\">the architecture diagram</a>. <a href=\"inuti.html\">Den här sidan på svenska</a>."),
+    ("Allt på den här sidan räknas av samma program som i demon, med samma modellfiler. Inget skickas någonstans. <a href=\"inuti.en.html\">This page in English</a>.",
+     "Everything on this page is computed by the same program as the demo, with the same model files. Nothing is sent anywhere. <a href=\"inuti.html\">Den här sidan på svenska</a>."),
     # script
     ("`${label} parametrar`", "`${label} parameters`"), ('"räknar…"', '"computing…"'),
     ("· ${m.T - 1} token · ${m.L} lager · ${m.H} huvuden per lager · ${m.D} tal per token · räknat på ${Math.round(performance.now() - t0)} ms`",
@@ -110,10 +144,10 @@ def main():
     for a, b in ALL:
         assert a in s, f"not found: {a}"
         s = s.replace(a, b)
-    missing = [a for a, _ in ONCE if s.count(a) != 1]
+    missing = [a for a, _ in ONCE + MAP if s.count(a) != 1]
     if missing:
         raise SystemExit("these Swedish strings are not found exactly once in web/inuti.html:\n  " + "\n  ".join(m[:110] for m in missing))
-    for a, b in ONCE:
+    for a, b in ONCE + MAP:
         s = s.replace(a, b)
     (WEB / "inuti.en.html").write_text(s, encoding="utf-8")
     print("web/inuti.en.html")

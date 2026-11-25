@@ -24,6 +24,7 @@ export const pytte = {
       note: "Allt nedan körs i din webbläsare. Inget skickas någonstans.",
     },
     demo: {
+      insideEntrance: { title: "Se vad som händer inuti", body: "Skriv en mening och följ den genom modellen: hur den delas i bitar, vilka ord som tittar på varandra, hur svaret växer fram lager för lager och hur slumpen väljer nästa ord. Allt räknas i din webbläsare, med modellens egna tal.", cta: "Öppna Inuti Pytte", href: "/pytte/inuti.html" },
       tabs: { grow: "Sagan växer", chat: "Prata med Pytte", inside: "Under huven" },
       grow: {
         lead: "Samma början, samma slumpfrö, sex modeller. Dra i reglaget och se språket ta form: från lösa meningar vid 0,3 miljoner parametrar till en saga vid 7.",
@@ -164,6 +165,7 @@ export const pytte = {
       note: "Everything below runs in your browser. Nothing is sent anywhere.",
     },
     demo: {
+      insideEntrance: { title: "See what happens inside", body: "Type a sentence and follow it through the model: how it is split into pieces, which words look at each other, how the answer takes shape layer by layer, and how chance picks the next word. Everything is computed in your browser, with the model's own numbers.", cta: "Open Inside Pytte", href: "/pytte/inuti.en.html" },
       tabs: { grow: "The story grows", chat: "Talk to Pytte", inside: "Under the hood" },
       grow: {
         lead: "The same opening, the same random seed, six models. Drag the slider and watch language take shape: from loose sentences at 0.3 million parameters to a story at 7. Pytte writes in Swedish; The default opening means “Alma lives in a small cottage in the forest. One day”.",

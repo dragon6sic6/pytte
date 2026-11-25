@@ -35,8 +35,8 @@ ONCE = [
     ('aria-label="Lagren"', 'aria-label="The layers"'), ('aria-label="Hopplänk"', 'aria-label="Skip connection"'), ('aria-label="Sista normaliseringen"', 'aria-label="The final normalisation"'),
     ('aria-label="Utmatning"', 'aria-label="Output"'), ('aria-label="Sannolikheter"', 'aria-label="Probabilities"'), ('aria-label="Slumpen väljer"', 'aria-label="Chance picks"'),
     (">Tokeniserare</text>", ">Tokenizer</text>"), (">Inbäddning</text>", ">Embedding</text>"),
-    (">varje token tittar bakåt i texten</text>", ">every token looks back in the text</text>"), (">och hämtar det den behöver</text>", ">and fetches what it needs</text>"),
-    (">varje token bearbetas för sig</text>", ">every token is processed on its own</text>"), (">genom ett litet nätverk</text>", ">through a small network</text>"),
+    (">varje token tittar bakåt i texten</text>", ">each token looks back in the text</text>"), (">och hämtar det den behöver</text>", ">and fetches what it needs</text>"),
+    (">varje token bearbetas för sig</text>", ">each token on its own</text>"), (">genom ett litet nätverk</text>", ">through a small network</text>"),
     (">Utmatning</text>", ">Output</text>"), (">Sannolikheter</text>", ">Probabilities</text>"), (">Slumpen väljer</text>", ">Chance picks</text>"),
     # numbers written with a decimal comma
     ('label: "0,3 M"', 'label: "0.3 M"'), ('mb: "0,38"', 'mb: "0.38"'), ('mb: "1,4"', 'mb: "1.4"'), ('mb: "2,4"', 'mb: "2.4"'), ('mb: "3,6"', 'mb: "3.6"'), ('mb: "7,3"', 'mb: "7.3"'),
@@ -44,7 +44,7 @@ ONCE = [
     ("`varje token blir ${m.dim} tal`", "`every token becomes ${m.dim} numbers`"), ("`Lager 1 av ${m.layers}`", "`Layer 1 of ${m.layers}`"),
     ("`${m.layers} likadana efter varandra`", "`${m.layers} alike, one after another`"), ("`${m.heads} huvuden med ${m.hd} tal var`", "`${m.heads} heads with ${m.hd} numbers each`"),
     ("`${m.dim} tal → ${n(m.ff)} → ${m.dim}`", "`${m.dim} numbers → ${n(m.ff)} → ${m.dim}`"),
-    ("`${m.dim} tal → ${n(m.vocab)} poäng, en per token`", "`${m.dim} numbers → ${n(m.vocab)} scores, one per token`"), ("`till exempel ${m.probs[0][0]}`", "`for example ${m.probs[0][0]}`"),
+    ("`${m.dim} tal → ${n(m.vocab)} poäng, en per token`", "`${m.dim} numbers → ${n(m.vocab)} scores`"), ("`till exempel ${m.probs[0][0]}`", "`for example ${m.probs[0][0]}`"),
     # the explanations
     ('title: "Texten", what: (m) => `Det du har skrivit, plus allt modellen själv har lagt till hittills. Här är exemplet <i>Alma bor i en liten</i>.`',
      'title: "The text", what: (m) => `What you have written, plus everything the model itself has added so far. The example here is <i>Alma bor i en liten</i>, Swedish for “Alma lives in a small”.`'),

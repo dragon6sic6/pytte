@@ -200,7 +200,7 @@ html[data-mode="embed"] .panel { overflow: visible; padding: 0 0 0 24px; transit
             <rect class="box" x="90" y="352" width="260" height="96" rx="10"/>
             <rect class="edge-attn" x="90" y="360" width="5" height="80" rx="2"/>
             <text class="t" x="104" y="377">Attention</text>
-            <text class="s" x="104" y="397">every token looks back in the text</text>
+            <text class="s" x="104" y="397">each token looks back in the text</text>
             <text class="s" x="104" y="415">and fetches what it needs</text>
             <text class="s" x="104" y="435" id="attn-sub"></text>
           </g>
@@ -212,7 +212,7 @@ html[data-mode="embed"] .panel { overflow: visible; padding: 0 0 0 24px; transit
             <rect class="box" x="90" y="574" width="260" height="96" rx="10"/>
             <rect class="edge-ff" x="90" y="582" width="5" height="80" rx="2"/>
             <text class="t" x="104" y="599">Feed-forward</text>
-            <text class="s" x="104" y="619">every token is processed on its own</text>
+            <text class="s" x="104" y="619">each token on its own</text>
             <text class="s" x="104" y="637">through a small network</text>
             <text class="s" x="104" y="657" id="ff-sub"></text>
           </g>
@@ -302,7 +302,7 @@ function draw() {
   $("layer-sub").textContent = `${m.layers} alike, one after another`;
   $("attn-sub").textContent = `${m.heads} heads with ${m.hd} numbers each`;
   $("ff-sub").textContent = `${m.dim} numbers → ${n(m.ff)} → ${m.dim}`;
-  $("out-sub").textContent = `${m.dim} numbers → ${n(m.vocab)} scores, one per token`;
+  $("out-sub").textContent = `${m.dim} numbers → ${n(m.vocab)} scores`;
   $("pick-sub").textContent = `for example ${m.probs[0][0]}`;
   const chips = $("chips"); chips.replaceChildren();
   let x = 104;
