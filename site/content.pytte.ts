@@ -27,7 +27,7 @@ export const pytte = {
       tabs: { grow: "Sagan växer", chat: "Prata med Pytte", inside: "Under huven" },
       grow: {
         lead: "Samma början, samma slumpfrö, sex modeller. Dra i reglaget och se språket ta form: från lösa meningar vid 0,3 miljoner parametrar till en saga vid 7.",
-        expect: "Sagorna blir ofta lite konstiga. Modellerna kan grammatiken men tappar lätt tråden, och de har bara läst sagor om barn i vardagen. Börja med en räv som vill flyga, så handlar sagan snart om ett barn i stället. Prova gärna: det är så man ser var gränsen går.",
+        expect: "Sagorna blir ofta lite konstiga, och det är väntat. Pytte är byggd för att visa hur en språkmodell fungerar, inte för att tävla med ChatGPT. Modellerna är tusentals gånger mindre än de stora AI-modellerna, tränades på minuter i stället för månader på en vanlig laptop och har bara läst korta sagor om barn i vardagen. De kan grammatiken men tappar lätt tråden. Börja med en räv som vill flyga, så handlar sagan snart om ett barn i stället. Prova gärna: det är så man ser var gränsen går.",
         promptLabel: "Börja sagan",
         promptDefault: "Alma bor i en liten stuga i skogen. En dag",
         run: "Skriv sagan",
@@ -167,7 +167,7 @@ export const pytte = {
       tabs: { grow: "The story grows", chat: "Talk to Pytte", inside: "Under the hood" },
       grow: {
         lead: "The same opening, the same random seed, six models. Drag the slider and watch language take shape: from loose sentences at 0.3 million parameters to a story at 7. Pytte writes in Swedish; The default opening means “Alma lives in a small cottage in the forest. One day”.",
-        expect: "The stories often turn out a little odd. The models know the grammar but easily lose the thread, and they have only read stories about children in everyday life. Start with a fox who wants to fly, and the story is soon about a child instead. Do try it: that is how you see where the limit is.",
+        expect: "The stories often turn out a little odd, and that is to be expected. Pytte was built to show how a language model works, not to compete with ChatGPT. The models are thousands of times smaller than the big AI models, were trained in minutes rather than months on an ordinary laptop, and have only read short stories about children in everyday life. They know the grammar but easily lose the thread. Start with a fox who wants to fly, and the story is soon about a child instead. Do try it: that is how you see where the limit is.",
         promptLabel: "Start the story (in Swedish)",
         promptDefault: "Alma bor i en liten stuga i skogen. En dag",
         run: "Write the story",
