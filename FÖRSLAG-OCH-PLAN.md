@@ -847,6 +847,8 @@ Båda spakarna verkar, och tiden är den stora: tät data gav +11 punkter på su
 
 **Ton i README, rapport och skript (2026-11-25, på Mathias uppdrag).** Meningen om att Pytte "så vitt vi vet är det första öppna, dokumenterade försöket" är struken ur README och ur rapportens avsnitt 1, och omdömet om Linköpings-kursens publicering ("utan licens, modellkort eller rapport") är ersatt med fakta: vad kursen publicerade, och att datan saknar licens och därför inte kunde återanvändas. De två oanvända Hugging Face-skripten säger inte längre "the smallest open, documented models" och har fått en rad om att de inte används. Rapporten är ombyggd: 19 sidor som förut, bara sida 2 skiljer sig. Sajtens kopia av PDF:en behöver bytas av sajtsessionen.
 
+**Sidan är ute (kontrollerat 2026-11-25).** `mathiaskarlsson.se/pytte` och `/en/pytte` svarar, kortet finns på `/sidoprojekt`, och sajtens `master` ligger på samma commit som grenen `pytte`. Publiceringen gjordes av sajtsessionen; tidigare rader i det här avsnittet som säger att sajten inte är publicerad gällde när de skrevs. Kontrollerat härifrån mot den publika sajten: rapporten där är samma fil som `paper/pytte.pdf` i repot, `pytte.js` är identisk med `web/pytte.js`, tre stickprov av modellfilerna har rätt storlek (0,3M, 7M-chat, 15M), och sidan länkar till GitHub-repot och till datasläppet `sagosvenska-1.1`. Demon är inte provkörd i en webbläsare mot den publika sajten härifrån.
+
 ## Källor som verifierades i den här genomgången
 
 - Hugging Face: `tdde19-llm-from-scratch/TinyStoriesSwe` och tillhörande modeller, `qwrt/Swedish0.1M`, `Dxniz/TinyStories-Multilingual` (API-anrop 2026-11-06)
